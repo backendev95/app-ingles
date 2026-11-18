@@ -9,6 +9,12 @@ create table if not exists public.progress (
 
 alter table public.progress enable row level security;
 
+-- Permisos para usuarios con sesión iniciada (los proyectos nuevos de Supabase no los dan solos).
+-- Los visitantes sin sesión (anon) no reciben ningún permiso.
+grant usage on schema public to authenticated;
+grant select, insert, update on public.progress to authenticated;
+
+
 -- Cada usuario solo puede ver y modificar su propia fila.
 drop policy if exists "leer mi progreso" on public.progress;
 create policy "leer mi progreso" on public.progress
