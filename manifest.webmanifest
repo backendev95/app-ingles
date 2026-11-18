@@ -1,0 +1,10 @@
+{
+  "name": "English Path: de A2 a C1",
+  "short_name": "English Path",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#2f6fed",
+  "lang": "es",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
