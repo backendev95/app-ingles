@@ -6,17 +6,25 @@ App web para aprender inglés por niveles, **sin IA y sin costos**: todo el cont
 
 | Sección | Qué hace |
 |---|---|
-| **Prueba de ubicación** | Unos 10 minutos para encontrar tu nivel real (A2 a C2) y desbloquear lo anterior. |
+| **Prueba de ubicación** | Unos 10 minutos para encontrar tu nivel real (A2 a C2). |
 | **Sesión de hoy** | 4 tareas diarias que se marcan solas: tarjetas, gramática o repaso, escucha y una actividad que rota (lectura, conversación o escritura). |
-| **Tarjetas** | ~500 palabras y expresiones por temas, con repetición espaciada (SM-2) **en dos direcciones**: inglés → español (reconocer) y español → inglés (escribir). Puedes agregar tus propias palabras. |
-| **Gramática** | 49 lecciones (A2 a C2) con explicación en español y ~300 ejercicios de 5 tipos: opción múltiple, completar, ordenar, **traducir** y **corregir errores**. Las lecciones aprobadas vuelven a aparecer a los 2, 7, 21, 60 y 120 días para que no se olviden. |
-| **Examen de nivel** | 4 secciones (gramática, vocabulario, lectura y escucha). Para subir de nivel necesitas 75% en total y al menos 60% en cada sección. |
-| **Escuchar** | Diálogos con varias voces y preguntas, más dictados con corrección palabra por palabra. |
-| **Leer** | Textos originales por nivel, con preguntas de comprensión, glosario y audio. |
-| **Hablar** | Conversaciones guiadas (entrevistas, quejas, negociaciones, debates…) con respuestas modelo, y práctica de pronunciación (shadowing) con micrófono. |
-| **Escribir** | Temas por nivel con expresiones útiles, lista de control y un texto modelo para comparar. |
-| **Errores** | Todo lo que fallas queda guardado y se practica escribiendo la forma correcta. |
-| **Progreso** | Racha de días, XP, gráfica de 14 días, porcentaje por habilidad y objetivos del nivel ("Puedo…"). |
+| **Tarjetas** | ~700 palabras y expresiones por temas, en dos direcciones (reconocer y escribir), con el algoritmo de repaso **FSRS**: los botones muestran cuándo volverá a aparecer cada tarjeta. |
+| **Gramática** | 49 lecciones y 300 ejercicios (opción múltiple, completar, ordenar, traducir y corregir), con repasos programados a los 2, 7, 21, 60 y 120 días. |
+| **Escuchar** | Diálogos con varias voces y dictados con corrección palabra por palabra. |
+| **Leer** | Lecturas del curso con preguntas, y **Mi lector**: pegas cualquier texto en inglés, tocas una palabra y ves definición, pronunciación real y traducción, y la conviertes en tarjeta. |
+| **Hablar** | Conversaciones guiadas con respuestas modelo, **Sonidos** (14 unidades de pronunciación para hispanohablantes: pares mínimos, -ed, -s, acento, schwa, unión de palabras) y shadowing. Puedes **grabarte** y compararte con el modelo. |
+| **Escribir** | Temas por nivel con modelo y lista de control, escritura libre, y **corrector automático** de gramática y ortografía (LanguageTool) que guarda tus errores. |
+| **Exámenes** | Exámenes de nivel (4 habilidades) y **4 simulacros tipo Cambridge** (B2 First y C1 Advanced, Use of English) con cronómetro. |
+| **Inmersión** | Registro de minutos de series, podcasts y lecturas fuera de la app, con recursos gratuitos recomendados por nivel. |
+| **Progreso** | Diagnóstico de tus temas más débiles con repaso enfocado, acierto por habilidad y por tipo de ejercicio, retención de tarjetas e historial de exámenes. También incluye **Mis errores**, para practicar todo lo que fallaste. |
+
+### Servicios gratuitos que usa (sin clave)
+
+- **LanguageTool** (corrector): `api.languagetool.org`. Límite: 20 revisiones por minuto.
+- **Free Dictionary API** (definiciones y audio): `api.dictionaryapi.dev`.
+- **MyMemory** (traducción): 5.000 caracteres al día, o 50.000 si pones tu correo en Ajustes.
+
+Estos servicios funcionan en la versión publicada (GitHub Pages). Dentro de Claude, la página no puede conectarse a servicios externos.
 
 ## Publicar en GitHub Pages
 
@@ -44,8 +52,9 @@ Sin base de datos, el progreso se guarda en cada navegador y puedes moverlo con 
 ## Editar o agregar contenido
 
 - `src/content.js`: niveles, lecciones base, vocabulario base y frases.
+- `src/extras/`: pronunciación (`pron.js`), simulacros Cambridge (`mocks.js`), vocabulario adicional (`vocab_more.js`) y recursos de inmersión (`resources.js`).
 - `src/levels/a2.js` … `c2.js`: lecciones adicionales, vocabulario por temas, lecturas, diálogos, conversaciones guiadas, temas de escritura y objetivos de cada nivel.
-- `src/app.js`: lógica de la app. `src/shell.html`: estructura y estilos. `src/config.js`: Supabase.
+- `src/app.js`, `src/app2.js`, `src/start.js`: lógica de la app. `src/shell.html`: estructura y estilos. `src/config.js`: Supabase.
 
 Después de editar, regenera la página y súbela:
 

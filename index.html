@@ -101,6 +101,27 @@ input[type=checkbox]{width:auto;margin:0 6px 0 0;vertical-align:middle}
 details summary{cursor:pointer;padding:4px 0}
 .flash.rev{cursor:default}
 ol li{margin:6px 0}
+
+.rw{cursor:pointer;border-radius:3px} .rw:hover{background:var(--pri2)} .rw.known{text-decoration:underline dotted var(--green);text-decoration-thickness:2px;text-underline-offset:3px} .rw.sel{background:var(--pri);color:#fff}
+.reader p{font-size:18px;line-height:1.9}
+.lookup{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(560px,calc(100% - 24px));background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:20;max-height:55vh;overflow:auto}
+.lookup .lw{font-size:22px} .lookup .les{margin:6px 0;font-size:17px} .lookup #ldef>div{margin:6px 0}
+@media (max-width:760px){.lookup{bottom:84px}}
+.ltm{padding:10px 0;border-bottom:1px solid var(--line)} .ltm mark{background:color-mix(in srgb,var(--red) 25%,transparent);color:inherit;border-radius:3px;padding:0 2px}
+.mocktext p{font-size:17px;line-height:2.1}
+.gap{width:auto;min-width:110px;display:inline-block;margin:2px 4px;padding:4px 8px;font-size:15px;border-radius:8px}
+.wide-gap{min-width:240px}
+.gap.okf{border-color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent)} .gap.badf{border-color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent)}
+.fixans{color:var(--green);font-weight:800;font-size:14px;margin-right:6px} .fixans::before{content:"✔ "}
+.kwt p{margin:6px 0} .kwt .key{font-weight:800;letter-spacing:2px;color:var(--pri)}
+.stems{margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+#timer.late{background:var(--red);color:#fff;border-color:var(--red)}
+.pairs{display:flex;flex-direction:column;gap:8px} .pair{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pair .icon-btn{font-size:16px;padding:6px 12px}
+.recbox{display:inline-flex;gap:6px} .icon-btn.on{background:var(--red);color:#fff}
+.lesson.static{cursor:default} .lesson.static a{color:var(--pri)}
+.big-tag{font-size:14px;padding:4px 10px;display:inline-block;margin:3px 0}
+.shadowline{flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:9}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media (max-width:760px){
@@ -1514,6 +1535,400 @@ CANDO.C2 = [
   "Puedo resumir y reconstruir argumentos de varias fuentes de forma coherente."
 ];
 
+// ===== SIMULACROS TIPO CAMBRIDGE (Use of English) =====
+// Textos y preguntas originales con el formato de B2 First y C1 Advanced.
+// mcc: opción múltiple en texto · open: huecos abiertos (una palabra)
+// wf: formación de palabras · kwt: transformaciones con palabra clave (2–5 palabras, sin cambiar la palabra clave)
+const MOCKS = [
+  { id: "m-b2-1", level: "B2", title: "B2 First · Simulacro 1", minutes: 40, parts: [
+    { type: "mcc", text: "When Marta moved to London for university, she quickly {1} that she had no idea how to cook. For the first few weeks she {2} on sandwiches and takeaway food, which soon {3} a hole in her budget. Eventually, she decided to {4} up a cookery class at a local community centre. The teacher, a retired chef, had a {5} for making complicated dishes seem simple. He encouraged students to {6} from their mistakes rather than worry about them. By the end of the course, Marta was {7} of preparing a three-course meal for her flatmates, who {8} that it was the best food they had eaten in months.",
+      gaps: [[["realised", "remarked", "observed", "reminded"], 0], [["lived", "kept", "held", "stood"], 0], [["made", "did", "took", "gave"], 0], [["take", "put", "get", "bring"], 0], [["gift", "present", "capacity", "ability"], 0], [["learn", "study", "teach", "know"], 0], [["capable", "able", "skilled", "competent"], 0], [["insisted", "told", "spoke", "talked"], 0]] },
+    { type: "open", text: "Chocolate has been enjoyed {1} thousands of years. The ancient peoples of Central America drank it as a bitter drink, {2} was very different from the sweet bars we know today. When the Spanish brought cacao to Europe {3} the sixteenth century, sugar was added to make it more appealing. For a long time, chocolate was so expensive {4} only the rich could afford it. {5} was not until the nineteenth century that new machines made it possible to produce solid chocolate cheaply. Today, some people find it almost impossible to live {6} it. However, experts warn that we should not eat too {7} of it, {8} it contains a lot of sugar and fat.",
+      gaps: [["for"], ["which"], ["in"], ["that"], ["it"], ["without"], ["much"], ["as", "because", "since"]] },
+    { type: "wf", text: "More and more {1} are choosing to work from cafés rather than offices. For many, the main {2} is the lively atmosphere, which some find more {3} than a silent room. However, there can be {4} too. Background noise can be {5} distracting, and finding a free table with a {6} internet connection is not always easy. There is also the question of {7}: is it acceptable to stay for hours after buying a single coffee? Café owners have mixed opinions, but most agree that regular customers are {8} welcome.",
+      gaps: [["EMPLOY", ["employees"]], ["ATTRACT", ["attraction"]], ["PRODUCE", ["productive"]], ["ADVANTAGE", ["disadvantages", "drawbacks"]], ["EXTREME", ["extremely"]], ["RELY", ["reliable"]], ["POLITE", ["politeness"]], ["GENERAL", ["generally"]]] },
+    { type: "kwt", items: [
+      ["It's not necessary for you to bring any food.", "NEED", "You ___ any food.", ["don't need to bring", "do not need to bring", "needn't bring", "need not bring"]],
+      ["I haven't been to the cinema for two months.", "LAST", "The ___ to the cinema was two months ago.", ["last time I went", "last time I was"]],
+      ["They say the new museum is fantastic.", "SAID", "The new museum ___ fantastic.", ["is said to be"]],
+      ["I regret not studying harder at school.", "WISH", "I ___ harder at school.", ["wish I had studied", "wish I'd studied"]],
+      ["Although it was raining heavily, we went for a walk.", "DESPITE", "We went for a walk ___ rain.", ["despite the heavy"]],
+      ["Someone stole my bike last night.", "HAD", "I ___ last night.", ["had my bike stolen"]]
+    ] }
+  ]},
+  { id: "m-b2-2", level: "B2", title: "B2 First · Simulacro 2", minutes: 40, parts: [
+    { type: "mcc", text: "Every year, thousands of young people {1} a gap year to volunteer in other countries. The idea {2} attractive: you help a community, see the world and gain experience that will look good on your CV. However, critics {3} out that some programmes do more harm than good. Volunteers with no training are sometimes asked to build schools or teach classes, {4} local workers could do the job better. Before signing up, experts {5} researching the organisation carefully. Find out how much of your fee actually {6} the community, and whether the project was {7} by local people. Choosing well can {8} all the difference.",
+      gaps: [[["take", "make", "do", "have"], 0], [["sounds", "hears", "listens", "says"], 0], [["point", "show", "put", "make"], 0], [["whereas", "despite", "although of", "however"], 0], [["recommend", "advise to", "suggest to", "propose to"], 0], [["reaches", "arrives", "gets", "comes"], 0], [["requested", "demanded", "required", "claimed"], 0], [["make", "do", "take", "give"], 0]] },
+    { type: "open", text: "New York is famous {1} being 'the city that never sleeps'. But is {2} really true? In some neighbourhoods, it certainly is: you can buy a pizza at three in the morning {3} any difficulty. In others, however, the streets are surprisingly quiet after midnight. {4} you visit, the subway runs twenty-four hours a day, {5} is unusual for a big city. Many tourists are surprised by how friendly New Yorkers are, despite {6} reputation for being rude. If you get lost, don't be afraid to ask for directions: most people will be happy to help {7} they are in a hurry. Whatever you do, make {8} you try a bagel.",
+      gaps: [["for"], ["it", "that", "this"], ["without"], ["whenever"], ["which"], ["their"], ["unless"], ["sure"]] },
+    { type: "wf", text: "Electric scooters have become a {1} sight in cities around the world. Their {2} is easy to understand: they are cheap, fast and {3} friendly. However, their arrival has also caused {4} between users and pedestrians. Many people complain that riders behave {5}, leaving scooters on pavements where they block the way. In response, several cities have introduced {6} rules, including speed limits and special parking areas. Whether scooters will remain a {7} part of urban transport depends largely on how {8} they can be integrated.",
+      gaps: [["FAMILY", ["familiar"]], ["POPULAR", ["popularity"]], ["ENVIRONMENT", ["environmentally"]], ["AGREE", ["disagreement", "disagreements"]], ["RESPONSIBLE", ["irresponsibly"]], ["STRICT", ["stricter"]], ["LAST", ["lasting"]], ["SAFE", ["safely"]]] },
+    { type: "kwt", items: [
+      ["This is the first time I've eaten Thai food.", "NEVER", "I ___ Thai food before.", ["have never eaten", "'ve never eaten", "had never eaten"]],
+      ["'I'll call you tomorrow,' Tom said to me.", "WOULD", "Tom told me ___ me the next day.", ["that he would call", "he would call"]],
+      ["It was such a boring film that I fell asleep.", "SO", "The film ___ that I fell asleep.", ["was so boring"]],
+      ["You should book in advance.", "BETTER", "You ___ in advance.", ["had better book", "'d better book"]],
+      ["People believe the castle was built in 1200.", "BELIEVED", "The castle ___ built in 1200.", ["is believed to have been"]],
+      ["I'm really excited about seeing you next week.", "FORWARD", "I'm really ___ you next week.", ["looking forward to seeing"]]
+    ] }
+  ]},
+  { id: "m-c1-1", level: "C1", title: "C1 Advanced · Simulacro 1", minutes: 45, parts: [
+    { type: "mcc", text: "It has become fashionable in business circles to {1} failure. Entrepreneurs speak openly about the companies that went {2}, and conferences invite speakers to share their worst mistakes. The logic is that failure provides lessons that success cannot. {3}, there is a danger in romanticising it. For every founder who bounced back, there are many who were left with crippling debts and little to show {4} their efforts. Critics argue that celebrating failure is a {5} that only those with a safety net can afford. What really {6} resilience, they say, is not the failure itself but the support that surrounds it. If we want people to take {7} risks, we should focus less on glorifying setbacks and more on ensuring that the {8} of failing is not too high.",
+      gaps: [[["celebrate", "commemorate", "honour", "rejoice"], 0], [["under", "down", "off", "out"], 0], [["Nevertheless", "Moreover", "Hence", "Likewise"], 0], [["for", "from", "about", "with"], 0], [["luxury", "treasure", "fortune", "wealth"], 0], [["fosters", "raises", "rears", "grows"], 0], [["calculated", "measured", "weighed", "counted"], 0], [["price", "fare", "fee", "tip"], 0]] },
+    { type: "open", text: "Scientists have long suspected that sleep plays a crucial role in memory, but only recently have they begun to understand {1} it works. During deep sleep, the brain appears to replay the events of the day, strengthening some connections and weakening {2}. Far {3} being a passive state, sleep is a period of intense activity. This may explain why students who stay up all night revising often perform worse than {4} who get a good night's rest. {5} the evidence, many people still regard sleep as a waste of time, something to be sacrificed {6} the sake of productivity. After all, it is not {7} much the hours we spend studying that matter, but how well our brains are able to consolidate {8} we have learnt.",
+      gaps: [["how"], ["others"], ["from"], ["those"], ["despite", "notwithstanding"], ["for"], ["so"], ["what"]] },
+    { type: "wf", text: "In recent years, urban gardening has undergone a remarkable {1}. What was once regarded as a somewhat {2} hobby has become a widespread movement. Rooftops and abandoned lots have been {3} by residents determined to grow their own food. Supporters point to the {4} benefits, from improved mental health to stronger community ties. Critics, however, question the {5} of such projects on a large scale, noting that yields are often {6} and that soil in cities can be {7}. Nevertheless, the movement's {8} suggests it is more than a passing trend.",
+      gaps: [["TRANSFORM", ["transformation"]], ["CONVENTION", ["unconventional"]], ["CLAIM", ["reclaimed"]], ["NUMBER", ["numerous"]], ["VIABLE", ["viability"]], ["SIGNIFY", ["insignificant"]], ["CONTAMINATE", ["contaminated"]], ["RESILIENT", ["resilience"]]] },
+    { type: "kwt", items: [
+      ["I didn't realise how serious the problem was until I read the report.", "UNTIL", "It ___ the report that I realised how serious the problem was.", ["was not until I read", "wasn't until I read"]],
+      ["She is very unlikely to accept the offer.", "CHANCE", "There is ___ she will accept the offer.", ["little chance that", "very little chance that", "hardly any chance that", "little chance"]],
+      ["The manager didn't mention the bonus at all.", "REFERENCE", "The manager ___ the bonus.", ["made no reference to", "did not make any reference to", "didn't make any reference to"]],
+      ["We only managed to finish on time because Laura helped us.", "HAD", "If Laura ___ us, we wouldn't have finished on time.", ["hadn't helped", "had not helped"]],
+      ["People say that he was a brilliant pianist in his youth.", "REPUTED", "He ___ a brilliant pianist in his youth.", ["is reputed to have been"]],
+      ["As soon as she arrived, the meeting started.", "SOONER", "No ___ than the meeting started.", ["sooner had she arrived"]]
+    ] }
+  ]},
+  { id: "m-c1-2", level: "C1", title: "C1 Advanced · Simulacro 2", minutes: 45, parts: [
+    { type: "mcc", text: "A growing number of holiday resorts now offer 'digital detox' packages, in which guests hand {1} their phones on arrival. The concept {2} into a widespread anxiety about our dependence on technology. Guests report feeling disoriented at first, but most claim that, {3} a couple of days, they begin to notice details they would {4} have missed. Sceptics, however, question whether such retreats {5} any lasting change. Once guests return to their daily routines, old habits tend to {6} back in. Some psychologists suggest that, rather than {7} our backs on technology altogether, we should learn to use it more mindfully. After all, abstaining for a week achieves little if it {8} no effect on the remaining fifty-one.",
+      gaps: [[["over", "in", "out", "up"], 0], [["taps", "hits", "plugs", "knocks"], 0], [["within", "inside", "among", "between"], 0], [["otherwise", "else", "instead", "alternatively"], 0], [["bring about", "carry out", "set off", "take on"], 0], [["creep", "crawl", "walk", "run"], 0], [["turning", "rolling", "spinning", "twisting"], 0], [["has", "makes", "takes", "gives"], 0]] },
+    { type: "open", text: "Most people think of negotiation as a battle {1} one side wins and the other loses. Experienced negotiators, however, see it {2} a problem to be solved together. The key, they argue, is to understand what the other party really wants, which is not always {3} they say they want. {4} instance, a supplier demanding a higher price may actually be more concerned about being paid on time. By identifying such hidden interests, both sides can reach an agreement {5} leaves everyone better off. Of course, this approach requires patience and a willingness to listen, qualities that are {6} from universal. But those who master it often find that negotiations become less confrontational and, {7} importantly, more productive. In short, the best deal is rarely the one in {8} you get everything you asked for.",
+      gaps: [["in", "where"], ["as"], ["what"], ["for"], ["that", "which"], ["far"], ["more"], ["which"]] },
+    { type: "wf", text: "The sudden shift to online education during the pandemic was, for many teachers, a {1} experience. Lessons had to be {2} almost overnight, and many students had {3} access to devices. Yet the crisis also revealed {4} strengths. Some shy students, who rarely spoke in class, became far more {5} in online discussions. Teachers discovered new tools that made learning more {6}. {7}, the experience may have accelerated changes that were long overdue. The challenge now is to combine the best of both worlds without {8} the gap between privileged and disadvantaged students.",
+      gaps: [["DAUNT", ["daunting"]], ["DESIGN", ["redesigned"]], ["ADEQUATE", ["inadequate"]], ["EXPECT", ["unexpected"]], ["ACT", ["active"]], ["INTERACT", ["interactive"]], ["ARGUE", ["arguably"]], ["WIDE", ["widening"]]] },
+    { type: "kwt", items: [
+      ["I'd prefer you not to smoke in here.", "RATHER", "I'd ___ smoke in here.", ["rather you did not", "rather you didn't"]],
+      ["It was wrong of you to shout at him.", "SHOULD", "You ___ at him.", ["should not have shouted", "shouldn't have shouted"]],
+      ["The concert was cancelled because of the storm.", "OWING", "The concert was cancelled ___ storm.", ["owing to the"]],
+      ["Nobody expected the team to win the final.", "CAME", "The team's victory in the final ___ everyone.", ["came as a surprise to", "came as a shock to"]],
+      ["She started learning Japanese three years ago.", "BEEN", "She ___ Japanese for three years.", ["has been learning", "'s been learning", "has been studying"]],
+      ["It doesn't matter how hard you try, you won't convince him.", "MATTER", "No ___ you try, you won't convince him.", ["matter how hard"]]
+    ] }
+  ]}
+];
+const MOCK_PART_INFO = {
+  mcc: { title: "Parte 1 · Opción múltiple", instr: "Elige la palabra que mejor completa cada hueco. Se evalúan colocaciones, phrasal verbs y matices de significado." },
+  open: { title: "Parte 2 · Huecos abiertos", instr: "Escribe UNA palabra en cada hueco. Suelen ser preposiciones, pronombres, conectores o auxiliares." },
+  wf: { title: "Parte 3 · Formación de palabras", instr: "Transforma la palabra en MAYÚSCULAS para que encaje en el hueco (prefijos, sufijos, plurales, negativos)." },
+  kwt: { title: "Parte 4 · Transformaciones", instr: "Completa la segunda frase para que signifique lo mismo que la primera. Usa la palabra clave SIN cambiarla y escribe entre 2 y 5 palabras (las contracciones cuentan como dos)." }
+};
+
+// ===== PRONUNCIACIÓN PARA HISPANOHABLANTES =====
+// type: "pairs"  → pares mínimos: escuchas una palabra y eliges cuál fue
+//       "class"  → clasificar (ej. sonido de -ed): items [palabra, índiceCorrecto], options = categorías
+//       "stress" → sílaba acentuada: items [palabra, ["syl","la","bles"], índice]
+//       "shadow" → escuchar, grabarte y comparar (frases)
+const PRON = [
+  { id: "p-ii", title: "ship / sheep: la i corta y la i larga", type: "pairs", explain: `<p>El español tiene una sola <b>i</b>. El inglés tiene dos: la <b>/ɪ/ corta y relajada</b> (<i>ship, sit, live</i>), entre la i y la e del español, y la <b>/iː/ larga y tensa</b> (<i>sheep, seat, leave</i>), como una i española alargada y sonriendo.</p><p>Confundirlas cambia el significado, y a veces mucho: <i>beach / bitch, sheet / shit</i>.</p>`, pairs: [["ship", "sheep"], ["sit", "seat"], ["live", "leave"], ["fill", "feel"], ["hit", "heat"], ["bin", "bean"], ["slip", "sleep"], ["chip", "cheap"], ["fit", "feet"], ["still", "steal"], ["rich", "reach"], ["it", "eat"]] },
+  { id: "p-ae", title: "cat / cut / cart: tres vocales que en español son «a»", type: "pairs", explain: `<p><b>/æ/</b> (<i>cat, bad, man</i>): abre mucho la boca, entre a y e. <b>/ʌ/</b> (<i>cut, bus, love</i>): una a corta, relajada, casi sin abrir. <b>/ɑː/</b> (<i>cart, father, car</i>): a larga y profunda.</p><p>Truco: sonríe un poco para la /æ/; relaja la cara para la /ʌ/.</p>`, pairs: [["cat", "cut"], ["bad", "bud"], ["hat", "hut"], ["cap", "cup"], ["ran", "run"], ["match", "much"], ["bag", "bug"], ["hut", "heart"], ["cut", "cart"], ["fan", "fun"], ["lack", "luck"], ["track", "truck"]] },
+  { id: "p-bv", title: "b / v: very no es berry", type: "pairs", explain: `<p>En español, b y v suenan igual. En inglés son distintas: <b>/b/</b> junta los dos labios; <b>/v/</b> apoya los <b>dientes de arriba sobre el labio de abajo</b> y vibra (como una f con voz).</p><p>Practica exagerando: <i>very, vest, vote, never, have</i>.</p>`, pairs: [["berry", "very"], ["ban", "van"], ["best", "vest"], ["boat", "vote"], ["bet", "vet"], ["base", "vase"], ["curb", "curve"], ["bowl", "vole"], ["bent", "vent"], ["marble", "marvel"]] },
+  { id: "p-th", title: "th: think, this (y no tink, dis)", type: "pairs", explain: `<p>La <b>/θ/</b> (<i>think, three, mouth</i>) es como la z del español de España: lengua entre los dientes, sin voz. La <b>/ð/</b> (<i>this, they, mother</i>) es igual pero con voz, vibrando.</p><p>Errores típicos: decir <i>tink</i>, <i>sink</i> o <i>dis</i>. Saca un poquito la punta de la lengua.</p>`, pairs: [["thin", "tin"], ["three", "tree"], ["think", "sink"], ["thank", "tank"], ["they", "day"], ["then", "den"], ["mouth", "mouse"], ["path", "pass"], ["thought", "taught"], ["faith", "face"], ["those", "doze"], ["breathe", "breed"]] },
+  { id: "p-h", title: "h aspirada: hat no es at", type: "pairs", explain: `<p>La <b>h</b> inglesa suena: es un soplo suave de aire, como cuando empañas un vidrio. No es la j española (no raspa la garganta) y no es muda.</p><p>Excepciones con h muda: <i>hour, honest, honour, heir</i>.</p>`, pairs: [["hat", "at"], ["hair", "air"], ["heat", "eat"], ["hold", "old"], ["hand", "and"], ["hit", "it"], ["heart", "art"], ["hear", "ear"], ["high", "eye"], ["hate", "eight"]] },
+  { id: "p-shch", title: "sh / ch: share no es chair", type: "pairs", explain: `<p><b>/ʃ/</b> (<i>she, shop, wash</i>) es un sonido continuo, como pedir silencio: «shhh». <b>/tʃ/</b> (<i>chair, watch</i>) es la ch del español: empieza con un pequeño golpe.</p>`, pairs: [["share", "chair"], ["ship", "chip"], ["wash", "watch"], ["sheep", "cheap"], ["shoes", "choose"], ["cash", "catch"], ["sheet", "cheat"], ["shop", "chop"], ["wish", "witch"], ["dish", "ditch"]] },
+  { id: "p-jy", title: "y / j: yes no es Jess", type: "pairs", explain: `<p>La <b>y</b> inglesa (<i>yes, you, year</i>) es suave, como la i en <i>«ieso»</i>. La <b>j</b> inglesa (<i>job, juice, Jess</i>) es como la «ll» argentina fuerte o la «dy»: <i>«dyob»</i>.</p><p>Muchos hispanohablantes dicen <i>«jes»</i> en vez de <i>yes</i>, o <i>«yob»</i> en vez de <i>job</i>.</p>`, pairs: [["yes", "Jess"], ["yolk", "joke"], ["yam", "jam"], ["yell", "jell"], ["yet", "jet"], ["Yale", "jail"], ["year", "jeer"], ["use", "juice"]] },
+  { id: "p-final", title: "Consonantes finales: no te las comas", type: "pairs", explain: `<p>En español casi ninguna palabra termina en <i>b, d, g, p, t, k, v, z</i>. En inglés sí, y cambian el significado. Pronuncia el final con claridad.</p><p>Además, una vocal antes de consonante sonora (b, d, g, v, z) se alarga: <i>bed</i> suena más largo que <i>bet</i>.</p>`, pairs: [["bed", "bet"], ["cab", "cap"], ["eyes", "ice"], ["leave", "leaf"], ["prize", "price"], ["bag", "back"], ["card", "cart"], ["rise", "rice"], ["dog", "dock"], ["half", "have"], ["plays", "place"], ["send", "sent"]] },
+  { id: "p-ed", title: "Terminación -ed: /t/, /d/ o /ɪd/", type: "class", options: ["/t/ como «workt»", "/d/ como «playd»", "/ɪd/ sílaba extra «wanted»"], explain: `<p>La -ed del pasado <b>casi nunca</b> es una sílaba extra. Regla:</p><ul><li>Después de <b>t</b> o <b>d</b> → <b>/ɪd/</b>, sílaba extra: <i>wanted, needed, decided</i>.</li><li>Después de sonido sordo (p, k, f, s, sh, ch, th) → <b>/t/</b>: <i>worked, stopped, washed, laughed</i>.</li><li>Después de sonido sonoro y vocales → <b>/d/</b>: <i>played, lived, called, cleaned</i>.</li></ul><p>Decir <i>«work-ed»</i> con dos sílabas es uno de los errores más comunes.</p>`, items: [["worked", 0], ["played", 1], ["wanted", 2], ["stopped", 0], ["lived", 1], ["needed", 2], ["washed", 0], ["called", 1], ["decided", 2], ["laughed", 0], ["cleaned", 1], ["started", 2], ["watched", 0], ["opened", 1], ["visited", 2], ["helped", 0], ["arrived", 1], ["ended", 2], ["kissed", 0], ["changed", 1]] },
+  { id: "p-s", title: "Terminación -s / -es: /s/, /z/ o /ɪz/", type: "class", options: ["/s/ como «cats»", "/z/ como «dogs»", "/ɪz/ sílaba extra «buses»"], explain: `<p>Plurales, tercera persona (<i>he works</i>) y posesivos siguen la misma regla:</p><ul><li>Después de s, z, sh, ch, j, x → <b>/ɪz/</b>, sílaba extra: <i>buses, watches, pages, boxes</i>.</li><li>Después de sonido sordo (p, t, k, f, th) → <b>/s/</b>: <i>cats, books, stops</i>.</li><li>Después de sonido sonoro y vocales → <b>/z/</b>: <i>dogs, plays, lives, goes</i>.</li></ul>`, items: [["cats", 0], ["dogs", 1], ["buses", 2], ["books", 0], ["plays", 1], ["watches", 2], ["stops", 0], ["lives", 1], ["pages", 2], ["works", 0], ["goes", 1], ["boxes", 2], ["laughs", 0], ["friends", 1], ["washes", 2], ["months", 0], ["calls", 1], ["changes", 2]] },
+  { id: "p-stress", title: "Acento de las palabras", type: "stress", explain: `<p>En inglés la sílaba acentuada se dice más fuerte, más larga y más aguda; las demás se «comen» (se reducen a una vocal neutra). Poner el acento en la sílaba equivocada hace que no te entiendan aunque los sonidos estén bien.</p><p>Patrones útiles: palabras en <b>-tion, -sion, -ic, -ity</b> llevan el acento justo antes del sufijo (<i>informAtion, ecOnomic, possiBIlity</i>). Muchos sustantivos de 2 sílabas lo llevan en la primera (<i>PREsent</i>) y los verbos en la segunda (<i>to preSENT</i>).</p>`, items: [["photograph", ["pho", "to", "graph"], 0], ["photography", ["pho", "to", "gra", "phy"], 1], ["photographic", ["pho", "to", "gra", "phic"], 2], ["comfortable", ["com", "for", "ta", "ble"], 0], ["vegetable", ["ve", "ge", "ta", "ble"], 0], ["important", ["im", "por", "tant"], 1], ["develop", ["de", "ve", "lop"], 1], ["economy", ["e", "co", "no", "my"], 1], ["economic", ["e", "co", "no", "mic"], 2], ["hotel", ["ho", "tel"], 1], ["interesting", ["in", "te", "res", "ting"], 0], ["determine", ["de", "ter", "mine"], 1], ["opportunity", ["op", "por", "tu", "ni", "ty"], 2], ["record (sustantivo)", ["re", "cord"], 0], ["record (verbo)", ["re", "cord"], 1], ["technology", ["tech", "no", "lo", "gy"], 1], ["Japanese", ["Ja", "pa", "nese"], 2], ["chocolate", ["cho", "co", "late"], 0]] },
+  { id: "p-s-cluster", title: "s + consonante: speak, no «espeak»", type: "shadow", explain: `<p>En español ninguna palabra empieza por <b>s + consonante</b>, así que tendemos a agregar una «e»: <i>«espeak», «estudent», «Espain»</i>. En inglés la s va directo: alarga la s como una serpiente y luego la consonante: <i>sssspeak</i>.</p>`, lines: ["Speak slowly, please.", "I study at a small school in Spain.", "The students stopped at the station.", "She speaks Spanish and Swedish.", "Start the story from the beginning.", "Stay strong and stop stressing."] },
+  { id: "p-schwa", title: "La vocal neutra (schwa) y las formas débiles", type: "shadow", explain: `<p>El sonido más común del inglés es la <b>schwa /ə/</b>: una «e» muy corta y relajada que aparece en sílabas sin acento: <i>about, banana, teacher, problem</i>.</p><p>Las palabras gramaticales (<i>to, for, of, can, was, and, a, the</i>) casi siempre se dicen débiles: <i>I want <b>tə</b> go</i>, <i>a cup <b>əv</b> tea</i>, <i>I <b>kən</b> swim</i>. Si las pronuncias fuertes sonarás robótico y te costará entender a los nativos.</p>`, lines: ["I want to go to the cinema.", "Can you give me a cup of tea?", "I was at the doctor's for an hour.", "Fish and chips for two, please.", "What are you going to do?", "She can swim, but she can't dive."] },
+  { id: "p-linking", title: "Unir palabras (linking) y ritmo", type: "shadow", explain: `<p>Los nativos unen las palabras: una consonante final se une con la vocal siguiente (<i>turn_off → «tur-noff», pick_it_up → «pi-ki-tup»</i>). También acentúan solo las palabras importantes y aceleran las demás: es un idioma de <b>ritmo marcado por el acento</b>, no sílaba por sílaba como el español.</p><p>Escucha el modelo y fíjate en el ritmo más que en cada sonido.</p>`, lines: ["Turn it off and put it away.", "Pick it up and give it back.", "What do you want to eat?", "I'll call you as soon as I get home.", "Not at all, it's an old idea.", "Could you hold on a minute?"] }
+];
+
+// ===== RECURSOS GRATUITOS PARA INMERSIÓN POR NIVEL =====
+const IMMERSION_TYPES = [["serie", "📺 Serie o película"], ["podcast", "🎧 Podcast o audio"], ["video", "▶️ Video"], ["lectura", "📖 Lectura"], ["conversacion", "🗣️ Conversación real"], ["musica", "🎵 Música con letra"]];
+const RESOURCES = {
+  A2: [
+    { name: "BBC Learning English", type: "Web y audio", desc: "Lecciones cortas por nivel, con transcripción. Empieza por las secciones para principiantes.", url: "https://www.bbc.co.uk/learningenglish" },
+    { name: "News in Levels (nivel 1 y 2)", type: "Noticias", desc: "La misma noticia escrita en 3 niveles de dificultad, con audio.", url: "https://www.newsinlevels.com" },
+    { name: "Series con subtítulos en inglés", type: "Series", desc: "Comedias con diálogos cotidianos y episodios cortos: Friends, Modern Family, The Good Place. Activa los subtítulos en inglés, no en español." },
+    { name: "Libros graduados", type: "Lectura", desc: "Colecciones como Penguin Readers u Oxford Bookworms tienen libros adaptados por nivel. Busca el nivel 2–3." }
+  ],
+  B1: [
+    { name: "BBC 6 Minute English", type: "Podcast", desc: "Episodios de 6 minutos sobre temas actuales, con vocabulario explicado y transcripción.", url: "https://www.bbc.co.uk/learningenglish" },
+    { name: "Breaking News English", type: "Noticias", desc: "Noticias en varios niveles con ejercicios, audio a diferentes velocidades.", url: "https://breakingnewsenglish.com" },
+    { name: "News in Levels (nivel 3)", type: "Noticias", desc: "Noticias reales con audio en su nivel más alto.", url: "https://www.newsinlevels.com" },
+    { name: "Series", type: "Series", desc: "Brooklyn Nine-Nine, The Office, Ted Lasso. Primero con subtítulos en inglés; luego, escenas repetidas sin subtítulos." },
+    { name: "YouTube en inglés sobre tus hobbies", type: "Video", desc: "Busca en inglés videos de lo que ya te gusta (cocina, tecnología, fútbol). El interés hace que entiendas más." }
+  ],
+  B2: [
+    { name: "TED Talks", type: "Charlas", desc: "Charlas de 10–18 minutos con transcripción interactiva y subtítulos.", url: "https://www.ted.com" },
+    { name: "BBC Learning English: The English We Speak", type: "Podcast", desc: "Expresiones coloquiales explicadas en 3 minutos.", url: "https://www.bbc.co.uk/learningenglish" },
+    { name: "Podcasts para nativos sencillos", type: "Podcast", desc: "Programas conversacionales sobre temas que te interesen; busca los que tengan transcripción." },
+    { name: "Series", type: "Series", desc: "Stranger Things, Breaking Bad, Suits, The Crown. Mira cada episodio dos veces: con y sin subtítulos." },
+    { name: "Novelas juveniles", type: "Lectura", desc: "Libros escritos para jóvenes nativos tienen lenguaje natural pero accesible: un gran paso antes de novelas adultas." }
+  ],
+  C1: [
+    { name: "TED Talks sin subtítulos", type: "Charlas", desc: "Escucha primero sin texto; luego verifica con la transcripción.", url: "https://www.ted.com" },
+    { name: "Prensa en inglés", type: "Lectura", desc: "Artículos de opinión y análisis de periódicos y revistas internacionales: es el registro del C1 Advanced." },
+    { name: "Podcasts de ideas y entrevistas", type: "Podcast", desc: "Programas largos de entrevistas, ciencia, economía o historia, a velocidad nativa." },
+    { name: "Cambridge English: modelos de examen", type: "Exámenes", desc: "Material oficial gratuito de muestra para C1 Advanced.", url: "https://www.cambridgeenglish.org" },
+    { name: "Clásicos y no ficción", type: "Lectura", desc: "Novelas contemporáneas y ensayos. En Project Gutenberg hay clásicos gratis.", url: "https://www.gutenberg.org" }
+  ],
+  C2: [
+    { name: "Literatura y ensayo", type: "Lectura", desc: "Novela literaria, ensayo y crítica: estilo, ironía y matices." },
+    { name: "Comedia en vivo y sátira", type: "Video", desc: "El humor es lo más difícil de entender: juegos de palabras, referencias culturales y acentos." },
+    { name: "Debates y conferencias académicas", type: "Charlas", desc: "Escucha argumentación compleja y toma notas como práctica de síntesis." },
+    { name: "Escribir en público", type: "Escritura", desc: "Blogs, reseñas o foros en inglés: escribir para lectores reales cambia la calidad del texto." }
+  ]
+};
+
+// ===== VOCABULARIO ADICIONAL POR NIVEL =====
+VOCAB.A2 += `
+# Verbos esenciales
+bring|traer|Can you bring some water?
+carry|cargar / llevar|I'll carry your bag.
+choose|elegir|Choose one, please.
+decide|decidir|We decided to stay.
+explain|explicar|Can you explain it again?
+forget|olvidar|Don't forget your keys.
+happen|pasar / suceder|What happened?
+hope|esperar (desear)|I hope you like it.
+join|unirse a|Join us for dinner!
+keep|guardar / mantener|Keep the receipt.
+lose|perder|I lost my phone.
+mean|significar / querer decir|What does it mean?
+need|necesitar|I need some help.
+pay|pagar|Can I pay later?
+plan|planear|We're planning a trip.
+send|enviar|Send me a message.
+spend|gastar / pasar (tiempo)|I spend a lot on food.
+travel|viajar|I love to travel.
+understand|entender|I don't understand.
+wear|llevar puesto|She's wearing a red dress.
+# Compras y dinero
+price|precio|What's the price?
+cash|efectivo|Do you take cash?
+receipt|recibo|Here's your receipt.
+discount|descuento|Is there a discount?
+size|talla / tamaño|What size are you?
+try on|probarse (ropa)|Can I try it on?
+sale|rebajas / venta|It was on sale.
+queue|fila / hacer fila|There was a long queue.
+# Tiempo y clima
+sunny|soleado|It's sunny today.
+windy|ventoso|It's very windy.
+rainy|lluvioso|It was a rainy day.
+storm|tormenta|There's a storm coming.
+temperature|temperatura|The temperature dropped.
+umbrella|paraguas|Take an umbrella.
+# Adjetivos frecuentes
+early|temprano|I woke up early.
+late|tarde / tardío|Sorry I'm late.
+easy|fácil|The test was easy.
+difficult|difícil|It's a difficult question.
+quiet|tranquilo / silencioso|It's a quiet street.
+noisy|ruidoso|The bar was noisy.
+safe|seguro (sin peligro)|Is it safe here?
+dangerous|peligroso|That road is dangerous.
+free|gratis / libre|Entry is free.
+full|lleno|The bus was full.
+empty|vacío|The fridge is empty.
+important|importante|It's very important.
+different|diferente|We're very different.
+same|mismo|We have the same name.
+ready|listo|Are you ready?
+# Tiempo y frecuencia
+yesterday|ayer|I saw him yesterday.
+tomorrow|mañana|See you tomorrow.
+tonight|esta noche|What are you doing tonight?
+ago|hace (tiempo)|Two years ago.
+soon|pronto|See you soon.
+later|más tarde|I'll do it later.
+once|una vez|I've been there once.
+twice|dos veces|Twice a week.
+during|durante|During the film.
+until|hasta|Wait until six.`;
+
+VOCAB.B1 += `
+# Verbos útiles B1
+achieve|lograr|I achieved my goal.
+admit|admitir|He admitted his mistake.
+allow|permitir|Smoking isn't allowed.
+approve|aprobar|They approved the plan.
+attend|asistir a|I attended the meeting.
+belong to|pertenecer a|This belongs to me.
+compare|comparar|Compare the prices.
+deal with|ocuparse de|I'll deal with it.
+deny|negar|She denied everything.
+depend on|depender de|It depends on you.
+encourage|animar|She encouraged me to try.
+expect|esperar (prever)|I didn't expect that.
+explore|explorar|Let's explore the city.
+gain|ganar / adquirir|I gained experience.
+ignore|ignorar|Don't ignore me.
+include|incluir|Breakfast is included.
+increase|aumentar|Prices have increased.
+manage|gestionar / arreglárselas|She manages a team.
+mention|mencionar|He didn't mention it.
+offer|ofrecer|They offered me a job.
+prefer|preferir|I prefer tea.
+prevent|prevenir / evitar|We must prevent accidents.
+protect|proteger|Protect your skin.
+provide|proporcionar|We provide free Wi-Fi.
+reduce|reducir|Reduce your stress.
+refuse|negarse|He refused to help.
+replace|reemplazar|Replace the battery.
+search for|buscar|I'm searching for a flat.
+solve|resolver|We solved the problem.
+succeed|tener éxito|She succeeded in business.
+# Sustantivos B1
+advantage|ventaja|It has many advantages.
+disadvantage|desventaja|The main disadvantage is cost.
+attitude|actitud|He has a great attitude.
+benefit|beneficio|What are the benefits?
+challenge|reto|It's a big challenge.
+choice|elección|You have no choice.
+community|comunidad|A friendly community.
+decision|decisión|It was a hard decision.
+effort|esfuerzo|Thanks for your effort.
+goal|meta|What's your goal?
+knowledge|conocimiento|Knowledge is power.
+opportunity|oportunidad|Don't miss this opportunity.
+purpose|propósito|What's the purpose?
+reason|razón|For no reason.
+relationship|relación|We have a good relationship.
+solution|solución|We need a solution.
+success|éxito|Congratulations on your success!
+# Adjetivos B1
+available|disponible|Is the room available?
+aware|consciente|I'm aware of the problem.
+common|común|It's a common mistake.
+current|actual|My current job.
+efficient|eficiente|A very efficient system.
+essential|esencial|Water is essential.
+familiar|familiar / conocido|That face looks familiar.
+likely|probable|It's likely to rain.
+obvious|obvio|The answer is obvious.
+private|privado|This is a private party.
+similar|similar|We have similar tastes.
+suitable|adecuado|Is it suitable for kids?
+useful|útil|Thanks, that's useful.
+useless|inútil|This map is useless.
+various|varios|For various reasons.`;
+
+VOCAB.B2 += `
+# Verbos B2
+acknowledge|reconocer|She acknowledged the problem.
+address|abordar (un tema)|We need to address this issue.
+adopt|adoptar|They adopted a new strategy.
+assume|suponer|I assume you're right.
+challenge|cuestionar / desafiar|He challenged the decision.
+contribute|contribuir|Everyone contributed.
+determine|determinar|We need to determine the cause.
+emphasise|enfatizar|She emphasised the risks.
+enhance|mejorar / realzar|It enhances the flavour.
+ensure|asegurar|Please ensure the door is locked.
+establish|establecer|The company was established in 1990.
+evaluate|evaluar|We evaluated the results.
+highlight|destacar|The report highlights the risks.
+implement|implementar|We'll implement the changes.
+involve|implicar / involucrar|The job involves travel.
+maintain|mantener|Maintain a healthy weight.
+obtain|obtener|You need to obtain a visa.
+pursue|perseguir (una meta)|She pursued her dreams.
+reflect|reflejar / reflexionar|It reflects our values.
+reveal|revelar|The study revealed surprising results.
+# Sustantivos B2
+approach|enfoque|A new approach.
+aspect|aspecto|Every aspect of life.
+awareness|conciencia|Raise awareness.
+capacity|capacidad|The stadium's capacity.
+consequence|consecuencia|Face the consequences.
+criteria|criterios|What are the criteria?
+demand|demanda|There's high demand.
+expertise|pericia / conocimiento experto|We need her expertise.
+factor|factor|A key factor.
+impact|impacto|A huge impact.
+insight|percepción / idea profunda|It gave me new insight.
+outcome|resultado|The outcome was positive.
+perspective|perspectiva|From my perspective.
+priority|prioridad|Safety is our priority.
+resource|recurso|We lack resources.
+strategy|estrategia|A marketing strategy.
+tendency|tendencia|He has a tendency to exaggerate.
+trend|tendencia (moda)|A new trend.
+# Adjetivos y adverbios B2
+accurate|preciso / exacto|An accurate translation.
+appropriate|apropiado|Appropriate clothing.
+crucial|crucial|It's crucial to act now.
+significant|significativo|A significant increase.
+relevant|relevante|That's not relevant.
+reluctant|reacio|He was reluctant to agree.
+sustainable|sostenible|Sustainable energy.
+temporary|temporal|A temporary job.
+permanent|permanente|A permanent contract.
+widespread|generalizado|Widespread support.
+considerably|considerablemente|It's considerably cheaper.
+eventually|finalmente|Eventually, he agreed.
+increasingly|cada vez más|Increasingly popular.
+merely|simplemente / meramente|It's merely a suggestion.
+nonetheless|no obstante|It was risky; nonetheless, we did it.
+presumably|presumiblemente|Presumably, he forgot.`;
+
+VOCAB.C1 += `
+# Verbos C1
+advocate|abogar por|She advocates for change.
+alleviate|aliviar|Measures to alleviate poverty.
+ascertain|averiguar / determinar|We need to ascertain the facts.
+compile|recopilar|Compile a list.
+constitute|constituir|This constitutes a breach.
+curtail|restringir / recortar|Spending was curtailed.
+deem|considerar / juzgar|It was deemed unsafe.
+deter|disuadir|Cameras deter crime.
+diminish|disminuir|The pain diminished.
+embark on|emprender|We embarked on a new project.
+entail|conllevar|What does the job entail?
+facilitate|facilitar|To facilitate communication.
+hamper|obstaculizar|Bad weather hampered the search.
+incur|incurrir en|You'll incur extra costs.
+mitigate|mitigar|To mitigate the impact.
+prompt|provocar / motivar|What prompted the decision?
+refrain from|abstenerse de|Please refrain from smoking.
+scrutinise|examinar a fondo|They scrutinised the data.
+uphold|mantener / defender|Uphold the law.
+warrant|justificar|The situation warrants action.
+# Sustantivos C1
+backlash|reacción adversa|A public backlash.
+breakthrough|avance decisivo|A scientific breakthrough.
+clarification|aclaración|I need some clarification.
+constraint|restricción|Time constraints.
+discrepancy|discrepancia|A discrepancy in the figures.
+drawback|inconveniente|The main drawback is cost.
+endeavour|esfuerzo / empresa|A worthwhile endeavour.
+incentive|incentivo|Tax incentives.
+leeway|margen de maniobra|We have some leeway.
+outlook|perspectiva / panorama|The economic outlook.
+pitfall|escollo / trampa|Common pitfalls.
+premise|premisa|The premise is wrong.
+prerequisite|requisito previo|A prerequisite for the course.
+rationale|razón fundamental|The rationale behind it.
+stance|postura|What's your stance?
+# Adjetivos C1
+ambiguous|ambiguo|An ambiguous answer.
+coherent|coherente|A coherent argument.
+conducive|propicio|Conducive to learning.
+conspicuous|llamativo|A conspicuous error.
+detrimental|perjudicial|Detrimental to health.
+inevitable|inevitable|It was inevitable.
+intricate|intrincado|An intricate design.
+lucrative|lucrativo|A lucrative business.
+obsolete|obsoleto|Obsolete technology.
+plausible|verosímil|A plausible explanation.
+prevalent|frecuente / extendido|A prevalent problem.
+profound|profundo|A profound impact.
+redundant|redundante / despedido|He was made redundant.
+susceptible|propenso / susceptible|Susceptible to infection.
+tentative|provisional / tímido|A tentative agreement.
+# Expresiones C1
+by no means|de ningún modo|It's by no means easy.
+for the time being|por ahora|Stay here for the time being.
+in light of|a la luz de|In light of recent events.
+on the grounds that|alegando que|He refused on the grounds that it was unfair.
+to the best of my knowledge|que yo sepa|To the best of my knowledge, it's true.
+with regard to|con respecto a|With regard to your request.
+a far cry from|muy lejos de|It's a far cry from perfect.
+come to grips with|llegar a entender / dominar|I'm coming to grips with it.`;
+
 </script>
 <script>
 // ===== ENGLISH PATH: A2 → C2 (sin IA) =====
@@ -1553,6 +1968,14 @@ const ALL_ROLEPLAY = itemsFor(ROLEPLAY, "p");
 const ALL_WRITING = itemsFor(WRITING, "w");
 const ALL_LESSONS = LEVELS.flatMap((lv) => LESSONS[lv].map((l) => ({ ...l, level: lv })));
 const REVIEW_STEPS = [2, 7, 21, 60, 120];
+const EX_LESSON = new Map(); ALL_LESSONS.forEach((l) => l.ex.forEach((e) => EX_LESSON.set(e, l.id)));
+const TYPE_NAMES = { mc: "Opción múltiple", fill: "Completar", ord: "Ordenar palabras", tr: "Traducir", fix: "Corregir errores" };
+function recordEx(ex, ok, fix) {
+  const id = EX_LESSON.get(ex); if (!id) return;
+  const a = S.exStats[id] || (S.exStats[id] = [0, 0]), b = S.typeStats[ex[0]] || (S.typeStats[ex[0]] = [0, 0]);
+  if (fix) { a[0]++; b[0]++; return; }
+  a[0] += ok ? 1 : 0; a[1]++; b[0] += ok ? 1 : 0; b[1]++;
+}
 
 // ---------- Estado ----------
 const defaultState = () => ({
@@ -1563,7 +1986,8 @@ const defaultState = () => ({
   done: { reading: {}, listening: {}, roleplay: {}, writing: {} },
   skills: { vocab: [0, 0], grammar: [0, 0], listening: [0, 0], reading: [0, 0], speaking: [0, 0], writing: [0, 0] },
   daily: { day: null, tasks: {} }, cando: {},
-  settings: { rate: 0.95, newPerDay: 10 }, updatedAt: 0
+  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {},
+  settings: { rate: 0.95, newPerDay: 10, retention: 0.9, mmEmail: "" }, updatedAt: 0
 });
 let S = defaultState();
 function migrate(x) {
@@ -1799,28 +2223,41 @@ function dueCards() {
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
   return { due, fresh: fresh.slice(0, room), rev: rev.slice(0, roomR), totalNew: fresh.length };
 }
-function grade(key, q) {
-  const isNew = !S.cards[key];
-  const st = S.cards[key] || { ef: 2.5, int: 0, reps: 0, due: 0 };
-  if (isNew) { if (key.endsWith(":r")) S.newToday.r++; else S.newToday.n++; }
-  if (q < 3) { st.reps = 0; st.int = 0; st.due = Date.now() + 60000; st.lapses = (st.lapses || 0) + 1; }
+// FSRS-4.5 (parámetros por defecto)
+const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
+const F_DECAY = -0.5, F_FACTOR = 19 / 81;
+const fR = (t, st) => Math.pow(1 + F_FACTOR * t / st, F_DECAY);
+const fInt = (st) => Math.min(3650, Math.max(1, Math.round(st / F_FACTOR * (Math.pow(S.settings.retention || 0.9, 1 / F_DECAY) - 1))));
+const clampD = (d) => Math.min(10, Math.max(1, d));
+const D0 = (g) => FW[4] - (g - 3) * FW[5];
+function fsrsNext(prev, G, now) {
+  let st = prev ? { ...prev } : null;
+  if (st && st.s === undefined) { st.s = Math.max(0.5, st.int || 1); st.d = clampD(10 - ((st.ef || 2.5) - 1.3) * 4); st.last = (st.due || now) - (st.int || 1) * DAY; }
+  if (!st || !st.last) st = { ...(st || {}), s: FW[G - 1], d: clampD(D0(G)), reps: 0, lapses: 0 };
   else {
-    st.reps++;
-    st.int = st.reps === 1 ? 1 : st.reps === 2 ? 3 : Math.round(st.int * st.ef);
-    if (q === 3) st.int = Math.max(1, Math.round(st.int * 0.7));
-    if (q === 5) st.int = Math.round(st.int * 1.3);
-    st.ef = Math.max(1.3, st.ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
-    st.due = Date.now() + st.int * DAY;
+    const t = Math.max(0, (now - st.last) / DAY), R = fR(t, st.s);
+    if (G === 1) { st.s = Math.min(st.s, FW[11] * Math.pow(st.d, -FW[12]) * (Math.pow(st.s + 1, FW[13]) - 1) * Math.exp(FW[14] * (1 - R))); st.lapses = (st.lapses || 0) + 1; }
+    else st.s = st.s * (Math.exp(FW[8]) * (11 - st.d) * Math.pow(st.s, -FW[9]) * (Math.exp(FW[10] * (1 - R)) - 1) * (G === 2 ? FW[15] : 1) * (G === 4 ? FW[16] : 1) + 1);
+    st.d = clampD(FW[7] * D0(4) + (1 - FW[7]) * (st.d - FW[6] * (G - 3)));
   }
-  S.cards[key] = st; skill("vocab", q >= 3 ? 1 : 0, 1);
+  st.last = now;
+  if (G === 1) { st.reps = 0; st.due = now + 60000; } else { st.reps = (st.reps || 0) + 1; st.due = now + fInt(st.s) * DAY; }
+  return st;
+}
+const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
+function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
+function grade(key, q) {
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else S.newToday.n++; }
+  S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
+  skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
 }
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
-const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["errores", "📝", "Errores"], ["ajustes", "⚙️", "Ajustes"]];
+const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
 let view = "inicio", sub = null;
-function route() { const h = (location.hash || "").slice(1); view = VIEWS.some((v) => v[0] === h) ? h : "inicio"; sub = null; stopSpeech(); render(); }
+function route() { let h = (location.hash || "").slice(1); if (h === "errores") { h = "progreso"; pTab = "errores"; } view = VIEWS.some((v) => v[0] === h) ? h : "inicio"; sub = null; stopSpeech(); closeLookup(); render(); }
 function go(v) { if (location.hash.slice(1) === v) route(); else location.hash = v; }
 function renderNav() { $("#nav").innerHTML = VIEWS.map(([id, ic, l]) => `<a href="#${id}" class="${view === id ? "active" : ""}"><span class="ic">${ic}</span><span class="lbl">${l}</span></a>`).join(""); }
 function renderTop() {
@@ -1888,13 +2325,14 @@ function exerciseRunner(box, items, o) {
   }
   function finish(ok, answer, why, given, close) {
     answered = true; const ex = items[i];
-    if (ok) correct++; else wrongs.push({ q: ex[1], answer, given, why, type: ex[0] });
+    if (ok) correct++; else wrongs.push({ q: ex[1], answer, given, why, type: ex[0], ex });
+    recordEx(ex, ok);
     const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)\s*$/, "") : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
       ${!ok && ex[0] !== "mc" && ex[0] !== "ord" && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
       ${why ? `<p>${esc(why)}</p>` : ""}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
       <button class="btn wide" id="nx">Continuar ⏎</button>`;
-    if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
+    if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); recordEx(ex, true, true); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
     $("#nx").onclick = next; $("#nx").focus();
   }
   function next() { i++; show(); }
@@ -1979,6 +2417,7 @@ RENDER.inicio = (m) => {
     <div class="bar big"><i style="width:${p.pct * 100}%"></i></div><div class="muted small">${p.done}/${p.total} lecciones aprobadas${examReady ? ` · <a href="#gramatica">¡Ya puedes presentar el examen ${S.level}!</a>` : " · Aprueba el 70% para el examen"}</div></div>
   <h2>Tu sesión de hoy <span class="muted small">${doneN}/4</span></h2>
   <div class="tasks">${tasks.map((x) => `<button class="task ${t[x.k] ? "done" : ""}" data-go="${x.go}"><span class="big">${x.ic}</span><span><b>${esc(x.t)}</b><small>${esc(x.s)}</small></span><span class="chk">${t[x.k] ? "✅" : "○"}</span></button>`).join("")}</div>
+  ${(() => { const w = weakLessons()[0]; return w && w.rate < 0.75 ? `<div class="card note row between"><div>🎯 Tu tema más débil: <b>${esc(w.l.title)}</b> (${Math.round(w.rate * 100)}% de acierto)</div><button class="btn small" data-go="progreso">Ver diagnóstico</button></div>` : ""; })()}
   <h2>Habilidades</h2><div class="card skills">${Object.entries(skillNames).map(([k, n]) => { const [c, tt] = S.skills[k]; return `<div class="sk"><span>${n}</span><div class="bar"><i style="width:${pct(c, tt)}%"></i></div><small>${tt ? pct(c, tt) + "% · " + tt + " resp." : "Sin datos"}</small></div>`; }).join("")}</div>
   <h2>Últimos 14 días</h2><div class="card week">${days.map((d) => `<div class="col"><div class="b" style="height:${Math.max(3, (d.v / max) * 90)}px" title="${d.v} XP"></div><small>${d.l}</small></div>`).join("")}</div>
   <div class="stats"><div class="card stat"><b>${S.xp}</b><small>XP total</small></div><div class="card stat"><b>${learnedCount()}</b><small>Palabras aprendidas</small></div><div class="card stat"><b>${Object.values(S.lessons).filter((l) => l.best >= 0.7).length}</b><small>Lecciones aprobadas</small></div><div class="card stat"><b>${Object.keys(S.done.reading).length + Object.keys(S.done.listening).length}</b><small>Textos y audios</small></div></div>
@@ -2029,7 +2468,7 @@ RENDER.tarjetas = (m) => {
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
     m.innerHTML = `${head}<div class="flash" id="flash"><div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${vq.flipped ? `<div class="back"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
-    ${vq.flipped ? `<div class="grades"><button class="btn red" data-q="1">Otra vez<small>1</small></button><button class="btn orange" data-q="3">Difícil<small>2</small></button><button class="btn" data-q="4">Bien<small>3</small></button><button class="btn green" data-q="5">Fácil<small>4</small></button></div>` : `<button class="btn wide" id="show">Mostrar respuesta (espacio)</button>`}`;
+    ${vq.flipped ? `<div class="grades"><button class="btn red" data-q="1">Otra vez<small>${intervalLabel(key, 1)}</small></button><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<button class="btn wide" id="show">Mostrar respuesta (espacio)</button>`}`;
     const flip = () => { if (!vq.flipped) { vq.flipped = true; render(); } };
     $("#flash").onclick = (e) => { if (!e.target.closest("[data-speak]")) flip(); };
     if ($("#show")) $("#show").onclick = flip;
@@ -2042,7 +2481,7 @@ RENDER.tarjetas = (m) => {
     const r = vq.typed;
     m.innerHTML = `${head}<div class="flash rev"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex.replace(new RegExp(c.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "_____"))}”</p>` : ""}<div class="muted small">Pista: ${esc(hint)}</div></div>
     ${r ? `<div class="feedback ${r.ok ? "good" : "bad"}"><b>${r.ok ? "¡Correcto!" : "Era:"}</b> ${esc(c.en)} ${speakBtn(c.en)}${!r.ok ? `<div class="small">Escribiste: ${esc(r.v)}</div>` : ""}</div>
-      ${r.ok ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil</button><button class="btn" data-q="4">Bien</button><button class="btn green" data-q="5">Fácil</button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}`
+      ${r.ok ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}`
     : `<form id="rf" class="row"><input id="ri" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe en inglés"><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}`;
     if (!r) {
       $("#ri").focus();
@@ -2113,20 +2552,17 @@ function lessonPage(m, l) {
     }
   });
 }
-function grammarReview(m) {
-  const ls = dueLessons().slice(0, 4);
-  const items = []; ls.forEach((l) => shuffle(l.ex).slice(0, 4).forEach((e) => items.push([...e, l.id])));
-  const map = {}; ls.forEach((l) => map[l.id] = [0, 0]);
-  const ordered = shuffle(items);
-  exerciseRunner(m, ordered.map((e) => e.slice(0, -1)), {
-    title: "Repaso de gramática", subtitle: ls.map((l) => l.title).join(" · "), onExit: () => render(),
+function grammarReview(m, lessons, title) {
+  const ls = lessons || dueLessons().slice(0, 4);
+  const ordered = shuffle(ls.flatMap((l) => shuffle(l.ex).slice(0, lessons ? 5 : 4)));
+  exerciseRunner(m, ordered, {
+    title: title || "Repaso de gramática", subtitle: ls.map((l) => l.title).join(" · "), onExit: () => render(),
     onFinish: (c, n, wrongs) => {
-      const wrongQ = new Set(wrongs.map((w) => w.q));
-      ordered.forEach((e) => { const id = e[e.length - 1]; map[id][1]++; if (!wrongQ.has(e[1])) map[id][0]++; });
-      ls.forEach((l) => { const r = S.lessons[l.id]; const [ok, t] = map[l.id]; if (ok / t >= 0.75) r.stage = Math.min(REVIEW_STEPS.length - 1, (r.stage || 0) + 1); else r.stage = Math.max(0, (r.stage || 0) - 1); r.due = Date.now() + REVIEW_STEPS[r.stage] * DAY; });
+      const wrongSet = new Set(wrongs.map((w) => w.ex));
+      if (!lessons) ls.forEach((l) => { const r = S.lessons[l.id]; const its = ordered.filter((e) => EX_LESSON.get(e) === l.id); const ok = its.filter((e) => !wrongSet.has(e)).length; if (ok / its.length >= 0.75) r.stage = Math.min(REVIEW_STEPS.length - 1, (r.stage || 0) + 1); else r.stage = Math.max(0, (r.stage || 0) - 1); r.due = Date.now() + REVIEW_STEPS[r.stage] * DAY; });
       wrongs.forEach((w) => addMistake({ type: "Gramática", wrong: w.given, right: w.answer, note: w.why || "Repaso", q: w.q }));
       skill("grammar", c, n); markDaily("grammar"); addXP(c * 4);
-      m.innerHTML = `<div class="card center"><div class="big">🔁</div><h2>${c} de ${n} correctas</h2><p>Programé el próximo repaso de cada lección según tu resultado.</p><button class="btn" id="ok">Continuar</button></div>`;
+      m.innerHTML = `<div class="card center"><div class="big">🔁</div><h2>${c} de ${n} correctas</h2><p>${lessons ? "Sigue reforzando estos temas hasta superar el 80%." : "Programé el próximo repaso de cada lección según tu resultado."}</p><button class="btn" id="ok">Continuar</button></div>`;
       $("#ok").onclick = () => render();
     }
   });
@@ -2201,14 +2637,20 @@ RENDER.escuchar = (m) => {
 };
 
 // ---------- LEER ----------
+let rTab = "lecturas";
 RENDER.leer = (m) => {
+  if (sub && sub.text) return readerPage(m, sub.text);
+  if (rTab === "lector" && !sub) { m.innerHTML = `<h1>Leer</h1>${readTabs()}<div id="rbody"></div>`; bindReadTabs(m); return myTextsView($("#rbody"), m); }
   if (sub && sub.item) return comprehension(m, sub.item, { kind: "reading", onExit: () => { sub = null; render(); }, onFinish: (c, n) => { S.done.reading[sub.item.id] = Math.max(S.done.reading[sub.item.id] || 0, c / n); skill("reading", c, n); if (extraTask().go === "leer") markDaily("extra"); addXP(c * 5); sub = null; render(); } });
   const list = ALL_READINGS.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
-  m.innerHTML = `<h1>Leer</h1><p class="muted">Lee el texto completo sin traducir cada palabra; usa el glosario solo al final. Luego responde las preguntas. Puedes escuchar el texto para practicar pronunciación.</p>
+  m.innerHTML = `<h1>Leer</h1>${readTabs()}<p class="muted">Lee el texto completo sin traducir cada palabra; usa el glosario solo al final. Luego responde las preguntas. Puedes escuchar el texto para practicar pronunciación.</p>
   <div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>~${x.text.split(/\s+/).length} palabras · ${x.q.length} preguntas${S.done.reading[x.id] !== undefined ? ` · Mejor: ${Math.round(S.done.reading[x.id] * 100)}%` : ""}</small></span><span class="st">${S.done.reading[x.id] >= 0.8 ? "✅" : ""}</span></button>`).join("")}</div>
   ${LEVELS.filter((l) => !S.unlocked.includes(l)).length ? `<p class="muted small">Más lecturas se desbloquean al subir de nivel.</p>` : ""}`;
   $$("[data-i]", m).forEach((b) => b.onclick = () => { sub = { item: ALL_READINGS.find((x) => x.id === b.dataset.i) }; render(); });
+  bindReadTabs(m);
 };
+const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lecturas" ? "on" : ""}" data-rt="lecturas">Lecturas del curso</button><button class="tab ${rTab === "lector" ? "on" : ""}" data-rt="lector">Mi lector (con diccionario)</button></div>`;
+function bindReadTabs(m) { $$("[data-rt]", m).forEach((b) => b.onclick = () => { rTab = b.dataset.rt; render(); }); }
 
 // ---------- HABLAR ----------
 let hTab = "conversa", hq = null;
@@ -2223,9 +2665,11 @@ function bindMic(btnId, onText, live) {
 }
 RENDER.hablar = (m) => {
   if (sub && sub.rp) return roleplay(m, sub.rp);
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Pronunciación</button></div><div id="hbody"></div>`;
+  if (sub && sub.pron) return pronPage(m, sub.pron);
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
+  if (hTab === "sonidos") return pronList(box);
   if (hTab === "conversa") {
     const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;
@@ -2234,7 +2678,7 @@ RENDER.hablar = (m) => {
   }
   if (!hq) hq = { list: shuffle(LEVELS.filter((l) => S.unlocked.includes(l)).flatMap((l) => SENTENCES[l].map((s) => ({ s, l })))).sort((a, b) => (b.l === S.level) - (a.l === S.level)), i: 0 };
   const it = hq.list[hq.i % hq.list.length];
-  box.innerHTML = `<p class="muted"><b>Shadowing:</b> escucha, imita el ritmo y la entonación, y luego dila tú.</p><div class="card excard"><p class="big-text">${esc(it.s)}</p><div class="row center">${speakBtn(it.s, "🔊 Normal")}<button class="icon-btn" data-speak="${esc(it.s)}" data-rate="0.7">🐢 Lento</button></div>
+  box.innerHTML = `<p class="muted"><b>Shadowing:</b> escucha, imita el ritmo y la entonación, y luego dila tú.</p><div class="card excard"><p class="big-text">${esc(it.s)}</p><div class="row center">${speakBtn(it.s, "🔊 Normal")}<button class="icon-btn" data-speak="${esc(it.s)}" data-rate="0.7">🐢 Lento</button>${recorderHTML("shd" + hq.i)}</div>
     <div class="center">${micButton("rec")}</div><p class="muted center" id="live"></p>${dictApi ? "" : `<form id="sf" class="row"><input id="si" placeholder="Escríbela de memoria"><button class="btn">Comprobar</button></form>`}<div id="fb"></div></div><button class="btn ghost" id="nx">Otra frase →</button>`;
   const evaluate = (said) => {
     const sc = similarity(it.s, said), ok = sc >= 0.85; skill("speaking", ok ? 1 : 0, 1); if (ok) addXP(4);
@@ -2242,6 +2686,7 @@ RENDER.hablar = (m) => {
   };
   bindMic("rec", evaluate, (t) => { const l = $("#live"); if (l) l.textContent = t; });
   if ($("#sf")) $("#sf").onsubmit = (e) => { e.preventDefault(); evaluate($("#si").value); };
+  bindRecorders(box);
   $("#nx").onclick = () => { hq.i++; render(); };
 };
 function roleplay(m, rp) {
@@ -2273,20 +2718,22 @@ function roleplay(m, rp) {
 }
 
 // ---------- ESCRIBIR ----------
+const FREE_WRITING = { id: "free", level: "Libre", title: "Escritura libre / diario", task: "Escribe lo que quieras: cómo fue tu día, una opinión, un correo real que necesites enviar, un resumen de lo que viste en inglés. Luego pásalo por el corrector.", words: "50–300", phrases: ["Today I...", "I've been thinking about...", "What surprised me was...", "To be honest,...", "Anyway,..."], check: [], model: "" };
 RENDER.escribir = (m) => {
   if (sub && sub.w) return writingPage(m, sub.w);
-  const list = ALL_WRITING.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
+  const list = [FREE_WRITING].concat(ALL_WRITING.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level)));
   m.innerHTML = `<h1>Escribir</h1><p class="muted">Escribe tu texto, revisa la lista de control y luego compáralo con el texto modelo. Copiar expresiones del modelo a tu cuaderno de tarjetas es una de las mejores formas de subir de nivel.</p>
   <div class="lessons">${list.map((x) => { const d = S.done.writing[x.id]; return `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.words)} palabras${d && d.text ? ` · ${d.done ? "Terminado" : "Borrador guardado"}` : ""}</small></span><span class="st">${d && d.done ? "✅" : ""}</span></button>`; }).join("")}</div>`;
-  $$("[data-i]", m).forEach((b) => b.onclick = () => { sub = { w: ALL_WRITING.find((x) => x.id === b.dataset.i) }; render(); });
+  $$("[data-i]", m).forEach((b) => b.onclick = () => { sub = { w: b.dataset.i === "free" ? FREE_WRITING : ALL_WRITING.find((x) => x.id === b.dataset.i) }; render(); });
 };
 function writingPage(m, w) {
   const d = S.done.writing[w.id] = S.done.writing[w.id] || { text: "", checks: [], done: false };
-  const reveal = sub.reveal || d.done;
+  const reveal = !!w.model && (sub.reveal || d.done);
   m.innerHTML = `<div class="row between"><h1>${esc(w.title)}</h1><button class="btn ghost small" id="back">← Volver</button></div>
-  <div class="card"><p>${esc(w.task)}</p><p class="muted small">Extensión: ${esc(w.words)} palabras · Nivel ${w.level}</p><div class="label">Expresiones útiles (toca para insertar)</div><div class="chips">${w.phrases.map((p) => `<button class="chipbtn" data-ph="${esc(p)}">${esc(p)}</button>`).join("")}</div></div>
-  <textarea id="wt" rows="12" placeholder="Write your text here…">${esc(d.text)}</textarea>
-  <div class="row between"><span class="muted small" id="wc"></span>${reveal ? "" : `<button class="btn" id="fin">Terminé: revisar</button>`}</div>
+  <div class="card"><p>${esc(w.task)}</p><p class="muted small">Extensión: ${esc(w.words)} palabras${w.model ? " · Nivel " + w.level : ""}</p><div class="label">Expresiones útiles (toca para insertar)</div><div class="chips">${w.phrases.map((p) => `<button class="chipbtn" data-ph="${esc(p)}">${esc(p)}</button>`).join("")}</div></div>
+  <textarea id="wt" rows="12" placeholder="Write your text here…" spellcheck="false">${esc(d.text)}</textarea>
+  <div class="row between"><span class="muted small" id="wc"></span><div class="row"><button class="btn ghost" id="lt">🔍 Revisar gramática y ortografía</button>${reveal || !w.model ? "" : `<button class="btn" id="fin">Terminé: comparar con el modelo</button>`}</div></div><div id="ltbox"></div>
+  ${!w.model ? `<button class="btn wide" id="savefree">Guardar</button>` : ""}
   ${reveal ? `<div class="card"><h2>1. Lista de control</h2><p class="muted small">Revisa tu texto con honestidad y marca lo que cumpliste. Si algo falta, corrígelo arriba.</p>${w.check.map((c, i) => `<label class="cando"><input type="checkbox" data-ck="${i}" ${d.checks[i] ? "checked" : ""}> ${esc(c)}</label>`).join("")}</div>
     <div class="card"><h2>2. Texto modelo</h2><p class="muted small">Compara: ¿qué estructuras o palabras usa el modelo que tú no usaste? Toca una frase para escucharla.</p><div class="model">${w.model.split(/\n+/).map((p) => `<p>${p.split(/(?<=[.!?])\s+/).map((s) => `<span class="sp" data-speak="${esc(s)}">${esc(s)}</span>`).join(" ")}</p>`).join("")}</div></div>
     <div class="card"><h2>3. Guarda lo que aprendiste</h2><form id="cf" class="row"><input id="cen" placeholder="Expresión del modelo (inglés)"><input id="ces" placeholder="Significado"><button class="btn">+ Tarjeta</button></form></div>
@@ -2297,6 +2744,8 @@ function writingPage(m, w) {
   count(); let tm; t.oninput = () => { count(); clearTimeout(tm); tm = setTimeout(() => { d.text = t.value; save(); }, 800); };
   $("#back").onclick = () => { d.text = t.value; save(); sub = null; render(); };
   $$("[data-ph]", m).forEach((b) => b.onclick = () => { const p = t.selectionStart, v = t.value; const ins = b.dataset.ph.replace(/\.\.\.$/, " "); t.value = v.slice(0, p) + ins + v.slice(t.selectionEnd); t.focus(); t.setSelectionRange(p + ins.length, p + ins.length); t.oninput(); });
+  $("#lt").onclick = ltPanel(m, t, w);
+  if ($("#savefree")) $("#savefree").onclick = () => { d.text = t.value; const n = (t.value.match(/\b[\w'-]+\b/g) || []).length; if (n >= 30 && !d.done) { d.done = true; skill("writing", 1, 1); if (extraTask().go === "escribir") markDaily("extra"); addXP(Math.min(20, Math.round(n / 10))); } save(); toast("Guardado"); };
   if ($("#fin")) $("#fin").onclick = () => { const n = (t.value.match(/\b[\w'-]+\b/g) || []).length; if (n < 20) { toast("Escribe al menos 20 palabras"); return; } d.text = t.value; save(); sub.reveal = true; render(); };
   $$("[data-ck]", m).forEach((c) => c.onchange = () => { d.checks[+c.dataset.ck] = c.checked; save(); });
   if ($("#cf")) $("#cf").onsubmit = (e) => { e.preventDefault(); const en = $("#cen").value.trim(), es = $("#ces").value.trim(); if (en && es) { addCustomCard(en, es, ""); $("#cen").value = ""; $("#ces").value = ""; } };
@@ -2311,9 +2760,9 @@ function addCustomCard(en, es, ex, silent) {
   S.custom.push({ id: "MIS-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), level: "MIS", topic: "Mías", en, es, ex: ex || "" }); vq = null; save();
   if (!silent) toast("Agregada a tus tarjetas");
 }
-RENDER.errores = (m) => {
+function errorsView(m, root) {
   const gm = S.mistakes.filter((x) => x.right && x.right.split(" ").length <= 14);
-  m.innerHTML = `<h1>Errores</h1><p class="muted">Todo lo que fallaste en gramática, exámenes y dictados. Practícalos: escribir la forma correcta de memoria es lo que los fija.</p>
+  m.innerHTML = `<p class="muted">Todo lo que fallaste en gramática, exámenes y dictados. Practícalos: escribir la forma correcta de memoria es lo que los fija.</p>
   ${gm.length ? `<div class="row"><button class="btn" id="prac">✍️ Practicar mis errores (${Math.min(10, gm.length)})</button><button class="btn ghost" id="clr">Borrar lista</button></div>` : `<div class="card center"><p>Sin errores guardados todavía. ¡A practicar!</p></div>`}<div id="cb"></div>
   ${S.mistakes.length ? `<div class="list card">${S.mistakes.map((x, k) => `<div class="li"><div><span class="tag">${esc(x.type)}</span> <s>${esc(x.wrong)}</s> → <b>${esc(x.right)}</b> ${speakBtn(x.right)}<div class="muted small">${esc(x.q && x.q !== x.wrong ? x.q + " · " : "")}${esc(x.note || "")}</div></div><button class="btn ghost small" data-del="${k}" title="Quitar">✕</button></div>`).join("")}</div>` : ""}`;
   $$("[data-del]", m).forEach((b) => b.onclick = () => { S.mistakes.splice(+b.dataset.del, 1); save(); render(); });
@@ -2321,14 +2770,14 @@ RENDER.errores = (m) => {
   if ($("#prac")) $("#prac").onclick = () => {
     const sel = gm.slice(0, 10);
     const items = sel.map((x) => x.q && x.q.includes("___") ? ["fill", x.q, [x.right], x.note] : x.q && x.type === "Gramática" && x.q !== x.right ? ["tr", x.q, [x.right], x.note] : ["tr", `Escribe la forma correcta (antes pusiste: “${x.wrong}”)`, [x.right], x.note]);
-    exerciseRunner(m, items, { title: "Practicar mis errores", onExit: () => render(), onFinish: (c, n, wrongs) => {
+    exerciseRunner(root, items, { title: "Practicar mis errores", onExit: () => render(), onFinish: (c, n, wrongs) => {
       const still = new Set(wrongs.map((w) => w.q));
       const fixed = items.map((it, k) => still.has(it[1]) ? null : sel[k]).filter(Boolean);
       S.mistakes = S.mistakes.filter((x) => !fixed.includes(x)); skill("grammar", c, n); addXP(c * 3);
-      m.innerHTML = `<div class="card center"><h2>${c} de ${n} corregidos</h2><p>Quité de la lista los ${fixed.length} que ya respondiste bien.</p><button class="btn" id="ok">Continuar</button></div>`; $("#ok").onclick = () => render();
+      root.innerHTML = `<div class="card center"><h2>${c} de ${n} corregidos</h2><p>Quité de la lista los ${fixed.length} que ya respondiste bien.</p><button class="btn" id="ok">Continuar</button></div>`; $("#ok").onclick = () => render();
     } });
   };
-};
+}
 
 // ---------- AJUSTES ----------
 RENDER.ajustes = (m) => {
@@ -2348,7 +2797,9 @@ RENDER.ajustes = (m) => {
     <label class="label">Tarjetas nuevas por día</label><select id="npd">${[5, 10, 15, 20, 30].map((n) => `<option ${S.settings.newPerDay === n ? "selected" : ""}>${n}</option>`).join("")}</select>
     <label class="label">Nivel de trabajo</label><select id="lvl">${S.unlocked.map((l) => `<option ${l === S.level ? "selected" : ""}>${l}</option>`).join("")}</select>
     <p class="muted small">Puedes bajar a un nivel ya desbloqueado si quieres reforzarlo.</p>
+    <label class="label">Retención objetivo de las tarjetas</label><select id="ret">${[[0.85, "85% · menos repasos"], [0.9, "90% · recomendado"], [0.95, "95% · más repasos, recuerdas más"]].map(([v, l]) => `<option value="${v}" ${S.settings.retention === v ? "selected" : ""}>${l}</option>`).join("")}</select>
     <button class="btn ghost small" id="redo">Repetir la prueba de ubicación</button></div>
+  <div class="card"><h2>📚 Diccionario y traducción</h2><p class="muted small">El lector usa servicios gratuitos: dictionaryapi.dev (definiciones y audio) y MyMemory (traducción, 5.000 caracteres al día). Si escribes tu correo, MyMemory sube el límite a 50.000 al día (no requiere registro).</p><input id="mme" type="email" placeholder="Tu correo (opcional)" value="${esc(S.settings.mmEmail || "")}"></div>
   <div class="card"><h2>💾 Respaldo manual</h2><p class="muted small">Copia este código para mover tu progreso a otro dispositivo sin base de datos.</p>
     <textarea id="bk" rows="3" readonly>${esc(code)}</textarea><button class="btn ghost small" id="copy">Copiar</button>
     <textarea id="rs" rows="2" placeholder="Pega aquí un código de respaldo"></textarea><button class="btn small" id="restore">Restaurar</button> <span id="rres" class="small"></span></div>
@@ -2371,10 +2822,319 @@ RENDER.ajustes = (m) => {
   $("#npd").onchange = (e) => { S.settings.newPerDay = +e.target.value; vq = null; save(); };
   $("#lvl").onchange = (e) => { S.level = e.target.value; gLevel = null; vq = null; dq = null; hq = null; save(); renderTop(); toast("Nivel de trabajo: " + S.level); };
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
+  $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
+  $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };
   $("#copy").onclick = () => { navigator.clipboard.writeText($("#bk").value).then(() => toast("Copiado"), () => { $("#bk").select(); toast("Selecciona y copia el texto"); }); };
   $("#restore").onclick = () => { try { const d = JSON.parse(decodeURIComponent(escape(atob($("#rs").value.trim())))); if (!d || !d.level || !d.cards) throw 0; S = migrate(d); vq = null; save(); $("#rres").textContent = "✅ Restaurado"; renderTop(); } catch (e) { $("#rres").textContent = "❌ Código no válido"; } };
   $("#reset").onclick = () => confirmBox($("#rb"), "Esto borra tarjetas, lecciones, exámenes y estadísticas. ¿Seguro?", () => { const set = S.settings; S = defaultState(); S.settings = set; vq = dq = hq = null; save(); go("inicio"); });
 };
+
+
+// ===== MÓDULOS ADICIONALES =====
+
+// ---------- Grabadora (comparar tu voz con el modelo) ----------
+let recState = { rec: null, chunks: [], blobs: {}, active: null, stream: null };
+const recorderHTML = (k) => `<span class="recbox"><button class="icon-btn" data-rec="${k}" title="Grabarme">⏺️ Grabar</button><button class="icon-btn" data-play="${k}" ${recState.blobs[k] ? "" : "hidden"} title="Escuchar mi voz">▶️ Mi voz</button></span>`;
+function bindRecorders(box) {
+  $$("[data-rec]", box).forEach((b) => b.onclick = async () => {
+    const k = b.dataset.rec;
+    if (recState.active === k && recState.rec) { recState.rec.stop(); return; }
+    if (recState.rec) { toast("Termina la grabación actual primero"); return; }
+    try {
+      if (!recState.stream) recState.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const r = new MediaRecorder(recState.stream); recState.rec = r; recState.chunks = []; recState.active = k;
+      r.ondataavailable = (e) => recState.chunks.push(e.data);
+      r.onstop = () => { recState.blobs[k] = new Blob(recState.chunks, { type: r.mimeType || "audio/webm" }); recState.rec = null; recState.active = null; b.textContent = "⏺️ Grabar"; b.classList.remove("on"); const p = $(`[data-play="${CSS.escape(k)}"]`, box); if (p) { p.hidden = false; } playBlob(k); };
+      r.start(); b.textContent = "⏹️ Detener"; b.classList.add("on");
+      setTimeout(() => { if (recState.active === k && recState.rec) recState.rec.stop(); }, 15000);
+    } catch (e) { toast("No se pudo usar el micrófono para grabar (funciona en Chrome desde tu versión publicada)"); }
+  });
+  $$("[data-play]", box).forEach((b) => b.onclick = () => playBlob(b.dataset.play));
+}
+function playBlob(k) { const bl = recState.blobs[k]; if (!bl) return; try { const a = new Audio(URL.createObjectURL(bl)); a.play().catch(() => {}); } catch (e) {} }
+
+// ---------- PROGRESO (diagnóstico + errores) ----------
+let pTab = "diagnostico";
+function weakLessons() {
+  return ALL_LESSONS.filter((l) => S.unlocked.includes(l.level) && S.exStats[l.id] && S.exStats[l.id][1] >= 4)
+    .map((l) => ({ l, rate: S.exStats[l.id][0] / S.exStats[l.id][1], n: S.exStats[l.id][1] }))
+    .sort((a, b) => a.rate - b.rate);
+}
+RENDER.progreso = (m) => {
+  m.innerHTML = `<h1>Progreso</h1><div class="tabs"><button class="tab ${pTab === "diagnostico" ? "on" : ""}" data-t="diagnostico">Diagnóstico</button><button class="tab ${pTab === "errores" ? "on" : ""}" data-t="errores">Mis errores (${S.mistakes.length})</button></div><div id="pbody"></div>`;
+  $$("[data-t]", m).forEach((b) => b.onclick = () => { pTab = b.dataset.t; render(); });
+  const box = $("#pbody");
+  if (pTab === "errores") return errorsView(box, m);
+  const weak = weakLessons(), strong = weak.slice().reverse().filter((x) => x.rate >= 0.85).slice(0, 3);
+  const skillNames = { vocab: "Vocabulario", grammar: "Gramática", listening: "Escucha", reading: "Lectura", speaking: "Habla", writing: "Escritura" };
+  const cards = Object.entries(S.cards), now = Date.now();
+  const lapses = cards.reduce((a, [, c]) => a + (c.lapses || 0), 0), reviews = cards.reduce((a, [, c]) => a + (c.reps || 0) + (c.lapses || 0), 0);
+  const mistakeTypes = S.mistakes.reduce((a, x) => { a[x.type] = (a[x.type] || 0) + 1; return a; }, {});
+  const imm = S.immersion.reduce((a, x) => a + x.min, 0);
+  const skillsSorted = Object.entries(S.skills).filter(([, v]) => v[1] >= 5).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]);
+  box.innerHTML = `
+  ${weak.length ? `<div class="card hero"><h2>🎯 Lo que más te cuesta</h2><p class="muted small">Basado en tus respuestas en lecciones, repasos y exámenes.</p>
+    <div class="list">${weak.slice(0, 6).map((x) => `<div class="li"><div><b>${esc(x.l.title)}</b> <span class="tag">${x.l.level}</span><div class="bar"><i style="width:${x.rate * 100}%;background:${x.rate < 0.6 ? "var(--red)" : x.rate < 0.8 ? "var(--orange)" : "var(--green)"}"></i></div><small class="muted">${Math.round(x.rate * 100)}% de acierto · ${x.n} respuestas</small></div><button class="btn ghost small" data-l="${x.l.id}">Practicar</button></div>`).join("")}</div>
+    <button class="btn" id="focus">🔁 Repaso enfocado en mis temas más débiles</button></div>` : `<div class="card note">Responde algunas lecciones y aquí verás un diagnóstico de tus puntos débiles.</div>`}
+  ${strong.length ? `<div class="card"><h2>💪 Tus fortalezas</h2>${strong.map((x) => `<span class="tag big-tag">${esc(x.l.title)} · ${Math.round(x.rate * 100)}%</span>`).join(" ")}</div>` : ""}
+  <div class="card"><h2>Por habilidad</h2><div class="skills">${Object.entries(skillNames).map(([k, n]) => { const [c, t] = S.skills[k]; return `<div class="sk"><span>${n}</span><div class="bar"><i style="width:${pct(c, t)}%"></i></div><small>${t ? pct(c, t) + "% · " + t + " resp." : "Sin datos"}</small></div>`; }).join("")}</div>
+    ${skillsSorted.length ? `<p class="small">👉 Tu habilidad más débil ahora es <b>${skillNames[skillsSorted[0][0]]}</b>. Dale prioridad esta semana.</p>` : ""}</div>
+  <div class="card"><h2>Por tipo de ejercicio</h2><div class="skills">${Object.entries(TYPE_NAMES).map(([k, n]) => { const [c, t] = S.typeStats[k] || [0, 0]; return `<div class="sk"><span>${n}</span><div class="bar"><i style="width:${pct(c, t)}%"></i></div><small>${t ? pct(c, t) + "% · " + t : "Sin datos"}</small></div>`; }).join("")}</div>
+    <p class="muted small">Si traducir o corregir te cuesta más que la opción múltiple, es normal: producir es más difícil que reconocer. Es justo lo que más hace subir de nivel.</p></div>
+  <div class="stats"><div class="card stat"><b>${cards.filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length}</b><small>Palabras aprendidas</small></div><div class="card stat"><b>${cards.filter(([, c]) => c.due <= now).length}</b><small>Tarjetas pendientes</small></div><div class="card stat"><b>${reviews ? Math.round((1 - lapses / reviews) * 100) + "%" : "–"}</b><small>Retención en tarjetas</small></div><div class="card stat"><b>${(imm / 60).toFixed(1)} h</b><small>Inmersión registrada</small></div></div>
+  <div class="card"><h2>Exámenes</h2><div class="list">${LEVELS.map((lv) => { const e = S.exams[lv]; return `<div class="li"><div><b>Nivel ${lv}</b></div><span class="tag">${e ? (e.placement ? "Ubicación" : Math.round(e.best * 100) + "%") : "—"}</span><span>${e && e.passed ? "✅" : ""}</span></div>`; }).join("")}${MOCKS.map((x) => { const r = S.mocks[x.id]; return `<div class="li"><div><b>${esc(x.title)}</b></div><span class="tag">${r ? Math.round(r.best * 100) + "%" : "—"}</span><span>${r && r.best >= 0.6 ? "✅" : ""}</span></div>`; }).join("")}</div></div>
+  ${Object.keys(mistakeTypes).length ? `<div class="card"><h2>Errores guardados por tipo</h2>${Object.entries(mistakeTypes).map(([k, v]) => `<span class="tag big-tag">${esc(k)}: ${v}</span>`).join(" ")}</div>` : ""}`;
+  $$("[data-l]", box).forEach((b) => b.onclick = () => grammarReview(m, [ALL_LESSONS.find((l) => l.id === b.dataset.l)], "Práctica enfocada"));
+  if ($("#focus")) $("#focus").onclick = () => grammarReview(m, weak.slice(0, 3).map((x) => x.l), "Repaso enfocado");
+};
+
+// ---------- EXÁMENES Y SIMULACROS ----------
+RENDER.examenes = (m) => {
+  if (sub && sub.mock) return mockRunner(m);
+  m.innerHTML = `<h1>Exámenes</h1>
+  <h2>Exámenes de nivel</h2><p class="muted">Gramática, vocabulario, lectura y escucha del nivel. Aprobarlo te sube al siguiente.</p>
+  <div class="lessons">${LEVELS.map((lv) => { const e = S.exams[lv], u = S.unlocked.includes(lv); return `<button class="lesson ${u ? "" : "dim"}" data-lv="${lv}"><span class="num">${lv}</span><span><b>Examen de nivel ${lv}</b><small>${e ? (e.placement ? "Aprobado por ubicación" : "Mejor: " + Math.round(e.best * 100) + "%") : u ? "Sin presentar" : "Bloqueado"}</small></span><span class="st">${e && e.passed ? "✅" : u ? "" : "🔒"}</span></button>`; }).join("")}</div>
+  <h2>Simulacros tipo Cambridge</h2><p class="muted">Formato de la sección <i>Use of English</i> de los exámenes B2 First y C1 Advanced: 4 partes con tiempo. Úsalos para medirte frente a un examen internacional.</p>
+  <div class="lessons">${MOCKS.map((x) => { const r = S.mocks[x.id]; return `<button class="lesson" data-mock="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${x.minutes} min sugeridos · 30 preguntas${r ? ` · Mejor: ${Math.round(r.best * 100)}%` : ""}${lvlIdx(x.level) > lvlIdx(S.level) ? " · Por encima de tu nivel actual" : ""}</small></span><span class="st">${r && r.best >= 0.6 ? "✅" : ""}</span></button>`; }).join("")}</div>
+  <p class="muted small">En los exámenes reales se aprueba con cerca del 60% en el conjunto del examen. Aquí, un 60% en Use of English indica que vas bien encaminado.</p>`;
+  $$("[data-lv]", m).forEach((b) => b.onclick = () => { const lv = b.dataset.lv; if (!S.unlocked.includes(lv)) { toast(`Primero aprueba el examen de ${LEVELS[lvlIdx(lv) - 1]}`); return; } levelExam(m, lv); });
+  $$("[data-mock]", m).forEach((b) => b.onclick = () => { sub = { mock: MOCKS.find((x) => x.id === b.dataset.mock), part: 0, res: [], start: Date.now(), checked: false, vals: {} }; render(); });
+};
+let mockTimer = null;
+function mockRunner(m) {
+  const st = sub, mk = st.mock, part = mk.parts[st.part];
+  clearInterval(mockTimer);
+  if (!part) {
+    const C = st.res.reduce((a, r) => a + r.c, 0), N = st.res.reduce((a, r) => a + r.n, 0), p = C / N;
+    const r = S.mocks[mk.id] || { best: 0, tries: 0 }; r.best = Math.max(r.best, p); r.tries++; r.last = Date.now(); S.mocks[mk.id] = r;
+    skill("grammar", C, N); addXP(C * 5);
+    const mins = Math.round((Date.now() - st.start) / 60000);
+    m.innerHTML = `<div class="card center"><div class="big">${p >= 0.6 ? "🎓" : "📚"}</div><h2>${mk.title}: ${pct(C, N)}%</h2><p class="muted">Tiempo: ${mins} min (sugerido: ${mk.minutes})</p>
+      <div class="secs">${st.res.map((x, i) => `<div class="sec ${x.c / x.n >= 0.6 ? "ok" : "low"}"><b>${MOCK_PART_INFO[mk.parts[i].type].title}</b><span>${x.c}/${x.n}</span></div>`).join("")}</div>
+      <p>${p >= 0.75 ? "¡Excelente! Este nivel de Use of English está dominado." : p >= 0.6 ? "Buen resultado: estás en zona de aprobado. Revisa las partes más bajas." : "Todavía no. Repasa las lecciones de gramática y vocabulario del nivel y vuelve a intentarlo en unas semanas."}</p>
+      <p class="muted small">Tus fallos quedaron en Progreso → Mis errores.</p><button class="btn" id="ok">Volver</button></div>`;
+    $("#ok").onclick = () => { sub = null; render(); };
+    return;
+  }
+  const info = MOCK_PART_INFO[part.type], ck = st.checked, vals = st.vals;
+  const tag = (i) => `${st.part}-${i}`;
+  const fieldCls = (i, ok) => ck ? (ok ? "okf" : "badf") : "";
+  const okOf = (i) => {
+    const v = vals[tag(i)] ?? "";
+    if (part.type === "mcc") return +v === part.gaps[i][1] && v !== "";
+    if (part.type === "kwt") return part.items[i][3].some((a) => norm(a) === norm(v));
+    const ans = part.type === "wf" ? part.gaps[i][1] : part.gaps[i];
+    return ans.some((a) => norm(a) === norm(v));
+  };
+  let body = "";
+  if (part.type === "kwt") body = part.items.map((it, i) => `<div class="kwt card"><p>${i + 1}. ${esc(it[0])}</p><p class="key">${esc(it[1])}</p><p>${esc(it[2]).replace("___", `<input class="gap wide-gap ${fieldCls(i, okOf(i))}" data-g="${i}" value="${esc(vals[tag(i)] || "")}" ${ck ? "disabled" : ""} autocomplete="off" autocapitalize="off" spellcheck="false">`)}</p>${ck && !okOf(i) ? `<p class="small">✔ ${esc(it[3][0])}${st.ovr && st.ovr[tag(i)] ? " · contada como correcta" : ` <button class="btn ghost small" data-ovr="${i}">Mi respuesta es válida</button>`}</p>` : ""}</div>`).join("");
+  else {
+    const html = esc(part.text).replace(/\{(\d+)\}/g, (_, n) => {
+      const i = +n - 1, v = vals[tag(i)] ?? "", ok = okOf(i);
+      let ctl;
+      if (part.type === "mcc") ctl = `<select class="gap ${fieldCls(i, ok)}" data-g="${i}" ${ck ? "disabled" : ""}><option value="">(${n})</option>${part.gaps[i][0].map((o, j) => `<option value="${j}" ${String(j) === String(v) ? "selected" : ""}>${"ABCD"[j]}) ${esc(o)}</option>`).join("")}</select>`;
+      else ctl = `<input class="gap ${fieldCls(i, ok)}" data-g="${i}" placeholder="(${n})${part.type === "wf" ? " " + part.gaps[i][0] : ""}" value="${esc(v)}" ${ck ? "disabled" : ""} autocomplete="off" autocapitalize="off" spellcheck="false">`;
+      const fix = ck && !ok ? `<span class="fixans">${esc(part.type === "mcc" ? part.gaps[i][0][part.gaps[i][1]] : part.type === "wf" ? part.gaps[i][1][0] : part.gaps[i][0])}</span>` : "";
+      return `${ctl}${part.type === "wf" && !ck ? "" : ""}${fix}`;
+    });
+    body = `${part.type === "wf" ? `<div class="stems">${part.gaps.map((g, i) => `<span class="tag">(${i + 1}) ${esc(g[0])}</span>`).join(" ")}</div>` : ""}<div class="card mocktext">${html.split(/\n+/).map((p) => `<p>${p}</p>`).join("")}</div>`;
+  }
+  const count = part.type === "kwt" ? part.items.length : part.gaps.length;
+  const correct = [...Array(count)].filter((_, i) => okOf(i) || (st.ovr && st.ovr[tag(i)])).length;
+  m.innerHTML = `<div class="row between"><div><h1>${esc(mk.title)}</h1><div class="muted small">${info.title} · Parte ${st.part + 1} de ${mk.parts.length}</div></div><div class="row"><span class="chip" id="timer">⏱️ 0:00</span><button class="btn ghost small" id="exit">Salir</button></div></div>
+  <div class="bar"><i style="width:${(st.part / mk.parts.length) * 100}%"></i></div>
+  <div class="card note">${esc(info.instr)}</div>${body}
+  ${ck ? `<div class="card center"><b>${correct} de ${count} correctas en esta parte</b></div><button class="btn wide" id="next">${st.part + 1 < mk.parts.length ? "Siguiente parte →" : "Ver resultado"}</button>` : `<button class="btn wide" id="check">Comprobar esta parte</button>`}`;
+  const tick = () => { const s2 = Math.floor((Date.now() - st.start) / 1000); const el = $("#timer"); if (!el) return clearInterval(mockTimer); el.textContent = `⏱️ ${Math.floor(s2 / 60)}:${String(s2 % 60).padStart(2, "0")} / ${mk.minutes}:00`; el.classList.toggle("late", s2 > mk.minutes * 60); };
+  tick(); mockTimer = setInterval(tick, 1000);
+  $("#exit").onclick = () => { clearInterval(mockTimer); sub = null; render(); };
+  $$("[data-g]", m).forEach((el) => { el.oninput = el.onchange = () => { vals[tag(+el.dataset.g)] = el.value; }; });
+  $$("[data-ovr]", m).forEach((b) => b.onclick = () => { st.ovr = st.ovr || {}; st.ovr[tag(+b.dataset.ovr)] = true; const y = window.scrollY; render(); window.scrollTo(0, y); });
+  if ($("#check")) $("#check").onclick = () => {
+    st.checked = true;
+    [...Array(count)].forEach((_, i) => { if (!okOf(i)) { const v = vals[tag(i)] || "(vacío)"; const right = part.type === "kwt" ? part.items[i][3][0] : part.type === "mcc" ? part.gaps[i][0][part.gaps[i][1]] : part.type === "wf" ? part.gaps[i][1][0] : part.gaps[i][0]; addMistake({ type: "Simulacro", wrong: part.type === "mcc" ? (part.gaps[i][0][+v] || "(vacío)") : v, right, note: `${mk.title} · ${info.title}${part.type === "kwt" ? " · " + part.items[i][0] : ""}` }); } });
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+  };
+  if ($("#next")) $("#next").onclick = () => { st.res.push({ c: correct, n: count }); st.part++; st.checked = false; render(); };
+}
+
+// ---------- INMERSIÓN ----------
+RENDER.inmersion = (m) => {
+  const now = new Date(), weekStart = new Date(now); weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); weekStart.setHours(0, 0, 0, 0);
+  const week = S.immersion.filter((x) => new Date(x.d) >= weekStart).reduce((a, x) => a + x.min, 0);
+  const total = S.immersion.reduce((a, x) => a + x.min, 0);
+  const byType = S.immersion.reduce((a, x) => { a[x.type] = (a[x.type] || 0) + x.min; return a; }, {});
+  const lvls = [S.level, LEVELS[lvlIdx(S.level) + 1]].filter(Boolean);
+  m.innerHTML = `<h1>Inmersión</h1><p class="muted">La app te da la base, pero para llegar a C1 necesitas <b>cientos de horas</b> de inglés real. Registra aquí lo que veas, escuches o leas fuera de la app: cuenta para tu racha y tu XP.</p>
+  <div class="stats"><div class="card stat"><b>${week}</b><small>Minutos esta semana</small></div><div class="card stat"><b>${(total / 60).toFixed(1)}</b><small>Horas totales</small></div><div class="card stat"><b>${S.immersion.length}</b><small>Registros</small></div></div>
+  <form id="imf" class="card"><h2>Registrar actividad</h2><div class="row"><select id="imt">${IMMERSION_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><input id="imm" type="number" min="1" max="600" placeholder="Minutos" required style="max-width:130px"></div><input id="imn" placeholder="¿Qué fue? (ej.: Friends T2E3, podcast de ciencia…)"><button class="btn">Guardar</button></form>
+  ${Object.keys(byType).length ? `<div class="card"><h2>Por tipo</h2>${IMMERSION_TYPES.filter(([k]) => byType[k]).map(([k, l]) => `<div class="sk"><span>${l}</span><div class="bar"><i style="width:${(byType[k] / total) * 100}%"></i></div><small>${byType[k]} min</small></div>`).join("")}</div>` : ""}
+  ${S.immersion.length ? `<h2>Últimos registros</h2><div class="card list">${S.immersion.slice(0, 15).map((x, i) => `<div class="li"><div><b>${esc((IMMERSION_TYPES.find((t) => t[0] === x.type) || ["", x.type])[1])}</b> · ${x.min} min<div class="muted small">${new Date(x.d).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}${x.title ? " · " + esc(x.title) : ""}</div></div><button class="btn ghost small" data-del="${i}">✕</button></div>`).join("")}</div>` : ""}
+  <h2>Recursos gratuitos recomendados</h2>${lvls.map((lv) => `<h3>Para ${lv}</h3><div class="lessons">${(RESOURCES[lv] || []).map((r) => `<div class="lesson static"><span class="num">${esc(r.type.slice(0, 2))}</span><span><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b><small>${esc(r.desc)}</small></span></div>`).join("")}</div>`).join("")}
+  <div class="card note"><b>Consejos que funcionan:</b><ul><li>Subtítulos en <b>inglés</b>, nunca en español.</li><li>Mejor 20 minutos todos los días que 3 horas el domingo.</li><li>Elige contenido que te guste de verdad: si te aburre, lo dejarás.</li><li>Cuando escuches una expresión útil, agrégala a tus tarjetas.</li></ul></div>`;
+  $("#imf").onsubmit = (e) => { e.preventDefault(); const min = Math.max(1, Math.min(600, +$("#imm").value || 0)); if (!min) return; S.immersion.unshift({ d: Date.now(), type: $("#imt").value, min, title: $("#imn").value.trim() }); S.immersion = S.immersion.slice(0, 500); addXP(Math.min(30, Math.round(min / 2))); render(); };
+  $$("[data-del]", m).forEach((b) => b.onclick = () => { S.immersion.splice(+b.dataset.del, 1); save(); render(); });
+};
+
+// ---------- LECTOR CON DICCIONARIO ----------
+let lookupCache = {};
+try { lookupCache = JSON.parse(localStorage.getItem("ingles-lookup") || "{}"); } catch (e) {}
+function cacheLookup(k, v) { lookupCache[k] = v; try { const keys = Object.keys(lookupCache); if (keys.length > 400) keys.slice(0, 100).forEach((x) => delete lookupCache[x]); localStorage.setItem("ingles-lookup", JSON.stringify(lookupCache)); } catch (e) {} }
+async function translateText(q) {
+  const k = "tr:" + q.toLowerCase(); if (lookupCache[k]) return lookupCache[k];
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=en|es${S.settings.mmEmail ? "&de=" + encodeURIComponent(S.settings.mmEmail) : ""}`);
+  const d = await r.json();
+  if (d.responseStatus && +d.responseStatus !== 200) throw new Error(String(d.responseDetails || "Límite diario de traducción alcanzado"));
+  const t = d.responseData && d.responseData.translatedText; if (!t) throw new Error("Sin traducción");
+  cacheLookup(k, t); return t;
+}
+async function defineWord(w) {
+  const k = "df:" + w; if (lookupCache[k]) return lookupCache[k];
+  const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(w)}`);
+  if (r.status === 404) { cacheLookup(k, { none: true }); return { none: true }; }
+  const d = await r.json(); const e = d[0] || {};
+  const out = { phonetic: e.phonetic || (e.phonetics || []).map((p) => p.text).find(Boolean) || "", audio: ((e.phonetics || []).find((p) => p.audio) || {}).audio || "", meanings: (e.meanings || []).slice(0, 3).map((mm) => ({ pos: mm.partOfSpeech, defs: mm.definitions.slice(0, 2).map((x) => ({ d: x.definition, ex: x.example })) })) };
+  cacheLookup(k, out); return out;
+}
+const POS_ES = { noun: "sustantivo", verb: "verbo", adjective: "adjetivo", adverb: "adverbio", preposition: "preposición", conjunction: "conjunción", pronoun: "pronombre", interjection: "interjección" };
+function closeLookup() { const p = $("#lookup"); if (p) p.remove(); }
+function sentenceOf(text, idx) { const before = text.lastIndexOf(".", idx), b2 = Math.max(before, text.lastIndexOf("!", idx), text.lastIndexOf("?", idx), text.lastIndexOf("\n", idx)); const after = text.slice(idx).search(/[.!?\n]/); return text.slice(b2 + 1, after < 0 ? undefined : idx + after + 1).trim(); }
+function knownSet() { const s = new Set(); allCards().forEach((c) => { if (S.cards[c.id]) c.en.toLowerCase().split(/\s+/).length === 1 && s.add(c.en.toLowerCase()); }); return s; }
+function readerHTML(text) {
+  const known = knownSet(); let pos = 0;
+  return text.split(/\n+/).map((para) => {
+    const start = text.indexOf(para, pos); pos = start + para.length;
+    return `<p>${para.replace(/([A-Za-z][A-Za-z'’-]*)|([^A-Za-z]+)/g, (mt, w, o, off) => w ? `<span class="rw ${known.has(w.toLowerCase().replace(/[’']s$/, "")) ? "known" : ""}" data-i="${start + off}">${esc(w)}</span>` : esc(o))}</p>`;
+  }).join("");
+}
+async function openLookup(word, sentence) {
+  closeLookup();
+  const w = word.toLowerCase().replace(/[’']s$/, "").replace(/[’']/g, "'");
+  const local = allCards().find((c) => c.en.toLowerCase() === w);
+  const el = document.createElement("div"); el.id = "lookup"; el.className = "lookup";
+  el.innerHTML = `<div class="row between"><div><b class="lw">${esc(w)}</b> <span id="lph" class="muted"></span> ${speakBtn(w)} <button class="icon-btn" id="lau" hidden>🔈 Audio real</button></div><button class="icon-btn" id="lx">✕</button></div>
+    <div id="les" class="les">${local ? `<b>${esc(local.es)}</b> <span class="tag">${local.level === "MIS" ? "tus tarjetas" : local.level}</span>` : `<span class="muted">Traduciendo…</span>`}</div>
+    <div id="ldef" class="small"></div>
+    <div class="row"><button class="btn small" id="ladd">+ Tarjeta</button><button class="btn ghost small" id="lsent">Traducir la frase</button></div><div id="lsout" class="small"></div>`;
+  document.body.appendChild(el);
+  $("#lx").onclick = closeLookup;
+  let es = local ? local.es : "";
+  $("#ladd").onclick = () => { if (local) { toast("Ya está en tus tarjetas"); return; } addCustomCard(w, es || "(ver definición)", sentence); $("#ladd").textContent = "✓ Agregada"; $("#ladd").disabled = true; };
+  $("#lsent").onclick = async () => { $("#lsout").textContent = "Traduciendo…"; try { $("#lsout").innerHTML = `<i>${esc(sentence)}</i><br>→ ${esc(await translateText(sentence))}`; } catch (e) { $("#lsout").textContent = "No se pudo traducir: " + e.message; } };
+  if (inClaude()) { $("#ldef").innerHTML = `<span class="muted">El diccionario en línea funciona en tu versión publicada (GitHub Pages). Aquí solo se muestran las palabras de la app.</span>`; if (!local) $("#les").innerHTML = ""; return; }
+  if (!local) translateText(w).then((t) => { es = t; if ($("#les")) $("#les").innerHTML = `<b>${esc(t)}</b> <span class="muted small">(traducción automática)</span>`; }).catch((e) => { if ($("#les")) $("#les").innerHTML = `<span class="muted">Sin traducción: ${esc(e.message)}</span>`; });
+  try {
+    const d = await defineWord(w); if (!$("#ldef")) return;
+    if (d.none) { $("#ldef").innerHTML = `<span class="muted">No está en el diccionario (puede ser un nombre propio o una forma conjugada; prueba con la forma base).</span>`; return; }
+    if (d.phonetic) $("#lph").textContent = d.phonetic;
+    if (d.audio) { const b = $("#lau"); b.hidden = false; b.onclick = () => { try { new Audio(d.audio).play(); } catch (e) {} }; }
+    $("#ldef").innerHTML = d.meanings.map((mm) => `<div><span class="tag">${esc(POS_ES[mm.pos] || mm.pos)}</span> ${mm.defs.map((x) => `${esc(x.d)}${x.ex ? ` <i class="muted">“${esc(x.ex)}”</i>` : ""}`).join("<br>")}</div>`).join("");
+  } catch (e) { if ($("#ldef")) $("#ldef").innerHTML = `<span class="muted">Diccionario no disponible (¿sin internet?).</span>`; }
+}
+function readerPage(m, t) {
+  m.innerHTML = `<div class="row between"><h1>${esc(t.title)}</h1><button class="btn ghost small" id="back">← Mis textos</button></div>
+  <p class="muted small">Toca cualquier palabra para ver su significado, escucharla y agregarla a tus tarjetas. Las <span class="rw known">subrayadas en verde</span> ya están en tus tarjetas.</p>
+  <div class="card reading reader">${speakBtn(t.text.slice(0, 1900), "🔊 Escuchar")}${readerHTML(t.text)}</div>
+  <div class="row"><button class="btn" id="done">✓ Terminé de leer</button><button class="btn ghost small" id="del">Borrar texto</button></div><div id="cb"></div>`;
+  $("#back").onclick = () => { closeLookup(); sub = null; render(); };
+  $$(".reader .rw", m).forEach((s) => s.onclick = () => { $$(".reader .rw.sel", m).forEach((x) => x.classList.remove("sel")); s.classList.add("sel"); openLookup(s.textContent, sentenceOf(t.text, +s.dataset.i)); });
+  $("#done").onclick = () => { if (!t.read) { t.read = true; skill("reading", 1, 1); if (extraTask().go === "leer") markDaily("extra"); addXP(Math.min(25, Math.round(t.text.split(/\s+/).length / 25))); } closeLookup(); sub = null; render(); };
+  $("#del").onclick = () => confirmBox($("#cb"), "¿Borrar este texto?", () => { S.texts = S.texts.filter((x) => x !== t); save(); closeLookup(); sub = null; render(); });
+}
+function myTextsView(box, m) {
+  const used = S.texts.reduce((a, x) => a + x.text.length, 0);
+  box.innerHTML = `<p class="muted">Pega cualquier texto en inglés (una noticia, un artículo, la letra de una canción tuya, un correo del trabajo) y léelo con diccionario integrado. Es la forma de llevar tu vocabulario a nivel C1.</p>
+  <form id="nf" class="card"><input id="nt" placeholder="Título" maxlength="80"><textarea id="nx" rows="6" placeholder="Pega aquí el texto en inglés…"></textarea><button class="btn">Abrir en el lector</button><span class="muted small"> Espacio usado: ${Math.round(used / 1000)}k de 120k caracteres</span></form>
+  ${S.texts.length ? `<div class="lessons">${S.texts.map((x, i) => `<button class="lesson" data-i="${i}"><span class="num">📄</span><span><b>${esc(x.title)}</b><small>~${x.text.split(/\s+/).length} palabras${x.read ? " · Leído" : ""}</small></span><span class="st">${x.read ? "✅" : ""}</span></button>`).join("")}</div>` : ""}`;
+  $("#nf").onsubmit = (e) => {
+    e.preventDefault(); const text = $("#nx").value.trim().slice(0, 15000); if (text.length < 20) { toast("Pega un texto un poco más largo"); return; }
+    if (used + text.length > 120000) { toast("Sin espacio: borra algún texto antiguo"); return; }
+    const t = { id: Date.now(), title: $("#nt").value.trim() || text.split(/\s+/).slice(0, 6).join(" ") + "…", text, at: Date.now() };
+    S.texts.unshift(t); save(); sub = { text: t }; render();
+  };
+  $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { text: S.texts[+b.dataset.i] }; render(); });
+}
+
+// ---------- CORRECTOR (LanguageTool) ----------
+async function languageTool(text) {
+  const r = await fetch("https://api.languagetool.org/v2/check", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ text, language: "en-US", motherTongue: "es" }) });
+  if (r.status === 429) throw new Error("Demasiadas revisiones seguidas. Espera un minuto.");
+  if (!r.ok) throw new Error("El corrector no respondió (" + r.status + ")");
+  return (await r.json()).matches || [];
+}
+function ltPanel(m, t, w) {
+  const box = $("#ltbox"); let matches = [];
+  const draw = () => {
+    if (!matches.length) { box.innerHTML = `<div class="feedback good"><b>✓ El corrector no encontró errores.</b> <span class="small">Ojo: revisa gramática y ortografía, no si el texto es natural o tiene buen estilo. Compáralo también con el modelo.</span></div>`; return; }
+    box.innerHTML = `<div class="card"><h3>El corrector encontró ${matches.length} posible(s) problema(s)</h3>${matches.map((mt, i) => { const ctx = mt.context; const bad = ctx.text.substr(ctx.offset, ctx.length); return `<div class="ltm"><div>…${esc(ctx.text.slice(0, ctx.offset))}<mark>${esc(bad)}</mark>${esc(ctx.text.slice(ctx.offset + ctx.length))}…</div><div class="small">${esc(mt.message)}</div>${mt.replacements.length ? `<div class="row">${mt.replacements.slice(0, 3).map((r, j) => `<button class="btn ghost small" data-fix="${i}" data-r="${j}">→ ${esc(r.value || "(borrar)")}</button>`).join("")}<button class="btn ghost small" data-ign="${i}">Ignorar</button></div>` : `<button class="btn ghost small" data-ign="${i}">Ignorar</button>`}</div>`; }).join("")}</div>`;
+    $$("[data-fix]", box).forEach((b) => b.onclick = () => {
+      const i = +b.dataset.fix, mt = matches[i], rep = mt.replacements[+b.dataset.r].value, v = t.value;
+      if (v.substr(mt.offset, mt.length) !== mt.context.text.substr(mt.context.offset, mt.context.length)) { toast("El texto cambió; vuelve a revisar"); return; }
+      t.value = v.slice(0, mt.offset) + rep + v.slice(mt.offset + mt.length);
+      const delta = rep.length - mt.length; matches.splice(i, 1); matches.forEach((x) => { if (x.offset > mt.offset) x.offset += delta; });
+      t.oninput && t.oninput(); draw();
+    });
+    $$("[data-ign]", box).forEach((b) => b.onclick = () => { matches.splice(+b.dataset.ign, 1); draw(); });
+  };
+  return async () => {
+    const text = t.value.trim(); if (text.split(/\s+/).length < 5) { toast("Escribe algo primero"); return; }
+    if (inClaude()) { box.innerHTML = `<div class="card note">El corrector automático funciona en tu versión publicada (GitHub Pages). Dentro de Claude no puede conectarse a servicios externos.</div>`; return; }
+    const btn = $("#lt"); btn.disabled = true; box.innerHTML = `<p class="muted">Revisando…</p>`;
+    try {
+      matches = (await languageTool(t.value)).filter((x) => x.rule && x.rule.issueType !== "whitespace");
+      matches.filter((x) => x.replacements.length).slice(0, 8).forEach((x) => addMistake({ type: "Escritura", wrong: t.value.substr(x.offset, x.length), right: x.replacements[0].value, note: x.message }));
+      skill("writing", matches.length ? 0 : 1, 1); draw();
+    } catch (e) { box.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+    setTimeout(() => { if ($("#lt")) $("#lt").disabled = false; }, 4000);
+  };
+}
+
+// ---------- SONIDOS (pronunciación) ----------
+function pronList(box) {
+  box.innerHTML = `<p class="muted">Los sonidos que más les cuestan a los hispanohablantes. Escucha, distingue y luego grábate para compararte con el modelo.</p>
+  <div class="lessons">${PRON.map((u) => { const r = S.pron[u.id]; return `<button class="lesson" data-u="${u.id}"><span class="num">${{ pairs: "👂", class: "🔤", stress: "📢", shadow: "🗣️" }[u.type]}</span><span><b>${esc(u.title)}</b><small>${{ pairs: "Pares mínimos", class: "Clasificar sonidos", stress: "Acento", shadow: "Escucha y repite" }[u.type]}${r !== undefined ? ` · Mejor: ${Math.round(r * 100)}%` : ""}</small></span><span class="st">${r >= 0.8 ? "✅" : ""}</span></button>`; }).join("")}</div>`;
+  $$("[data-u]", box).forEach((b) => b.onclick = () => { sub = { pron: PRON.find((u) => u.id === b.dataset.u) }; render(); });
+}
+function pronPage(m, u) {
+  let extra = "";
+  if (u.type === "pairs") extra = `<div class="card"><h3>Escucha cada par</h3><div class="pairs">${u.pairs.map(([a, b], i) => `<div class="pair">${speakBtn(a, esc(a))}<span class="muted">vs</span>${speakBtn(b, esc(b))}${recorderHTML("pp" + i)}</div>`).join("")}</div></div>`;
+  if (u.type === "class") extra = `<div class="card"><h3>Ejemplos</h3><div class="chips">${u.items.slice(0, 9).map(([w, k]) => `<button class="chipbtn" data-speak="${esc(w)}">${esc(w)} <small class="muted">${u.options[k].split(" ")[0]}</small></button>`).join("")}</div></div>`;
+  if (u.type === "stress") extra = `<div class="card"><h3>Ejemplos</h3><div class="chips">${u.items.slice(0, 8).map(([w, syl, k]) => `<button class="chipbtn" data-speak="${esc(w.replace(/\s*\(.*\)/, ""))}">${syl.map((x, j) => j === k ? `<b>${esc(x.toUpperCase())}</b>` : esc(x)).join("·")}</button>`).join("")}</div></div>`;
+  if (u.type === "shadow") extra = `<div class="card"><h3>Escucha, repite y grábate</h3>${u.lines.map((l, i) => `<div class="li shadowline"><div>${esc(l)}</div><div class="row">${speakBtn(l)}<button class="icon-btn" data-speak="${esc(l)}" data-rate="0.7">🐢</button>${recorderHTML("sh" + i)}</div></div>`).join("")}<p class="muted small">Graba, escúchate y compara con el modelo: ¿el ritmo y la entonación se parecen? Repite hasta que suene natural.</p></div>`;
+  m.innerHTML = `<div class="row between"><h1>${esc(u.title)}</h1><button class="btn ghost small" id="back">← Sonidos</button></div><div class="card explain">${u.explain}</div>${extra}
+  ${u.type !== "shadow" ? `<button class="btn big-btn" id="quiz">Practicar: ¿lo distingues? (${u.type === "pairs" ? 12 : Math.min(12, u.items.length)} preguntas)</button>` : `<button class="btn" id="done">✓ Practiqué esta unidad</button>`}`;
+  $("#back").onclick = () => { sub = null; render(); };
+  $$(".explain i", m).forEach((it) => { it.classList.add("sp"); it.onclick = () => speak(it.textContent); });
+  bindRecorders(m);
+  if ($("#done")) $("#done").onclick = () => { S.pron[u.id] = 1; skill("speaking", 1, 1); addXP(8); sub = null; render(); };
+  if ($("#quiz")) $("#quiz").onclick = () => pronQuiz(m, u);
+}
+function pronQuiz(m, u) {
+  let qs = [];
+  if (u.type === "pairs") qs = [...Array(12)].map(() => { const p = pick(u.pairs), say = pick(p); return { prompt: "¿Qué palabra escuchaste?", say, options: p, ans: p.indexOf(say) }; });
+  if (u.type === "class") qs = shuffle(u.items).slice(0, 12).map(([w, k]) => ({ prompt: `“${w}”: ¿cómo suena la terminación?`, say: w, options: u.options, ans: k }));
+  if (u.type === "stress") qs = shuffle(u.items).slice(0, 12).map(([w, syl, k]) => ({ prompt: `¿Qué sílaba lleva el acento en “${w}”?`, say: w.replace(/\s*\(.*\)/, ""), options: syl.map((x) => x.toUpperCase()), ans: k }));
+  let i = 0, c = 0;
+  const show = () => {
+    const q = qs[i];
+    if (!q) { const p = c / qs.length; S.pron[u.id] = Math.max(S.pron[u.id] || 0, p); skill("listening", c, qs.length); addXP(c * 2);
+      m.innerHTML = `<div class="card center"><div class="big">${p >= 0.8 ? "👂✨" : "👂"}</div><h2>${c} de ${qs.length}</h2><p>${p >= 0.8 ? "¡Tu oído distingue bien estos sonidos!" : "Escucha otra vez los pares, exagera las diferencias al repetir y vuelve a intentarlo."}</p><div class="row center"><button class="btn" id="again">Repetir</button><button class="btn ghost" id="back">Volver</button></div></div>`;
+      $("#again").onclick = () => pronQuiz(m, u); $("#back").onclick = () => render(); return; }
+    m.innerHTML = `<div class="row between"><h1>${esc(u.title)}</h1><button class="btn ghost small" id="exit">Salir</button></div><div class="bar"><i style="width:${(i / qs.length) * 100}%"></i></div><div class="muted small">${i + 1}/${qs.length}</div>
+    <div class="card excard center"><p class="q">${esc(q.prompt)}</p><div class="row center"><button class="btn big-btn" id="play">🔊 Escuchar</button><button class="btn ghost" id="slow">🐢</button></div><div class="opts">${q.options.map((o, k) => `<button class="opt" data-k="${k}">${esc(o)}</button>`).join("")}</div><div id="fb"></div></div>`;
+    $("#exit").onclick = () => render();
+    $("#play").onclick = () => speak(q.say); $("#slow").onclick = () => speak(q.say, 0.65);
+    setTimeout(() => speak(q.say), 250);
+    let done = false;
+    $$(".opt", m).forEach((b) => b.onclick = () => {
+      if (done) return; done = true; const k = +b.dataset.k, ok = k === q.ans; if (ok) c++;
+      b.classList.add(ok ? "right" : "wrong"); $$(".opt", m)[q.ans].classList.add("right");
+      $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : "Era: " + esc(q.options[q.ans])}</b> ${u.type === "pairs" ? q.options.map((o) => speakBtn(o, "🔊 " + esc(o))).join(" ") : speakBtn(q.say)}</div><button class="btn wide" id="nx">Continuar</button>`;
+      $("#nx").onclick = () => { i++; show(); };
+    });
+  };
+  show();
+}
 
 // ---------- Arranque ----------
 loadLocal();
