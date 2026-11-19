@@ -78,6 +78,21 @@ git add . && git commit -m "Actualizo contenido" && git push
 
 ## Voz y micrófono
 
-- La voz usa las voces en inglés del sistema. En Ajustes puedes cambiar la velocidad.
-- El micrófono funciona en Chrome y Edge, en computador y Android. En iPhone puedes usar el dictado del teclado en las casillas de texto.
-- Los ejercicios funcionan sin internet una vez instalada la app.
+- **Audios de alta calidad:** las palabras, verbos irregulares, frases de dictado, diálogos, conversaciones guiadas, unidades de pronunciación, correcciones de los ejercicios, ejemplos de las lecciones y el glosario tienen audios pregrabados (2.129 en total) con una voz neuronal de código abierto (Kokoro): voz estadounidense para la persona A, británica para la B y estadounidense masculina para la C. Están en la carpeta `audio/` y se activan o desactivan en **Ajustes → Voz y audio**.
+- **Voces del dispositivo:** lo que no tiene audio pregrabado usa las voces de tu celular o computador. En **Ajustes → Voz y audio** eliges la voz principal y las voces de los diálogos (★ = alta calidad) y encuentras cómo instalar voces más naturales en Android, iPhone y Windows. En computador, Microsoft Edge trae voces "Natural" muy realistas.
+- **Velocidad:** se ajusta en Ajustes y aplica tanto a los audios como a las voces del dispositivo.
+- **Micrófono:** funciona en Chrome y Edge, en computador y Android. En iPhone puedes usar el dictado del teclado.
+
+### Generar más audios (opcional)
+
+Si agregas contenido, o quieres audio también para los ejemplos del vocabulario, las lecturas y los textos modelo de escritura (lo único que todavía usa la voz del dispositivo):
+
+```bash
+pip install kokoro-onnx soundfile        # y ten ffmpeg instalado
+# Descarga kokoro-v1.0.int8.onnx y voices-v1.0.bin de
+# https://github.com/thewh1teagle/kokoro-onnx/releases (model-files-v1.0), fuera de la carpeta del proyecto
+node tools/audio_texts.js --all > audio/texts.json
+python tools/generate_audio.py --model RUTA/kokoro-v1.0.int8.onnx --voices RUTA/voices-v1.0.bin
+```
+
+Es incremental: solo crea los audios que faltan y actualiza `audio/index.json`. Faltan unos 900 (≈2–3 horas en un computador normal). Puedes dividir el trabajo entre dos computadores con `--part 1/2` y `--part 2/2`.

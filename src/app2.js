@@ -410,3 +410,31 @@ function irrList(m) {
     } });
   };
 }
+
+// ---------- AJUSTES DE VOZ ----------
+const ACCENTS = { US: "Estados Unidos", GB: "Reino Unido", AU: "Australia", CA: "Canadá", IE: "Irlanda", IN: "India", NZ: "Nueva Zelanda", ZA: "Sudáfrica", SC: "Escocia" };
+const accentOf = (lang) => { const m = String(lang).match(/[-_]([A-Za-z]{2})/); return m ? ACCENTS[m[1].toUpperCase()] || m[1].toUpperCase() : "Inglés"; };
+const VOICE_ROLES = [["A", "Voz principal", "Palabras, frases, ejercicios y la persona A de los diálogos"], ["B", "Segunda voz", "Persona B de los diálogos y tu interlocutor en las conversaciones guiadas"], ["C", "Tercera voz", "Persona C de los diálogos"]];
+function voiceSettingsHTML() {
+  const vs = rankedVoices(), pref = voicePrefs();
+  const hqN = audioIndex ? audioIndex.size : 0;
+  return `<div class="card"><h2>🔊 Voz y audio</h2>
+    <label class="cando"><input type="checkbox" id="hq" ${S.settings.hq === false ? "" : "checked"}> <span><b>Usar audios de alta calidad</b> (voz neuronal pregrabada para palabras, frases, diálogos, conversaciones, verbos irregulares y pronunciación). ${inClaude() ? "<span class='muted small'>No disponible dentro de Claude: funciona en tu versión publicada.</span>" : hqN ? `<span class="muted small">${hqN} audios disponibles.</span>` : "<span class='muted small'>Todavía no hay audios en esta versión.</span>"}</span></label>
+    <p class="muted small">Lo que no tenga audio pregrabado (tus textos, tus palabras propias) usa las voces de tu dispositivo. Elige aquí las que mejor suenen; se guardan en este dispositivo.</p>
+    ${vs.length ? VOICE_ROLES.map(([k, title, desc]) => `<label class="label">${title} <span class="muted">· ${desc}</span></label><div class="row"><select data-vsel="${k}" style="flex:1"><option value="">Automática (la mejor disponible)</option>${vs.map((v) => `<option value="${esc(v.voiceURI)}" ${pref[k] === v.voiceURI ? "selected" : ""}>${voiceScore(v) >= 6 ? "★ " : ""}${esc(v.name)} — ${esc(accentOf(v.lang))}</option>`).join("")}</select><button class="btn ghost small" data-vtest="${k}">▶ Probar</button></div>`).join("") : `<p class="note card">Tu navegador todavía no informa sus voces. Si no aparecen en unos segundos, prueba con Chrome, Edge o Safari.</p>`}
+    <p class="muted small">★ = voz de alta calidad (natural, neuronal o mejorada). Ahora mismo se usaría: <b>${esc((voiceFor(0) || {}).name || "la voz por defecto")}</b>.</p>
+    <details><summary><b>Cómo conseguir voces más naturales en tu dispositivo</b></summary>
+      <p><b>💻 Computador:</b> abre la app en <b>Microsoft Edge</b>: trae voces "Natural" de Microsoft (Aria, Jenny, Guy, Sonia, Ryan…) que suenan casi humanas. En Chrome aparecen las voces de Google (Google US English, Google UK English). En Windows también puedes agregar voces en Configuración → Hora e idioma → Voz.</p>
+      <p><b>🤖 Android:</b> Ajustes → Sistema → Idiomas → Salida de texto a voz → motor de Google → ⚙️ → Instalar datos de voz → English (United States / United Kingdom) y elige la voz que más te guste. Luego vuelve aquí y pruébalas.</p>
+      <p><b>🍎 iPhone/iPad:</b> Configuración → Accesibilidad → Contenido leído → Voces → Inglés → descarga voces marcadas como "Mejorada" o "Premium" (por ejemplo Ava, Zoe, Evan, Nathan). Después cierra y vuelve a abrir la app.</p>
+    </details></div>`;
+}
+function bindVoiceSettings(m) {
+  if ($("#hq", m)) $("#hq", m).onchange = (e) => { S.settings.hq = e.target.checked; save(); };
+  $$("[data-vsel]", m).forEach((sel) => sel.onchange = () => { setVoicePref(sel.dataset.vsel, sel.value); const y = window.scrollY; render(); window.scrollTo(0, y); });
+  $$("[data-vtest]", m).forEach((b) => b.onclick = () => {
+    const k = b.dataset.vtest, i = VOICE_KEYS.indexOf(k);
+    const samples = { A: "Hello! I'm going to help you practise your English every day.", B: "Good morning. How can I help you today?", C: "That sounds like a great plan. Let's do it!" };
+    stopSpeech(); const token = speakToken; ttsLine(i, samples[k], S.settings.rate, token);
+  });
+}

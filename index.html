@@ -2339,37 +2339,83 @@ async function initCaps() {
 }
 
 // ---------- Voz ----------
+// 1) Audios pregrabados con voz neuronal (audio/*.mp3) cuando existen; 2) voces del dispositivo elegidas en Ajustes.
+const VOICE_KEYS = ["A", "B", "C"];
+let audioIndex = null;
+function fnv(str) { let h = 0x811c9dc5; for (const b of new TextEncoder().encode(str)) { h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, "0"); }
+function loadAudioIndex() { if (inClaude()) return; fetch("audio/index.json").then((r) => r.ok ? r.json() : []).then((a) => { audioIndex = new Set(a); }).catch(() => { audioIndex = null; }); }
+function hqFile(sp, text) {
+  if (!audioIndex || !audioIndex.size || S.settings.hq === false) return null;
+  const t = String(text).trim(), order = [VOICE_KEYS[sp] || "A", ...VOICE_KEYS.filter((k) => k !== (VOICE_KEYS[sp] || "A"))];
+  for (const k of order) { const h = fnv(k + "|" + t); if (audioIndex.has(h)) return `audio/${h}.mp3`; }
+  return null;
+}
 function enVoices() { try { return speechSynthesis.getVoices().filter((v) => /^en[-_]/i.test(v.lang)); } catch (e) { return []; } }
+function voiceScore(v) {
+  const n = (v.name || "").toLowerCase(); let s = 0;
+  if (/natural|neural|online|enhanced|premium|siri|wavenet|studio/.test(n)) s += 6;
+  if (/google/.test(n)) s += 3; if (/microsoft/.test(n)) s += 2;
+  if (/samantha|daniel|karen|moira|serena|aria|jenny|guy|ryan|sonia|libby|natasha|william/.test(n)) s += 2;
+  if (/espeak|compact|robot|novelty|bad news|bells|bubbles|boing|jester|organ|trinoids|whisper|zarvox|superstar|wobble|cellos|albert|bahh|fred|junior|ralph/.test(n)) s -= 8;
+  if (/en[-_](us|gb)/i.test(v.lang)) s += 1;
+  if (v.localService === false) s += 1;
+  return s;
+}
+const rankedVoices = () => enVoices().slice().sort((a, b) => voiceScore(b) - voiceScore(a) || a.name.localeCompare(b.name));
+function voicePrefs() { try { return JSON.parse(localStorage.getItem("ingles-voices") || "{}"); } catch (e) { return {}; } }
+function setVoicePref(k, uri) { const p = voicePrefs(); if (uri) p[k] = uri; else delete p[k]; try { localStorage.setItem("ingles-voices", JSON.stringify(p)); } catch (e) {} }
 function voiceFor(i) {
-  const vs = enVoices(); if (!vs.length) return null;
-  const us = vs.filter((v) => /US/i.test(v.lang)), gb = vs.filter((v) => /GB/i.test(v.lang));
-  if (i === 0) return us[0] || vs[0];
-  return gb[0] || vs.find((v) => v !== (us[0] || vs[0])) || vs[0];
+  const vs = rankedVoices(); if (!vs.length) return null;
+  const pref = voicePrefs()[VOICE_KEYS[i] || "A"]; const chosen = pref && vs.find((v) => v.voiceURI === pref);
+  if (chosen) return chosen;
+  const main = vs.find((v) => v.voiceURI === voicePrefs().A) || vs[0];
+  if (i === 0) return main;
+  const others = vs.filter((v) => v !== main);
+  if (i === 1) return others.find((v) => /GB/i.test(v.lang) && voiceScore(v) >= voiceScore(main) - 4) || others[0] || main;
+  return others[1] || others[0] || main;
 }
 const CLAUDE_VOICES = ["airy", "rounded", "glassy", "buttery"];
-function stopSpeech() { try { ttsApi && ttsApi.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
+let speakToken = 0, curAudio = null;
+function stopSpeech() { speakToken++; try { if (curAudio) { curAudio.pause(); curAudio = null; } } catch (e) {} try { ttsApi && ttsApi.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
 function speak(text, rate) { return speakLines([[0, text]], rate); }
-function speakLines(lines, rate, onLine) {
+function playFile(url, rate, token) {
+  return new Promise((resolve, reject) => {
+    if (token !== speakToken) return resolve();
+    const a = new Audio(url); curAudio = a; a.playbackRate = rate; try { a.preservesPitch = true; } catch (e) {}
+    a.onended = () => resolve(); a.onerror = () => reject(new Error("audio"));
+    a.play().catch(reject);
+  });
+}
+function ttsLine(sp, text, rate, token) {
+  return new Promise((resolve) => {
+    if (token !== speakToken) return resolve();
+    try {
+      const u = new SpeechSynthesisUtterance(text); const v = voiceFor(sp);
+      u.lang = v ? v.lang : sp === 1 ? "en-GB" : "en-US"; if (v) u.voice = v; u.rate = rate;
+      if (sp >= 2 && v && v === voiceFor(0)) u.pitch = 0.8;
+      u.onend = resolve; u.onerror = resolve; speechSynthesis.speak(u);
+    } catch (e) { toast("El audio no está disponible en este navegador"); resolve(); }
+  });
+}
+async function speakLines(lines, rate, onLine) {
   rate = rate || S.settings.rate;
   stopSpeech();
-  if (ttsApi) {
+  const token = speakToken;
+  const anyHQ = lines.some(([sp, t]) => hqFile(sp, t));
+  if (ttsApi && !anyHQ) {
     const t0 = lines.map(([sp, text], i) => ({ text, voice: CLAUDE_VOICES[sp % CLAUDE_VOICES.length], language: "en", rate, id: String(i) }));
     if (onLine) try { ttsApi.onLine(({ id }) => onLine(+id)); } catch (e) {}
     return ttsApi.speak(t0).catch((e) => { if (e && e.code === "not_granted") { ttsApi = null; return speakLines(lines, rate, onLine); } });
   }
-  return new Promise((resolve) => {
-    try {
-      lines.forEach(([sp, text], i) => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = sp % 2 ? "en-GB" : "en-US"; u.rate = rate;
-        const v = voiceFor(sp % 2); if (v) u.voice = v;
-        if (sp >= 2) u.pitch = 0.8;
-        u.onstart = () => onLine && onLine(i);
-        if (i === lines.length - 1) { u.onend = resolve; u.onerror = resolve; }
-        speechSynthesis.speak(u);
-      });
-    } catch (e) { toast("El audio no está disponible en este navegador"); resolve(); }
-  });
+  for (let i = 0; i < lines.length; i++) {
+    if (token !== speakToken) return;
+    const [sp, text] = lines[i]; onLine && onLine(i);
+    const f = hqFile(sp, text);
+    if (f) { try { await playFile(f, rate, token); continue; } catch (e) {} }
+    if (token !== speakToken) return;
+    await ttsLine(sp, text, rate, token);
+    if (i < lines.length - 1) await new Promise((r) => setTimeout(r, 250));
+  }
 }
 const speakBtn = (text, label = "🔊") => `<button class="icon-btn" data-speak="${esc(text)}" title="Escuchar">${label}</button>`;
 
@@ -2523,7 +2569,7 @@ function exerciseRunner(box, items, o) {
     answered = true; const ex = items[i];
     if (ok) correct++; else wrongs.push({ q: ex[1], answer, given, why, type: ex[0], ex });
     recordEx(ex, ok);
-    const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)\s*$/, "") : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
+    const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)/g, "").trim() : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
       ${!ok && ex[0] !== "mc" && ex[0] !== "ord" && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
       ${why ? `<p>${esc(why)}</p>` : ""}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
@@ -2990,6 +3036,7 @@ RENDER.ajustes = (m) => {
     ${s ? `<p>✅ Sesión iniciada como <b>${esc(s.email || "")}</b></p><div class="row"><button class="btn" id="snow">Sincronizar ahora</button><button class="btn ghost" id="sout">Cerrar sesión</button></div>`
     : `<label class="label">Tu correo y contraseña</label><div class="row"><input id="se" type="email" placeholder="correo@ejemplo.com" autocomplete="username"><input id="sp" type="password" placeholder="Contraseña" autocomplete="current-password"></div><div class="row"><button class="btn" id="sin">Iniciar sesión</button><button class="btn ghost" id="sup">Crear cuenta</button></div>`}
     <p class="small" id="sres">${esc(Sync.text || "")}</p></div>
+  ${voiceSettingsHTML()}
   <div class="card"><h2>🎓 Estudio</h2>
     <label class="label">Velocidad de la voz: <b id="rv">${S.settings.rate}</b></label><input type="range" id="rate" min="0.6" max="1.2" step="0.05" value="${S.settings.rate}">
     <label class="label">Tarjetas nuevas por día</label><select id="npd">${[5, 10, 15, 20, 30].map((n) => `<option ${S.settings.newPerDay === n ? "selected" : ""}>${n}</option>`).join("")}</select>
@@ -3017,6 +3064,7 @@ RENDER.ajustes = (m) => {
   if ($("#sout")) $("#sout").onclick = () => { Supa.logout(); Sync.mode = "local"; Sync.status("Guardado solo en este navegador"); render(); };
   $("#rate").oninput = (e) => { S.settings.rate = +e.target.value; $("#rv").textContent = S.settings.rate; };
   $("#rate").onchange = () => { save(); speak("This is how fast I will speak."); };
+  bindVoiceSettings(m);
   $("#npd").onchange = (e) => { S.settings.newPerDay = +e.target.value; vq = null; save(); };
   $("#lvl").onchange = (e) => { S.level = e.target.value; gLevel = null; vq = null; dq = null; hq = null; save(); renderTop(); toast("Nivel de trabajo: " + S.level); };
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
@@ -3441,12 +3489,41 @@ function irrList(m) {
   };
 }
 
+// ---------- AJUSTES DE VOZ ----------
+const ACCENTS = { US: "Estados Unidos", GB: "Reino Unido", AU: "Australia", CA: "Canadá", IE: "Irlanda", IN: "India", NZ: "Nueva Zelanda", ZA: "Sudáfrica", SC: "Escocia" };
+const accentOf = (lang) => { const m = String(lang).match(/[-_]([A-Za-z]{2})/); return m ? ACCENTS[m[1].toUpperCase()] || m[1].toUpperCase() : "Inglés"; };
+const VOICE_ROLES = [["A", "Voz principal", "Palabras, frases, ejercicios y la persona A de los diálogos"], ["B", "Segunda voz", "Persona B de los diálogos y tu interlocutor en las conversaciones guiadas"], ["C", "Tercera voz", "Persona C de los diálogos"]];
+function voiceSettingsHTML() {
+  const vs = rankedVoices(), pref = voicePrefs();
+  const hqN = audioIndex ? audioIndex.size : 0;
+  return `<div class="card"><h2>🔊 Voz y audio</h2>
+    <label class="cando"><input type="checkbox" id="hq" ${S.settings.hq === false ? "" : "checked"}> <span><b>Usar audios de alta calidad</b> (voz neuronal pregrabada para palabras, frases, diálogos, conversaciones, verbos irregulares y pronunciación). ${inClaude() ? "<span class='muted small'>No disponible dentro de Claude: funciona en tu versión publicada.</span>" : hqN ? `<span class="muted small">${hqN} audios disponibles.</span>` : "<span class='muted small'>Todavía no hay audios en esta versión.</span>"}</span></label>
+    <p class="muted small">Lo que no tenga audio pregrabado (tus textos, tus palabras propias) usa las voces de tu dispositivo. Elige aquí las que mejor suenen; se guardan en este dispositivo.</p>
+    ${vs.length ? VOICE_ROLES.map(([k, title, desc]) => `<label class="label">${title} <span class="muted">· ${desc}</span></label><div class="row"><select data-vsel="${k}" style="flex:1"><option value="">Automática (la mejor disponible)</option>${vs.map((v) => `<option value="${esc(v.voiceURI)}" ${pref[k] === v.voiceURI ? "selected" : ""}>${voiceScore(v) >= 6 ? "★ " : ""}${esc(v.name)} — ${esc(accentOf(v.lang))}</option>`).join("")}</select><button class="btn ghost small" data-vtest="${k}">▶ Probar</button></div>`).join("") : `<p class="note card">Tu navegador todavía no informa sus voces. Si no aparecen en unos segundos, prueba con Chrome, Edge o Safari.</p>`}
+    <p class="muted small">★ = voz de alta calidad (natural, neuronal o mejorada). Ahora mismo se usaría: <b>${esc((voiceFor(0) || {}).name || "la voz por defecto")}</b>.</p>
+    <details><summary><b>Cómo conseguir voces más naturales en tu dispositivo</b></summary>
+      <p><b>💻 Computador:</b> abre la app en <b>Microsoft Edge</b>: trae voces "Natural" de Microsoft (Aria, Jenny, Guy, Sonia, Ryan…) que suenan casi humanas. En Chrome aparecen las voces de Google (Google US English, Google UK English). En Windows también puedes agregar voces en Configuración → Hora e idioma → Voz.</p>
+      <p><b>🤖 Android:</b> Ajustes → Sistema → Idiomas → Salida de texto a voz → motor de Google → ⚙️ → Instalar datos de voz → English (United States / United Kingdom) y elige la voz que más te guste. Luego vuelve aquí y pruébalas.</p>
+      <p><b>🍎 iPhone/iPad:</b> Configuración → Accesibilidad → Contenido leído → Voces → Inglés → descarga voces marcadas como "Mejorada" o "Premium" (por ejemplo Ava, Zoe, Evan, Nathan). Después cierra y vuelve a abrir la app.</p>
+    </details></div>`;
+}
+function bindVoiceSettings(m) {
+  if ($("#hq", m)) $("#hq", m).onchange = (e) => { S.settings.hq = e.target.checked; save(); };
+  $$("[data-vsel]", m).forEach((sel) => sel.onchange = () => { setVoicePref(sel.dataset.vsel, sel.value); const y = window.scrollY; render(); window.scrollTo(0, y); });
+  $$("[data-vtest]", m).forEach((b) => b.onclick = () => {
+    const k = b.dataset.vtest, i = VOICE_KEYS.indexOf(k);
+    const samples = { A: "Hello! I'm going to help you practise your English every day.", B: "Good morning. How can I help you today?", C: "That sounds like a great plan. Let's do it!" };
+    stopSpeech(); const token = speakToken; ttsLine(i, samples[k], S.settings.rate, token);
+  });
+}
+
 // ---------- Arranque ----------
 loadLocal();
 window.addEventListener("hashchange", route);
 route();
 initCaps();
-try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) {}
+loadAudioIndex();
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => { if (view === "ajustes") { const y = window.scrollY; render(); window.scrollTo(0, y); } }; } catch (e) {}
 try { if (!inClaude() && "serviceWorker" in navigator && location.protocol === "https:" && window.top === window) navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {}
 
 </script>
