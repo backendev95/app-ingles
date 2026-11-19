@@ -31,7 +31,9 @@ Estos servicios funcionan en la versión publicada (GitHub Pages). Dentro de Cla
 1. Sube el contenido de esta carpeta a un repositorio (por ejemplo `app-ingles`).
 2. En GitHub, entra a **Settings → Pages → Deploy from a branch**, elige la rama `main` y la carpeta `/ (root)`, y guarda.
 3. En un par de minutos la app estará en `https://TU-USUARIO.github.io/app-ingles/`.
-4. En el celular, abre esa dirección en Chrome y toca **⋮ → Agregar a pantalla de inicio**.
+4. Instálala en tu celular:
+   - **Android:** abre la dirección en Chrome y toca **⋮ → Instalar app** (o "Agregar a pantalla de inicio").
+   - **iPhone/iPad:** abre la dirección en **Safari**, toca **Compartir** (el cuadrado con la flecha hacia arriba) y luego **Agregar a inicio**. Desde iOS 16.4 también funciona desde Chrome o Edge con su botón Compartir.
 
 ## Sincronizar tu progreso con Supabase (gratis)
 
