@@ -53,7 +53,7 @@ const defaultState = () => ({
   done: { reading: {}, listening: {}, roleplay: {}, writing: {} },
   skills: { vocab: [0, 0], grammar: [0, 0], listening: [0, 0], reading: [0, 0], speaking: [0, 0], writing: [0, 0] },
   daily: { day: null, tasks: {} }, cando: {},
-  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {},
+  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
   settings: { rate: 0.95, newPerDay: 10, retention: 0.9, mmEmail: "" }, updatedAt: 0
 });
 let S = defaultState();
@@ -279,8 +279,9 @@ const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || lvlIdx(c.level) <= lvlIdx(S.level);
 function dueCards() {
   const now = Date.now();
-  if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0 };
-  const due = [], fresh = [], rev = [];
+  if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0, i: 0 };
+  const due = [], fresh = [], rev = [], irrNew = [];
+  IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level)).forEach((v) => { const st = S.cards[v.id]; if (st) { if (st.due <= now) due.push({ c: v, dir: "irr" }); } else irrNew.push({ c: v, dir: "irr" }); });
   allCards().filter(levelOK).forEach((c) => {
     const f = S.cards[c.id], r = S.cards[c.id + ":r"];
     if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else fresh.push({ c, dir: "f" });
@@ -288,7 +289,8 @@ function dueCards() {
   });
   fresh.sort((a, b) => (b.c.level === "MIS") - (a.c.level === "MIS") || (b.c.level === S.level) - (a.c.level === S.level));
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
-  return { due, fresh: fresh.slice(0, room), rev: rev.slice(0, roomR), totalNew: fresh.length };
+  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0));
+  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
 }
 // FSRS-4.5 (parámetros por defecto)
 const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
@@ -314,11 +316,20 @@ function fsrsNext(prev, G, now) {
 const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
 function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
 function grade(key, q) {
-  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else S.newToday.n++; }
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else S.newToday.n++; }
   S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
   skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
 }
+// Verbos irregulares
+const IRREG = LEVELS.flatMap((lv) => (IRREGULAR[lv] || "").trim().split("\n").filter(Boolean).map((line) => { const [base, past, pp, es] = line.split("|").map((x) => x.trim()); return { id: "IRR:" + base, level: lv, base, past, pp, es, en: base, irr: true }; }));
+const firstForm = (f) => f.split("/")[0];
+function irrPattern(v) { const a = v.base, b = firstForm(v.past), c = firstForm(v.pp); return a === b && b === c ? "AAA" : b === c ? "ABB" : a === c ? "ABA" : "ABC"; }
+const IRR_PATTERNS = { AAA: "Las tres formas iguales (cut – cut – cut)", ABB: "Pasado y participio iguales (buy – bought – bought)", ABA: "Participio igual al verbo base (come – came – come)", ABC: "Las tres formas distintas (go – went – gone)" };
+const irrForms = (v) => `${v.base} – ${v.past.replace("/", " / ")} – ${v.pp.replace("/", " / ")}`;
+const irrSay = (v) => `${v.base}, ${firstForm(v.past)}, ${firstForm(v.pp)}`;
+const formOK = (forms, given) => forms.split("/").some((f) => norm(f) === norm(given));
+const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
@@ -520,17 +531,18 @@ function placementTest(m) {
 let vq = null;
 RENDER.tarjetas = (m) => {
   if (sub === "list") return vocabList(m);
-  if (!vq) { const { due, fresh, rev } = dueCards(); vq = { list: shuffle(due).concat(fresh, shuffle(rev)), i: 0, flipped: false, done: 0, typed: null }; }
+  if (!vq) { const { due, fresh, rev } = dueCards(); vq = { list: shuffle(due).concat(shuffle(fresh), shuffle(rev)), i: 0, flipped: false, done: 0, typed: null }; }
   const it = vq.list[vq.i];
   if (!it) {
     if (vq.done) markDaily("cards");
     const { totalNew } = dueCards();
-    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button></div></div>`;
+    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}. Cada día entran también ${IRR_NEW_PER_DAY} verbos irregulares nuevos.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button></div></div>`;
     $("#more").onclick = () => { S.newToday.n = Math.max(0, S.newToday.n - 5); vq = null; render(); };
     $("#lst").onclick = () => { sub = "list"; render(); };
     return;
   }
   const { c, dir } = it, key = c.id + (dir === "r" ? ":r" : ""), isNew = !S.cards[key];
+  if (dir === "irr") return irrCard(m, it, key, isNew);
   const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level + " · " + esc(c.topic || "")}</div>`;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
@@ -563,10 +575,11 @@ RENDER.tarjetas = (m) => {
 let vlFilter = { q: "", lv: null, topic: "" };
 function vocabList(m) {
   const lv = vlFilter.lv || S.level;
+  if (lv === "IRR") return irrList(m);
   const topics = [...new Set(ALL_VOCAB.filter((v) => v.level === lv).map((v) => v.topic))];
   const list = (lv === "MIS" ? S.custom : ALL_VOCAB.filter((v) => v.level === lv)).filter((v) => (!vlFilter.topic || v.topic === vlFilter.topic) && (!vlFilter.q || (v.en + " " + v.es).toLowerCase().includes(vlFilter.q.toLowerCase())));
   m.innerHTML = `<div class="row between"><h1>Vocabulario</h1><button class="btn ghost small" id="back">← Repasar</button></div>
-  <div class="tabs">${LEVELS.map((l) => `<button class="tab ${l === lv ? "on" : ""}" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab ${lv === "MIS" ? "on" : ""}" data-l="MIS">Mías (${S.custom.length})</button></div>
+  <div class="tabs">${LEVELS.map((l) => `<button class="tab ${l === lv ? "on" : ""}" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab ${lv === "MIS" ? "on" : ""}" data-l="MIS">Mías (${S.custom.length})</button><button class="tab ${lv === "IRR" ? "on" : ""}" data-l="IRR">Irregulares (${IRREG.length})</button></div>
   <div class="row"><input id="q" placeholder="Buscar en inglés o español…" value="${esc(vlFilter.q)}">${lv !== "MIS" ? `<select id="tp"><option value="">Todos los temas</option>${topics.map((t) => `<option ${t === vlFilter.topic ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>` : ""}</div>
   ${!S.unlocked.includes(lv) && lv !== "MIS" ? `<p class="note card">Puedes ver este vocabulario, pero entrará a tus tarjetas cuando llegues a ${lv}.</p>` : ""}
   <div class="card list">${list.map((v) => { const st = S.cards[v.id]; return `<div class="li"><div><b>${esc(v.en)}</b> — ${esc(v.es)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("") || "<p class='muted'>Nada por aquí.</p>"}</div>

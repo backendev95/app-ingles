@@ -9,13 +9,14 @@ App web para aprender inglés por niveles, **sin IA y sin costos**: todo el cont
 | **Prueba de ubicación** | Unos 10 minutos para encontrar tu nivel real (A2 a C2). |
 | **Sesión de hoy** | 4 tareas diarias que se marcan solas: tarjetas, gramática o repaso, escucha y una actividad que rota (lectura, conversación o escritura). |
 | **Tarjetas** | ~700 palabras y expresiones por temas, en dos direcciones (reconocer y escribir), con el algoritmo de repaso **FSRS**: los botones muestran cuándo volverá a aparecer cada tarjeta. |
+| **Verbos irregulares** | 124 verbos (A2 a B2) agrupados por patrón. Cada día entran 5 nuevos a tus tarjetas: ves el verbo y escribes el pasado y el participio. También hay práctica rápida. |
 | **Gramática** | 49 lecciones y 300 ejercicios (opción múltiple, completar, ordenar, traducir y corregir), con repasos programados a los 2, 7, 21, 60 y 120 días. |
 | **Escuchar** | Diálogos con varias voces y dictados con corrección palabra por palabra. |
 | **Leer** | Lecturas del curso con preguntas, y **Mi lector**: pegas cualquier texto en inglés, tocas una palabra y ves definición, pronunciación real y traducción, y la conviertes en tarjeta. |
 | **Hablar** | Conversaciones guiadas con respuestas modelo, **Sonidos** (14 unidades de pronunciación para hispanohablantes: pares mínimos, -ed, -s, acento, schwa, unión de palabras) y shadowing. Puedes **grabarte** y compararte con el modelo. |
 | **Escribir** | Temas por nivel con modelo y lista de control, escritura libre, y **corrector automático** de gramática y ortografía (LanguageTool) que guarda tus errores. |
 | **Exámenes** | Exámenes de nivel (4 habilidades) y **4 simulacros tipo Cambridge** (B2 First y C1 Advanced, Use of English) con cronómetro. |
-| **Inmersión** | Registro de minutos de series, podcasts y lecturas fuera de la app, con recursos gratuitos recomendados por nivel. |
+| **Inmersión** | Plan guiado en 5 fases (de contenido para estudiantes con subtítulos en inglés hasta vivir en inglés), con rutina diaria, meta semanal de minutos, criterios para avanzar de fase, guía de técnicas (método de 3 pasadas, regla del 70%, shadowing…), registro de actividades y recursos gratuitos. |
 | **Progreso** | Diagnóstico de tus temas más débiles con repaso enfocado, acierto por habilidad y por tipo de ejercicio, retención de tarjetas e historial de exámenes. También incluye **Mis errores**, para practicar todo lo que fallaste. |
 
 ### Servicios gratuitos que usa (sin clave)
@@ -54,7 +55,7 @@ Sin base de datos, el progreso se guarda en cada navegador y puedes moverlo con 
 ## Editar o agregar contenido
 
 - `src/content.js`: niveles, lecciones base, vocabulario base y frases.
-- `src/extras/`: pronunciación (`pron.js`), simulacros Cambridge (`mocks.js`), vocabulario adicional (`vocab_more.js`) y recursos de inmersión (`resources.js`).
+- `src/extras/`: pronunciación (`pron.js`), verbos irregulares (`irregular.js`), simulacros Cambridge (`mocks.js`), vocabulario adicional (`vocab_more.js`) y recursos de inmersión (`resources.js`) y guía de inmersión por fases (`immersion_guide.js`).
 - `src/levels/a2.js` … `c2.js`: lecciones adicionales, vocabulario por temas, lecturas, diálogos, conversaciones guiadas, temas de escritura y objetivos de cada nivel.
 - `src/app.js`, `src/app2.js`, `src/start.js`: lógica de la app. `src/shell.html`: estructura y estilos. `src/config.js`: Supabase.
 

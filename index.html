@@ -126,6 +126,12 @@ ol li{margin:6px 0}
 .lesson.static{cursor:default} .lesson.static a{color:var(--pri)}
 .big-tag{font-size:14px;padding:4px 10px;display:inline-block;margin:3px 0}
 .shadowline{flex-wrap:wrap}
+.irrform{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-end;margin-top:8px} .irrform label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);font-weight:700;text-align:left} .irrform input{width:150px;margin:4px 0 0}
+.flash .icon-btn{align-self:center}
+.irrres{display:flex;gap:18px;justify-content:center;font-size:20px;margin-top:8px}
+.li.dim{opacity:.5}
+.weekdots{display:flex;gap:6px;margin-top:10px} .wd{flex:1;text-align:center;border-radius:10px;padding:6px 0;background:var(--line);font-size:12px;font-weight:700;display:flex;flex-direction:column} .wd small{font-weight:400;min-height:14px} .wd.part{background:color-mix(in srgb,var(--green) 35%,var(--line))} .wd.full{background:var(--green);color:#fff} .wd.today{outline:2px solid var(--pri)}
+details.phase summary{line-height:1.8} details.curph{border:2px solid var(--pri)}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:99px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:9}
 #toast.show{opacity:1;transform:translateX(-50%)}
 @media (max-width:760px){
@@ -1539,6 +1545,181 @@ CANDO.C2 = [
   "Puedo resumir y reconstruir argumentos de varias fuentes de forma coherente."
 ];
 
+// ===== GUÍA DE INMERSIÓN POR FASES =====
+const IMM_MODES = [["3pasadas", "Método de 3 pasadas"], ["subs_en", "Con subtítulos en inglés"], ["sin_subs", "Sin subtítulos"], ["pasiva", "Escucha de fondo (pasiva)"], ["lectura", "Lectura"], ["shadowing", "Shadowing / repetir en voz alta"], ["conversacion", "Conversación real"], ["resumen", "Resumen hablado o escrito"]];
+
+const IMM_PHASES = [
+  { n: 1, title: "Fase 1 · Escuchar contenido para estudiantes", level: "A2", weeks: "Semanas 1 a 6", minutes: 20,
+    goal: "Acostumbrar el oído al inglés con contenido hecho para estudiantes, siempre con apoyo escrito.",
+    content: ["Podcasts y videos para estudiantes con transcripción (BBC Learning English, News in Levels nivel 1–2)", "Videos cortos de YouTube para principiantes (2–5 minutos)", "Libros graduados de nivel 2–3"],
+    routine: ["Elige un audio o video corto (3–5 min) para estudiantes", "Aplica el método de 3 pasadas: subtítulos en inglés → sin subtítulos → con subtítulos otra vez", "Anota 3 expresiones nuevas y agrégalas a tus tarjetas", "Repite en voz alta 3 frases imitando la entonación"],
+    tips: ["Siempre subtítulos o transcripción en inglés, nunca en español.", "Está bien no entender todo: si entiendes el 60–70%, vas bien.", "Repetir el mismo audio varias veces vale más que escuchar muchos distintos."],
+    criteria: ["Entiendo la idea general de un audio para estudiantes sin leer la transcripción", "Puedo seguir un video de 5 minutos para estudiantes sin pausar a cada rato", "Llevo al menos 3 semanas registrando inmersión casi todos los días"] },
+  { n: 2, title: "Fase 2 · Series con subtítulos en inglés", level: "A2 → B1", weeks: "Semanas 6 a 14", minutes: 30,
+    goal: "Pasar del contenido para estudiantes a series reales, apoyándote en los subtítulos en inglés.",
+    content: ["Comedias con episodios cortos y lenguaje cotidiano (Friends, Modern Family, The Good Place)", "Podcasts para estudiantes mientras caminas o viajas (escucha de fondo)", "Noticias en niveles (News in Levels nivel 3, Breaking News English)"],
+    routine: ["Ve un episodio (20 min) con subtítulos en inglés", "Elige una escena de 1–2 minutos que te guste y mírala sin subtítulos hasta entenderla", "Agrega 3–5 frases útiles de la escena a tus tarjetas", "Escucha 10 minutos de podcast de fondo (de camino, cocinando)"],
+    tips: ["Ve series que ya viste en español: conoces la trama y te concentras en el idioma.", "No pauses por cada palabra: pausa solo si pierdes el hilo.", "Elige algo que de verdad te guste; si te aburre, cambia de serie."],
+    criteria: ["Sigo la trama de un episodio con subtítulos en inglés sin pausar mucho", "Entiendo escenas cortas sin subtítulos después de verlas 2–3 veces", "Entiendo podcasts para estudiantes sin transcripción"] },
+  { n: 3, title: "Fase 3 · Quitar los subtítulos poco a poco", level: "B1", weeks: "Meses 4 a 8", minutes: 45,
+    goal: "Ganar independencia de los subtítulos y empezar con contenido para nativos sencillo.",
+    content: ["Episodios que ya viste, ahora sin subtítulos", "YouTubers nativos que hablan de tus hobbies (cocina, tecnología, fútbol, viajes)", "Podcasts conversacionales para nativos con transcripción", "Novelas juveniles o libros graduados de nivel 4–5"],
+    routine: ["Mira los primeros 10 minutos de un episodio nuevo SIN subtítulos; si te pierdes, actívalos", "Re-ve un episodio anterior completo sin subtítulos", "Lee 10 minutos en inglés (libro o artículo) usando Mi lector para las palabras nuevas", "Resume en voz alta durante 1 minuto lo que viste o leíste"],
+    tips: ["Es normal sentir que entiendes menos al quitar los subtítulos: el oído se adapta en 2–3 semanas.", "Si entiendes menos del 50%, el contenido es demasiado difícil: baja un nivel.", "Cambia el idioma del celular y de tus redes sociales al inglés."],
+    criteria: ["Entiendo el 60–70% de un video de YouTube para nativos sin subtítulos", "Puedo ver episodios que ya conozco sin subtítulos", "Leo un capítulo de un libro juvenil sin traducir cada palabra", "He tenido al menos una conversación real en inglés (intercambio, clase, trabajo)"] },
+  { n: 4, title: "Fase 4 · Contenido nativo sin apoyo", level: "B2", weeks: "Meses 8 a 14", minutes: 60,
+    goal: "Consumir contenido nativo sin subtítulos y empezar a producir: hablar y escribir sobre lo que consumes.",
+    content: ["Series y películas sin subtítulos (dramas, thrillers, series de abogados o médicos)", "Podcasts para nativos sin transcripción", "Noticias y artículos de opinión", "Novelas contemporáneas para adultos", "Charlas TED"],
+    routine: ["Mira un episodio o película sin subtítulos (actívalos solo para revisar una escena difícil)", "Escucha un podcast nativo de 20–30 minutos", "Escribe un resumen de 5–8 líneas de lo que viste y pásalo por el corrector de la app", "Haz shadowing de 1 minuto de un diálogo real"],
+    tips: ["Varía los acentos: británico, estadounidense, australiano, irlandés.", "La escucha intensiva (entender cada palabra de un fragmento corto) debe ser el 20% del tiempo; el 80% es escucha extensiva y relajada.", "Busca conversación real cada semana: intercambios de idiomas, clubes o trabajo."],
+    criteria: ["Veo series sin subtítulos y entiendo el 80% o más", "Entiendo podcasts para nativos sin transcripción", "Leo noticias en inglés con facilidad", "Puedo resumir en voz alta un episodio sin preparar", "Saqué 60% o más en un simulacro B2 First de la app"] },
+  { n: 5, title: "Fase 5 · Vivir en inglés", level: "C1", weeks: "Mes 14 en adelante", minutes: 90,
+    goal: "Integrar el inglés en tu vida diaria y dominar registros complejos: debates, temas académicos y profesionales.",
+    content: ["Documentales y debates", "Conferencias académicas y podcasts de ideas, economía o ciencia", "Comedia en vivo (lo más difícil: juegos de palabras y referencias culturales)", "Prensa de calidad y ensayos", "Novelas literarias"],
+    routine: ["Consume 60+ minutos de contenido nativo exigente (podcasts a velocidad 1.0–1.25x)", "Lee un artículo de opinión largo y anota 5 expresiones o colocaciones avanzadas", "Escribe o habla 10 minutos sobre un tema complejo (argumenta una postura)", "Piensa en inglés: narra mentalmente lo que haces durante el día"],
+    tips: ["Tu celular, tus redes, tus búsquedas y tus series deberían estar en inglés.", "Busca entender el humor y la ironía: es la última barrera hacia el C1–C2.", "Produce para audiencias reales: comentarios, reseñas, presentaciones en el trabajo."],
+    criteria: ["Entiendo debates rápidos y comedia sin subtítulos", "Leo artículos de opinión y libros para adultos sin diccionario la mayor parte del tiempo", "Puedo argumentar en inglés sobre temas complejos con fluidez", "Saqué 60% o más en un simulacro C1 Advanced de la app"] }
+];
+
+const IMM_TECHNIQUES = [
+  { title: "Método de las 3 pasadas", body: "Elige un fragmento corto (1–5 min). 1) Míralo con subtítulos en inglés para entenderlo. 2) Míralo sin subtítulos y fíjate cuánto captas. 3) Míralo otra vez con subtítulos para confirmar lo que no entendiste. Repetir el mismo fragmento entrena el oído mucho más que ver contenido nuevo sin parar." },
+  { title: "La regla del 70%", body: "El contenido ideal es el que entiendes en un 70–80%. Si entiendes menos del 50%, es demasiado difícil y te frustrará; si entiendes el 95%, es demasiado fácil y aprendes poco. Ajusta el nivel según cómo te sientas." },
+  { title: "Escucha intensiva vs. extensiva", body: "Intensiva: un fragmento corto, con atención total, repitiéndolo hasta entender cada palabra (20% del tiempo). Extensiva: mucho contenido, relajado, sin pausar, disfrutándolo (80% del tiempo). Necesitas las dos." },
+  { title: "Minería de frases", body: "Cuando oigas o leas una expresión útil, guárdala completa (no solo la palabra) en tus tarjetas. Con Mi lector de la app puedes pegar el texto o la transcripción y agregar las palabras con un toque." },
+  { title: "Shadowing", body: "Pon un fragmento corto de una serie o podcast y repite en voz alta al mismo tiempo, imitando ritmo, entonación y velocidad. Graba tu voz con la app y compárala. Mejora la pronunciación y la fluidez más rápido que cualquier otra técnica." },
+  { title: "Resumen activo", body: "Después de ver o leer algo, cuéntalo en voz alta o escríbelo en 5 líneas. Convierte lo que entendiste (pasivo) en lo que puedes decir (activo). Pasa el resumen por el corrector de la sección Escribir." },
+  { title: "Lo que NO funciona", body: "Subtítulos en español (lees en español y no escuchas). Pausar cada palabra que no entiendes (pierdes el hilo y te cansas). Contenido que te aburre (lo abandonarás). Solo escuchar de fondo sin nunca prestar atención (ayuda poco por sí solo)." }
+];
+
+// ===== VERBOS IRREGULARES =====
+// Formato: "base|pasado|participio|español". Si hay dos formas válidas, sepáralas con "/" (ej. learnt/learned).
+const IRREGULAR = {
+  A2: `be|was/were|been|ser / estar
+have|had|had|tener / haber
+do|did|done|hacer
+say|said|said|decir
+go|went|gone|ir
+get|got|got/gotten|conseguir / llegar
+make|made|made|hacer / fabricar
+know|knew|known|saber / conocer
+think|thought|thought|pensar
+take|took|taken|tomar / llevar
+see|saw|seen|ver
+come|came|come|venir
+give|gave|given|dar
+find|found|found|encontrar
+tell|told|told|decir / contar
+become|became|become|convertirse en
+leave|left|left|salir / dejar
+feel|felt|felt|sentir(se)
+put|put|put|poner
+bring|brought|brought|traer
+begin|began|begun|empezar
+keep|kept|kept|mantener / guardar
+hold|held|held|sostener
+write|wrote|written|escribir
+stand|stood|stood|estar de pie
+hear|heard|heard|oír
+let|let|let|dejar / permitir
+mean|meant|meant|significar / querer decir
+meet|met|met|conocer / reunirse
+run|ran|run|correr
+pay|paid|paid|pagar
+sit|sat|sat|sentarse
+speak|spoke|spoken|hablar
+lose|lost|lost|perder
+buy|bought|bought|comprar
+eat|ate|eaten|comer
+drink|drank|drunk|beber
+sleep|slept|slept|dormir
+drive|drove|driven|conducir
+read|read|read|leer (el pasado se pronuncia «red»)
+swim|swam|swum|nadar
+sing|sang|sung|cantar
+teach|taught|taught|enseñar
+understand|understood|understood|entender
+wear|wore|worn|llevar puesto
+win|won|won|ganar
+send|sent|sent|enviar
+spend|spent|spent|gastar / pasar (tiempo)
+sell|sold|sold|vender
+cost|cost|cost|costar
+cut|cut|cut|cortar
+fly|flew|flown|volar
+forget|forgot|forgotten|olvidar
+set|set|set|poner / establecer`,
+  B1: `break|broke|broken|romper
+build|built|built|construir
+catch|caught|caught|atrapar / tomar (bus)
+choose|chose|chosen|elegir
+draw|drew|drawn|dibujar
+fall|fell|fallen|caer
+feed|fed|fed|alimentar
+fight|fought|fought|pelear
+forgive|forgave|forgiven|perdonar
+freeze|froze|frozen|congelar
+grow|grew|grown|crecer / cultivar
+hide|hid|hidden|esconder
+hit|hit|hit|golpear
+hurt|hurt|hurt|doler / lastimar
+lead|led|led|liderar / conducir
+learn|learnt/learned|learnt/learned|aprender
+lend|lent|lent|prestar
+light|lit|lit|encender
+ride|rode|ridden|montar (bici, caballo)
+ring|rang|rung|sonar / llamar
+rise|rose|risen|subir / elevarse
+shake|shook|shaken|sacudir / temblar
+shoot|shot|shot|disparar
+show|showed|shown|mostrar
+shut|shut|shut|cerrar
+steal|stole|stolen|robar
+throw|threw|thrown|lanzar
+wake|woke|woken|despertar(se)
+burn|burnt/burned|burnt/burned|quemar
+dream|dreamt/dreamed|dreamt/dreamed|soñar
+smell|smelt/smelled|smelt/smelled|oler
+spell|spelt/spelled|spelt/spelled|deletrear
+forbid|forbade|forbidden|prohibir
+bite|bit|bitten|morder
+blow|blew|blown|soplar
+hang|hung|hung|colgar
+beat|beat|beaten|vencer / golpear
+bleed|bled|bled|sangrar
+mistake|mistook|mistaken|confundir`,
+  B2: `arise|arose|arisen|surgir
+bear|bore|borne|soportar
+bend|bent|bent|doblar
+bet|bet|bet|apostar
+bind|bound|bound|atar / obligar
+breed|bred|bred|criar
+deal|dealt|dealt|tratar / repartir
+dig|dug|dug|cavar
+flee|fled|fled|huir
+forecast|forecast|forecast|pronosticar
+lay|laid|laid|colocar / poner
+lean|leant/leaned|leant/leaned|inclinarse / apoyarse
+overcome|overcame|overcome|superar
+seek|sought|sought|buscar
+shrink|shrank|shrunk|encoger
+sink|sank|sunk|hundir(se)
+slide|slid|slid|deslizar(se)
+spin|spun|spun|girar
+split|split|split|dividir
+spread|spread|spread|extender / difundir
+stick|stuck|stuck|pegar / atascarse
+sting|stung|stung|picar (insecto)
+strike|struck|struck|golpear / impactar
+swear|swore|sworn|jurar / decir groserías
+tear|tore|torn|rasgar
+undertake|undertook|undertaken|emprender
+upset|upset|upset|molestar / alterar
+weep|wept|wept|llorar
+withdraw|withdrew|withdrawn|retirar
+foresee|foresaw|foreseen|prever
+mislead|misled|misled|engañar / despistar`
+};
+
 // ===== SIMULACROS TIPO CAMBRIDGE (Use of English) =====
 // Textos y preguntas originales con el formato de B2 First y C1 Advanced.
 // mcc: opción múltiple en texto · open: huecos abiertos (una palabra)
@@ -1990,7 +2171,7 @@ const defaultState = () => ({
   done: { reading: {}, listening: {}, roleplay: {}, writing: {} },
   skills: { vocab: [0, 0], grammar: [0, 0], listening: [0, 0], reading: [0, 0], speaking: [0, 0], writing: [0, 0] },
   daily: { day: null, tasks: {} }, cando: {},
-  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {},
+  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
   settings: { rate: 0.95, newPerDay: 10, retention: 0.9, mmEmail: "" }, updatedAt: 0
 });
 let S = defaultState();
@@ -2216,8 +2397,9 @@ const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || lvlIdx(c.level) <= lvlIdx(S.level);
 function dueCards() {
   const now = Date.now();
-  if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0 };
-  const due = [], fresh = [], rev = [];
+  if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0, i: 0 };
+  const due = [], fresh = [], rev = [], irrNew = [];
+  IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level)).forEach((v) => { const st = S.cards[v.id]; if (st) { if (st.due <= now) due.push({ c: v, dir: "irr" }); } else irrNew.push({ c: v, dir: "irr" }); });
   allCards().filter(levelOK).forEach((c) => {
     const f = S.cards[c.id], r = S.cards[c.id + ":r"];
     if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else fresh.push({ c, dir: "f" });
@@ -2225,7 +2407,8 @@ function dueCards() {
   });
   fresh.sort((a, b) => (b.c.level === "MIS") - (a.c.level === "MIS") || (b.c.level === S.level) - (a.c.level === S.level));
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
-  return { due, fresh: fresh.slice(0, room), rev: rev.slice(0, roomR), totalNew: fresh.length };
+  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0));
+  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
 }
 // FSRS-4.5 (parámetros por defecto)
 const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
@@ -2251,11 +2434,20 @@ function fsrsNext(prev, G, now) {
 const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
 function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
 function grade(key, q) {
-  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else S.newToday.n++; }
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else S.newToday.n++; }
   S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
   skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
 }
+// Verbos irregulares
+const IRREG = LEVELS.flatMap((lv) => (IRREGULAR[lv] || "").trim().split("\n").filter(Boolean).map((line) => { const [base, past, pp, es] = line.split("|").map((x) => x.trim()); return { id: "IRR:" + base, level: lv, base, past, pp, es, en: base, irr: true }; }));
+const firstForm = (f) => f.split("/")[0];
+function irrPattern(v) { const a = v.base, b = firstForm(v.past), c = firstForm(v.pp); return a === b && b === c ? "AAA" : b === c ? "ABB" : a === c ? "ABA" : "ABC"; }
+const IRR_PATTERNS = { AAA: "Las tres formas iguales (cut – cut – cut)", ABB: "Pasado y participio iguales (buy – bought – bought)", ABA: "Participio igual al verbo base (come – came – come)", ABC: "Las tres formas distintas (go – went – gone)" };
+const irrForms = (v) => `${v.base} – ${v.past.replace("/", " / ")} – ${v.pp.replace("/", " / ")}`;
+const irrSay = (v) => `${v.base}, ${firstForm(v.past)}, ${firstForm(v.pp)}`;
+const formOK = (forms, given) => forms.split("/").some((f) => norm(f) === norm(given));
+const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
@@ -2457,17 +2649,18 @@ function placementTest(m) {
 let vq = null;
 RENDER.tarjetas = (m) => {
   if (sub === "list") return vocabList(m);
-  if (!vq) { const { due, fresh, rev } = dueCards(); vq = { list: shuffle(due).concat(fresh, shuffle(rev)), i: 0, flipped: false, done: 0, typed: null }; }
+  if (!vq) { const { due, fresh, rev } = dueCards(); vq = { list: shuffle(due).concat(shuffle(fresh), shuffle(rev)), i: 0, flipped: false, done: 0, typed: null }; }
   const it = vq.list[vq.i];
   if (!it) {
     if (vq.done) markDaily("cards");
     const { totalNew } = dueCards();
-    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button></div></div>`;
+    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}. Cada día entran también ${IRR_NEW_PER_DAY} verbos irregulares nuevos.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button></div></div>`;
     $("#more").onclick = () => { S.newToday.n = Math.max(0, S.newToday.n - 5); vq = null; render(); };
     $("#lst").onclick = () => { sub = "list"; render(); };
     return;
   }
   const { c, dir } = it, key = c.id + (dir === "r" ? ":r" : ""), isNew = !S.cards[key];
+  if (dir === "irr") return irrCard(m, it, key, isNew);
   const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level + " · " + esc(c.topic || "")}</div>`;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
@@ -2500,10 +2693,11 @@ RENDER.tarjetas = (m) => {
 let vlFilter = { q: "", lv: null, topic: "" };
 function vocabList(m) {
   const lv = vlFilter.lv || S.level;
+  if (lv === "IRR") return irrList(m);
   const topics = [...new Set(ALL_VOCAB.filter((v) => v.level === lv).map((v) => v.topic))];
   const list = (lv === "MIS" ? S.custom : ALL_VOCAB.filter((v) => v.level === lv)).filter((v) => (!vlFilter.topic || v.topic === vlFilter.topic) && (!vlFilter.q || (v.en + " " + v.es).toLowerCase().includes(vlFilter.q.toLowerCase())));
   m.innerHTML = `<div class="row between"><h1>Vocabulario</h1><button class="btn ghost small" id="back">← Repasar</button></div>
-  <div class="tabs">${LEVELS.map((l) => `<button class="tab ${l === lv ? "on" : ""}" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab ${lv === "MIS" ? "on" : ""}" data-l="MIS">Mías (${S.custom.length})</button></div>
+  <div class="tabs">${LEVELS.map((l) => `<button class="tab ${l === lv ? "on" : ""}" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab ${lv === "MIS" ? "on" : ""}" data-l="MIS">Mías (${S.custom.length})</button><button class="tab ${lv === "IRR" ? "on" : ""}" data-l="IRR">Irregulares (${IRREG.length})</button></div>
   <div class="row"><input id="q" placeholder="Buscar en inglés o español…" value="${esc(vlFilter.q)}">${lv !== "MIS" ? `<select id="tp"><option value="">Todos los temas</option>${topics.map((t) => `<option ${t === vlFilter.topic ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>` : ""}</div>
   ${!S.unlocked.includes(lv) && lv !== "MIS" ? `<p class="note card">Puedes ver este vocabulario, pero entrará a tus tarjetas cuando llegues a ${lv}.</p>` : ""}
   <div class="card list">${list.map((v) => { const st = S.cards[v.id]; return `<div class="li"><div><b>${esc(v.en)}</b> — ${esc(v.es)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("") || "<p class='muted'>Nada por aquí.</p>"}</div>
@@ -2963,22 +3157,81 @@ function mockRunner(m) {
 }
 
 // ---------- INMERSIÓN ----------
+let iTab = "plan";
+const suggestedPhase = () => ({ A2: 1, B1: 3, B2: 4, C1: 5, C2: 5 }[S.level] || 1);
+const curPhase = () => IMM_PHASES.find((p) => p.n === (S.immPhase || suggestedPhase())) || IMM_PHASES[0];
+function weekBounds() { const now = new Date(), ws = new Date(now); ws.setDate(now.getDate() - ((now.getDay() + 6) % 7)); ws.setHours(0, 0, 0, 0); return ws; }
 RENDER.inmersion = (m) => {
-  const now = new Date(), weekStart = new Date(now); weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); weekStart.setHours(0, 0, 0, 0);
-  const week = S.immersion.filter((x) => new Date(x.d) >= weekStart).reduce((a, x) => a + x.min, 0);
-  const total = S.immersion.reduce((a, x) => a + x.min, 0);
-  const byType = S.immersion.reduce((a, x) => { a[x.type] = (a[x.type] || 0) + x.min; return a; }, {});
-  const lvls = [S.level, LEVELS[lvlIdx(S.level) + 1]].filter(Boolean);
-  m.innerHTML = `<h1>Inmersión</h1><p class="muted">La app te da la base, pero para llegar a C1 necesitas <b>cientos de horas</b> de inglés real. Registra aquí lo que veas, escuches o leas fuera de la app: cuenta para tu racha y tu XP.</p>
-  <div class="stats"><div class="card stat"><b>${week}</b><small>Minutos esta semana</small></div><div class="card stat"><b>${(total / 60).toFixed(1)}</b><small>Horas totales</small></div><div class="card stat"><b>${S.immersion.length}</b><small>Registros</small></div></div>
-  <form id="imf" class="card"><h2>Registrar actividad</h2><div class="row"><select id="imt">${IMMERSION_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><input id="imm" type="number" min="1" max="600" placeholder="Minutos" required style="max-width:130px"></div><input id="imn" placeholder="¿Qué fue? (ej.: Friends T2E3, podcast de ciencia…)"><button class="btn">Guardar</button></form>
-  ${Object.keys(byType).length ? `<div class="card"><h2>Por tipo</h2>${IMMERSION_TYPES.filter(([k]) => byType[k]).map(([k, l]) => `<div class="sk"><span>${l}</span><div class="bar"><i style="width:${(byType[k] / total) * 100}%"></i></div><small>${byType[k]} min</small></div>`).join("")}</div>` : ""}
-  ${S.immersion.length ? `<h2>Últimos registros</h2><div class="card list">${S.immersion.slice(0, 15).map((x, i) => `<div class="li"><div><b>${esc((IMMERSION_TYPES.find((t) => t[0] === x.type) || ["", x.type])[1])}</b> · ${x.min} min<div class="muted small">${new Date(x.d).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}${x.title ? " · " + esc(x.title) : ""}</div></div><button class="btn ghost small" data-del="${i}">✕</button></div>`).join("")}</div>` : ""}
-  <h2>Recursos gratuitos recomendados</h2>${lvls.map((lv) => `<h3>Para ${lv}</h3><div class="lessons">${(RESOURCES[lv] || []).map((r) => `<div class="lesson static"><span class="num">${esc(r.type.slice(0, 2))}</span><span><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b><small>${esc(r.desc)}</small></span></div>`).join("")}</div>`).join("")}
-  <div class="card note"><b>Consejos que funcionan:</b><ul><li>Subtítulos en <b>inglés</b>, nunca en español.</li><li>Mejor 20 minutos todos los días que 3 horas el domingo.</li><li>Elige contenido que te guste de verdad: si te aburre, lo dejarás.</li><li>Cuando escuches una expresión útil, agrégala a tus tarjetas.</li></ul></div>`;
-  $("#imf").onsubmit = (e) => { e.preventDefault(); const min = Math.max(1, Math.min(600, +$("#imm").value || 0)); if (!min) return; S.immersion.unshift({ d: Date.now(), type: $("#imt").value, min, title: $("#imn").value.trim() }); S.immersion = S.immersion.slice(0, 500); addXP(Math.min(30, Math.round(min / 2))); render(); };
-  $$("[data-del]", m).forEach((b) => b.onclick = () => { S.immersion.splice(+b.dataset.del, 1); save(); render(); });
+  m.innerHTML = `<h1>Inmersión</h1><p class="muted">La app te da la base; la inmersión (series, podcasts, lecturas y conversaciones reales) es lo que te lleva a C1. Sigue tu plan por fases y registra tu tiempo.</p>
+  <div class="tabs">${[["plan", "Mi plan"], ["registro", "Registro"], ["guia", "Guía completa"], ["recursos", "Recursos"]].map(([k, l]) => `<button class="tab ${iTab === k ? "on" : ""}" data-t="${k}">${l}</button>`).join("")}</div><div id="ibody"></div>`;
+  $$("[data-t]", m).forEach((b) => b.onclick = () => { iTab = b.dataset.t; render(); });
+  const box = $("#ibody");
+  ({ plan: immPlan, registro: immLog, guia: immGuide, recursos: immResources })[iTab](box, m);
 };
+function immLogForm() {
+  return `<form id="imf" class="card"><h2>Registrar actividad</h2><div class="row"><select id="imt">${IMMERSION_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><select id="imd">${IMM_MODES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><input id="imm" type="number" min="1" max="600" placeholder="Minutos" required style="max-width:120px"></div><input id="imn" placeholder="¿Qué fue? (ej.: Friends T2E3, podcast de ciencia…)"><button class="btn">Guardar</button></form>`;
+}
+function bindLogForm(box) {
+  $("#imf", box).onsubmit = (e) => { e.preventDefault(); const min = Math.max(1, Math.min(600, +$("#imm").value || 0)); if (!min) return; S.immersion.unshift({ d: Date.now(), type: $("#imt").value, mode: $("#imd").value, min, title: $("#imn").value.trim() }); S.immersion = S.immersion.slice(0, 500); addXP(Math.min(30, Math.round(min / 2))); render(); };
+}
+function immPlan(box) {
+  const ph = curPhase(), ws = weekBounds();
+  const week = S.immersion.filter((x) => new Date(x.d) >= ws);
+  const weekMin = week.reduce((a, x) => a + x.min, 0), goal = ph.minutes * 7;
+  const days = [...Array(7)].map((_, i) => { const d = new Date(ws); d.setDate(ws.getDate() + i); const k = d.toDateString(); const min = week.filter((x) => new Date(x.d).toDateString() === k).reduce((a, x) => a + x.min, 0); return { l: d.toLocaleDateString("es-CO", { weekday: "narrow" }), min, today: k === new Date().toDateString() }; });
+  if (!S.immDaily || S.immDaily.day !== today()) S.immDaily = { day: today(), done: [] };
+  const crit = (S.immCrit && S.immCrit[ph.n]) || [];
+  const allCrit = ph.criteria.every((_, i) => crit[i]);
+  const next = IMM_PHASES.find((p) => p.n === ph.n + 1);
+  box.innerHTML = `
+  <div class="card hero"><div class="row between"><div><div class="muted small">${esc(ph.level)} · ${esc(ph.weeks)}</div><h2 style="margin:4px 0">${esc(ph.title)}</h2></div><span class="chip lvl">${ph.minutes} min/día</span></div>
+    <p>${esc(ph.goal)}</p>
+    <div class="label">Esta semana: ${weekMin} de ${goal} minutos</div><div class="bar big"><i style="width:${Math.min(100, (weekMin / goal) * 100)}%"></i></div>
+    <div class="weekdots">${days.map((d) => `<div class="wd ${d.min >= ph.minutes ? "full" : d.min ? "part" : ""} ${d.today ? "today" : ""}" title="${d.min} min"><span>${d.l}</span><small>${d.min || ""}</small></div>`).join("")}</div>
+    ${S.immPhase ? "" : `<p class="muted small">Fase sugerida según tu nivel (${S.level}). Puedes cambiarla abajo.</p>`}</div>
+  <div class="card"><h2>✅ Tu rutina de hoy</h2><p class="muted small">Haz estos pasos en orden; marca cada uno al terminarlo.</p>
+    ${ph.routine.map((r, i) => `<label class="cando"><input type="checkbox" data-r="${i}" ${S.immDaily.done[i] ? "checked" : ""}> <span><b>Paso ${i + 1}.</b> ${esc(r)}</span></label>`).join("")}</div>
+  ${immLogForm()}
+  <div class="card"><h2>📺 Qué ver, escuchar y leer en esta fase</h2><ul>${ph.content.map((c) => `<li>${esc(c)}</li>`).join("")}</ul><button class="btn ghost small" data-go2="recursos">Ver recursos gratuitos con enlaces</button></div>
+  <div class="card note"><h3 style="margin-top:0">💡 Claves de esta fase</h3><ul>${ph.tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="card"><h2>🚀 ¿Listo para la siguiente fase?</h2><p class="muted small">Marca solo lo que de verdad ya puedes hacer. Cuando cumplas todo, pasa a la siguiente fase.</p>
+    ${ph.criteria.map((c, i) => `<label class="cando"><input type="checkbox" data-c="${i}" ${crit[i] ? "checked" : ""}> ${esc(c)}</label>`).join("")}
+    ${next ? `<button class="btn" id="nextph" ${allCrit ? "" : "disabled"}>Pasar a ${esc(next.title.split(" · ")[0])}</button>` : `<p><b>🏁 Estás en la fase final.</b> Mantén el hábito: el inglés de C1 se conserva usándolo todos los días.</p>`}
+    <div class="row"><label class="small muted">Cambiar de fase manualmente:</label><select id="phsel" style="max-width:280px">${IMM_PHASES.map((p) => `<option value="${p.n}" ${p.n === ph.n ? "selected" : ""}>${esc(p.title)}</option>`).join("")}</select></div></div>`;
+  $$("[data-r]", box).forEach((c) => c.onchange = () => {
+    S.immDaily.done[+c.dataset.r] = c.checked;
+    if (ph.routine.every((_, i) => S.immDaily.done[i]) && !S.immDaily.rewarded) { S.immDaily.rewarded = true; addXP(10); toast("🎉 Rutina de inmersión completada"); } else save();
+  });
+  $$("[data-c]", box).forEach((c) => c.onchange = () => { S.immCrit = S.immCrit || {}; S.immCrit[ph.n] = S.immCrit[ph.n] || []; S.immCrit[ph.n][+c.dataset.c] = c.checked; save(); const y = window.scrollY; render(); window.scrollTo(0, y); });
+  if ($("#nextph")) $("#nextph").onclick = () => { S.immPhase = next.n; S.immDaily = { day: today(), done: [] }; addXP(30); save(); toast("🚀 ¡Nueva fase de inmersión!"); render(); };
+  $("#phsel").onchange = (e) => { S.immPhase = +e.target.value; save(); render(); };
+  $$("[data-go2]", box).forEach((b) => b.onclick = () => { iTab = b.dataset.go2; render(); });
+  bindLogForm(box);
+}
+function immLog(box) {
+  const ws = weekBounds();
+  const week = S.immersion.filter((x) => new Date(x.d) >= ws).reduce((a, x) => a + x.min, 0);
+  const total = S.immersion.reduce((a, x) => a + x.min, 0);
+  const by = (key, list) => { const acc = S.immersion.reduce((a, x) => { if (x[key]) a[x[key]] = (a[x[key]] || 0) + x.min; return a; }, {}); return list.filter(([k]) => acc[k]).map(([k, l]) => `<div class="sk"><span>${l}</span><div class="bar"><i style="width:${(acc[k] / total) * 100}%"></i></div><small>${acc[k]} min</small></div>`).join(""); };
+  box.innerHTML = `<div class="stats"><div class="card stat"><b>${week}</b><small>Minutos esta semana</small></div><div class="card stat"><b>${(total / 60).toFixed(1)}</b><small>Horas totales</small></div><div class="card stat"><b>${S.immersion.length}</b><small>Registros</small></div></div>
+  ${immLogForm()}
+  ${total ? `<div class="card"><h2>Por tipo de contenido</h2>${by("type", IMMERSION_TYPES)}</div><div class="card"><h2>Por técnica</h2>${by("mode", IMM_MODES) || `<p class="muted small">Elige la técnica al registrar para ver aquí cómo repartes tu tiempo.</p>`}<p class="muted small">Ideal: mezcla técnicas activas (3 pasadas, shadowing, resumen) con mucha escucha relajada.</p></div>` : ""}
+  ${S.immersion.length ? `<h2>Últimos registros</h2><div class="card list">${S.immersion.slice(0, 30).map((x, i) => `<div class="li"><div><b>${esc((IMMERSION_TYPES.find((t) => t[0] === x.type) || ["", x.type])[1])}</b> · ${x.min} min${x.mode ? ` · <span class="tag">${esc((IMM_MODES.find((t) => t[0] === x.mode) || ["", x.mode])[1])}</span>` : ""}<div class="muted small">${new Date(x.d).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}${x.title ? " · " + esc(x.title) : ""}</div></div><button class="btn ghost small" data-del="${i}">✕</button></div>`).join("")}</div>` : ""}`;
+  bindLogForm(box);
+  $$("[data-del]", box).forEach((b) => b.onclick = () => { S.immersion.splice(+b.dataset.del, 1); save(); render(); });
+}
+function immGuide(box) {
+  const cur = curPhase().n;
+  box.innerHTML = `<div class="card note"><b>La idea general:</b> empiezas con contenido para estudiantes y subtítulos en inglés, vas quitando el apoyo poco a poco y terminas viviendo en inglés. Cada fase dura semanas o meses: avanza cuando cumplas los criterios, no por calendario.</div>
+  <h2>Las 5 fases</h2>${IMM_PHASES.map((p) => `<details class="card phase ${p.n === cur ? "curph" : ""}" ${p.n === cur ? "open" : ""}><summary><b>${esc(p.title)}</b> <span class="tag">${esc(p.level)}</span> <span class="muted small">${esc(p.weeks)} · ${p.minutes} min/día</span>${p.n === cur ? ` <span class="tag">← estás aquí</span>` : ""}</summary>
+    <p>${esc(p.goal)}</p><h3>Rutina diaria</h3><ol>${p.routine.map((r) => `<li>${esc(r)}</li>`).join("")}</ol><h3>Contenido</h3><ul>${p.content.map((c) => `<li>${esc(c)}</li>`).join("")}</ul><h3>Pasas a la siguiente fase cuando…</h3><ul>${p.criteria.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></details>`).join("")}
+  <h2>Técnicas</h2>${IMM_TECHNIQUES.map((t) => `<details class="card"><summary><b>${esc(t.title)}</b></summary><p>${esc(t.body)}</p></details>`).join("")}`;
+}
+function immResources(box) {
+  const lvls = [S.level, LEVELS[lvlIdx(S.level) + 1]].filter(Boolean);
+  box.innerHTML = `${lvls.map((lv) => `<h2>Para ${lv}</h2><div class="lessons">${(RESOURCES[lv] || []).map((r) => `<div class="lesson static"><span class="num">${esc(r.type.slice(0, 2))}</span><span><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b><small>${esc(r.desc)}</small></span></div>`).join("")}</div>`).join("")}
+  <div class="card note"><b>Consejos:</b><ul><li>Subtítulos en <b>inglés</b>, nunca en español.</li><li>Mejor 20 minutos todos los días que 3 horas el domingo.</li><li>Elige contenido que te guste de verdad.</li><li>Pega transcripciones o artículos en <b>Leer → Mi lector</b> para sacar vocabulario.</li></ul></div>`;
+}
 
 // ---------- LECTOR CON DICCIONARIO ----------
 let lookupCache = {};
@@ -3138,6 +3391,54 @@ function pronQuiz(m, u) {
     });
   };
   show();
+}
+
+// ---------- VERBOS IRREGULARES ----------
+function irrCard(m, it, key, isNew) {
+  const v = it.c, r = vq.typed;
+  const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
+  m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nuevo" : "Repaso"} · Verbo irregular · ${v.level}</div>
+  <div class="flash rev"><div class="label">Escribe el pasado y el participio</div><div class="word">${esc(v.base)}</div>${speakBtn(v.base)}<div class="muted">${esc(v.es)}</div>
+  ${r ? `<div class="irrres"><span class="${r.okP ? "ok" : "miss"}">${r.okP ? "✓" : "✗"} ${esc(v.past.replace("/", " / "))}</span><span class="${r.okPP ? "ok" : "miss"}">${r.okPP ? "✓" : "✗"} ${esc(v.pp.replace("/", " / "))}</span></div>` :
+  `<form id="irf" class="irrform"><label>Pasado<input id="irp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="pasado"></label><label>Participio<input id="irpp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="participio"></label><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}</div>
+  ${r ? `<div class="feedback ${r.okP && r.okPP ? "good" : "bad"}"><b>${esc(irrForms(v))}</b> ${speakBtn(irrSay(v), "🔊 Escuchar las 3 formas")}${!(r.okP && r.okPP) && r.given ? `<div class="small">Escribiste: ${esc(r.given)}</div>` : ""}<div class="small muted">Patrón: ${esc(IRR_PATTERNS[irrPattern(v)])}</div></div>
+    ${r.okP && r.okPP ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}` : ""}`;
+  $("#lst").onclick = () => { sub = "list"; vlFilter.lv = "IRR"; render(); };
+  document.onkeydown = null;
+  if (!r) {
+    $("#irp").focus();
+    $("#irf").onsubmit = (e) => {
+      e.preventDefault(); const p = $("#irp").value.trim(), pp = $("#irpp").value.trim();
+      if (!p || !pp) { (!p ? $("#irp") : $("#irpp")).focus(); return; }
+      vq.typed = { okP: formOK(v.past, p), okPP: formOK(v.pp, pp), given: `${p} – ${pp}` };
+      if (!(vq.typed.okP && vq.typed.okPP)) addMistake({ type: "Verbos irregulares", wrong: `${v.base} – ${p} – ${pp}`, right: irrForms(v).replace(/ \/ [^ ]+/g, ""), note: v.es });
+      render(); speak(irrSay(v));
+    };
+    $("#idk").onclick = () => { vq.typed = { okP: false, okPP: false, given: "" }; render(); speak(irrSay(v)); };
+  }
+  $$("[data-q]", m).forEach((b) => b.onclick = () => nextCard(+b.dataset.q));
+}
+function irrList(m) {
+  const tabs = `<div class="tabs">${LEVELS.map((l) => `<button class="tab" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab" data-l="MIS">Mías (${S.custom.length})</button><button class="tab on" data-l="IRR">Irregulares (${IRREG.length})</button></div>`;
+  const avail = IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level));
+  const learned = avail.filter((v) => S.cards[v.id] && S.cards[v.id].reps >= 2).length;
+  const groups = Object.keys(IRR_PATTERNS).map((p) => [p, IRREG.filter((v) => irrPattern(v) === p)]);
+  m.innerHTML = `<div class="row between"><h1>Vocabulario</h1><button class="btn ghost small" id="back">← Repasar</button></div>${tabs}
+  <div class="card hero"><h2>Verbos irregulares</h2><p class="muted small">Cada día entran ${IRR_NEW_PER_DAY} verbos nuevos a tus tarjetas: ves el verbo y escribes el pasado y el participio. Aprenderlos por <b>patrones</b> (abajo) es mucho más fácil que de memoria uno por uno.</p>
+    <div class="bar"><i style="width:${pct(learned, avail.length)}%"></i></div><div class="small muted">${learned} de ${avail.length} aprendidos hasta ${S.level}${avail.length < IRREG.length ? ` · ${IRREG.length - avail.length} más al subir de nivel` : ""}</div>
+    <div class="row"><button class="btn" id="quick">⚡ Práctica rápida (12)</button></div></div>
+  ${groups.map(([p, list]) => `<h2>${esc(IRR_PATTERNS[p])}</h2><div class="card list">${list.map((v) => { const st = S.cards[v.id], ok = lvlIdx(v.level) <= lvlIdx(S.level); return `<div class="li ${ok ? "" : "dim"}"><div><b>${esc(irrForms(v))}</b><div class="muted small">${esc(v.es)}</div></div>${speakBtn(irrSay(v))}<span class="tag">${v.level}</span><span class="tag">${st ? (st.reps >= 2 ? "Aprendido" : "En curso") : "Nuevo"}</span></div>`; }).join("")}</div>`).join("")}`;
+  $("#back").onclick = () => { sub = null; vlFilter.lv = null; render(); };
+  $$("[data-l]", m).forEach((b) => b.onclick = () => { vlFilter = { q: vlFilter.q, lv: b.dataset.l, topic: "" }; render(); });
+  $("#quick").onclick = () => {
+    const pool = shuffle(avail).slice(0, 12);
+    const items = pool.map((v, k) => k % 2 ? ["fill", `${v.base} – ${firstForm(v.past)} – ___ (${v.es})`, v.pp.split("/"), `Participio · ${irrForms(v)}`] : ["fill", `${v.base} – ___ – ${firstForm(v.pp)} (${v.es})`, v.past.split("/"), `Pasado · ${irrForms(v)}`]);
+    exerciseRunner(m, items, { title: "Verbos irregulares", subtitle: "Escribe la forma que falta", onExit: () => render(), onFinish: (c, n, wrongs) => {
+      wrongs.forEach((w) => addMistake({ type: "Verbos irregulares", wrong: w.given, right: w.answer, note: w.why }));
+      skill("grammar", c, n); addXP(c * 2);
+      m.innerHTML = `<div class="card center"><div class="big">${c / n >= 0.8 ? "💪" : "🔁"}</div><h2>${c} de ${n}</h2><p>${c / n >= 0.8 ? "¡Muy bien!" : "Repasa los patrones y vuelve a intentarlo."}</p><button class="btn" id="ok">Volver</button></div>`; $("#ok").onclick = () => render();
+    } });
+  };
 }
 
 // ---------- Arranque ----------

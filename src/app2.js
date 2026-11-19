@@ -127,22 +127,81 @@ function mockRunner(m) {
 }
 
 // ---------- INMERSIÓN ----------
+let iTab = "plan";
+const suggestedPhase = () => ({ A2: 1, B1: 3, B2: 4, C1: 5, C2: 5 }[S.level] || 1);
+const curPhase = () => IMM_PHASES.find((p) => p.n === (S.immPhase || suggestedPhase())) || IMM_PHASES[0];
+function weekBounds() { const now = new Date(), ws = new Date(now); ws.setDate(now.getDate() - ((now.getDay() + 6) % 7)); ws.setHours(0, 0, 0, 0); return ws; }
 RENDER.inmersion = (m) => {
-  const now = new Date(), weekStart = new Date(now); weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); weekStart.setHours(0, 0, 0, 0);
-  const week = S.immersion.filter((x) => new Date(x.d) >= weekStart).reduce((a, x) => a + x.min, 0);
-  const total = S.immersion.reduce((a, x) => a + x.min, 0);
-  const byType = S.immersion.reduce((a, x) => { a[x.type] = (a[x.type] || 0) + x.min; return a; }, {});
-  const lvls = [S.level, LEVELS[lvlIdx(S.level) + 1]].filter(Boolean);
-  m.innerHTML = `<h1>Inmersión</h1><p class="muted">La app te da la base, pero para llegar a C1 necesitas <b>cientos de horas</b> de inglés real. Registra aquí lo que veas, escuches o leas fuera de la app: cuenta para tu racha y tu XP.</p>
-  <div class="stats"><div class="card stat"><b>${week}</b><small>Minutos esta semana</small></div><div class="card stat"><b>${(total / 60).toFixed(1)}</b><small>Horas totales</small></div><div class="card stat"><b>${S.immersion.length}</b><small>Registros</small></div></div>
-  <form id="imf" class="card"><h2>Registrar actividad</h2><div class="row"><select id="imt">${IMMERSION_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><input id="imm" type="number" min="1" max="600" placeholder="Minutos" required style="max-width:130px"></div><input id="imn" placeholder="¿Qué fue? (ej.: Friends T2E3, podcast de ciencia…)"><button class="btn">Guardar</button></form>
-  ${Object.keys(byType).length ? `<div class="card"><h2>Por tipo</h2>${IMMERSION_TYPES.filter(([k]) => byType[k]).map(([k, l]) => `<div class="sk"><span>${l}</span><div class="bar"><i style="width:${(byType[k] / total) * 100}%"></i></div><small>${byType[k]} min</small></div>`).join("")}</div>` : ""}
-  ${S.immersion.length ? `<h2>Últimos registros</h2><div class="card list">${S.immersion.slice(0, 15).map((x, i) => `<div class="li"><div><b>${esc((IMMERSION_TYPES.find((t) => t[0] === x.type) || ["", x.type])[1])}</b> · ${x.min} min<div class="muted small">${new Date(x.d).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}${x.title ? " · " + esc(x.title) : ""}</div></div><button class="btn ghost small" data-del="${i}">✕</button></div>`).join("")}</div>` : ""}
-  <h2>Recursos gratuitos recomendados</h2>${lvls.map((lv) => `<h3>Para ${lv}</h3><div class="lessons">${(RESOURCES[lv] || []).map((r) => `<div class="lesson static"><span class="num">${esc(r.type.slice(0, 2))}</span><span><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b><small>${esc(r.desc)}</small></span></div>`).join("")}</div>`).join("")}
-  <div class="card note"><b>Consejos que funcionan:</b><ul><li>Subtítulos en <b>inglés</b>, nunca en español.</li><li>Mejor 20 minutos todos los días que 3 horas el domingo.</li><li>Elige contenido que te guste de verdad: si te aburre, lo dejarás.</li><li>Cuando escuches una expresión útil, agrégala a tus tarjetas.</li></ul></div>`;
-  $("#imf").onsubmit = (e) => { e.preventDefault(); const min = Math.max(1, Math.min(600, +$("#imm").value || 0)); if (!min) return; S.immersion.unshift({ d: Date.now(), type: $("#imt").value, min, title: $("#imn").value.trim() }); S.immersion = S.immersion.slice(0, 500); addXP(Math.min(30, Math.round(min / 2))); render(); };
-  $$("[data-del]", m).forEach((b) => b.onclick = () => { S.immersion.splice(+b.dataset.del, 1); save(); render(); });
+  m.innerHTML = `<h1>Inmersión</h1><p class="muted">La app te da la base; la inmersión (series, podcasts, lecturas y conversaciones reales) es lo que te lleva a C1. Sigue tu plan por fases y registra tu tiempo.</p>
+  <div class="tabs">${[["plan", "Mi plan"], ["registro", "Registro"], ["guia", "Guía completa"], ["recursos", "Recursos"]].map(([k, l]) => `<button class="tab ${iTab === k ? "on" : ""}" data-t="${k}">${l}</button>`).join("")}</div><div id="ibody"></div>`;
+  $$("[data-t]", m).forEach((b) => b.onclick = () => { iTab = b.dataset.t; render(); });
+  const box = $("#ibody");
+  ({ plan: immPlan, registro: immLog, guia: immGuide, recursos: immResources })[iTab](box, m);
 };
+function immLogForm() {
+  return `<form id="imf" class="card"><h2>Registrar actividad</h2><div class="row"><select id="imt">${IMMERSION_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><select id="imd">${IMM_MODES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select><input id="imm" type="number" min="1" max="600" placeholder="Minutos" required style="max-width:120px"></div><input id="imn" placeholder="¿Qué fue? (ej.: Friends T2E3, podcast de ciencia…)"><button class="btn">Guardar</button></form>`;
+}
+function bindLogForm(box) {
+  $("#imf", box).onsubmit = (e) => { e.preventDefault(); const min = Math.max(1, Math.min(600, +$("#imm").value || 0)); if (!min) return; S.immersion.unshift({ d: Date.now(), type: $("#imt").value, mode: $("#imd").value, min, title: $("#imn").value.trim() }); S.immersion = S.immersion.slice(0, 500); addXP(Math.min(30, Math.round(min / 2))); render(); };
+}
+function immPlan(box) {
+  const ph = curPhase(), ws = weekBounds();
+  const week = S.immersion.filter((x) => new Date(x.d) >= ws);
+  const weekMin = week.reduce((a, x) => a + x.min, 0), goal = ph.minutes * 7;
+  const days = [...Array(7)].map((_, i) => { const d = new Date(ws); d.setDate(ws.getDate() + i); const k = d.toDateString(); const min = week.filter((x) => new Date(x.d).toDateString() === k).reduce((a, x) => a + x.min, 0); return { l: d.toLocaleDateString("es-CO", { weekday: "narrow" }), min, today: k === new Date().toDateString() }; });
+  if (!S.immDaily || S.immDaily.day !== today()) S.immDaily = { day: today(), done: [] };
+  const crit = (S.immCrit && S.immCrit[ph.n]) || [];
+  const allCrit = ph.criteria.every((_, i) => crit[i]);
+  const next = IMM_PHASES.find((p) => p.n === ph.n + 1);
+  box.innerHTML = `
+  <div class="card hero"><div class="row between"><div><div class="muted small">${esc(ph.level)} · ${esc(ph.weeks)}</div><h2 style="margin:4px 0">${esc(ph.title)}</h2></div><span class="chip lvl">${ph.minutes} min/día</span></div>
+    <p>${esc(ph.goal)}</p>
+    <div class="label">Esta semana: ${weekMin} de ${goal} minutos</div><div class="bar big"><i style="width:${Math.min(100, (weekMin / goal) * 100)}%"></i></div>
+    <div class="weekdots">${days.map((d) => `<div class="wd ${d.min >= ph.minutes ? "full" : d.min ? "part" : ""} ${d.today ? "today" : ""}" title="${d.min} min"><span>${d.l}</span><small>${d.min || ""}</small></div>`).join("")}</div>
+    ${S.immPhase ? "" : `<p class="muted small">Fase sugerida según tu nivel (${S.level}). Puedes cambiarla abajo.</p>`}</div>
+  <div class="card"><h2>✅ Tu rutina de hoy</h2><p class="muted small">Haz estos pasos en orden; marca cada uno al terminarlo.</p>
+    ${ph.routine.map((r, i) => `<label class="cando"><input type="checkbox" data-r="${i}" ${S.immDaily.done[i] ? "checked" : ""}> <span><b>Paso ${i + 1}.</b> ${esc(r)}</span></label>`).join("")}</div>
+  ${immLogForm()}
+  <div class="card"><h2>📺 Qué ver, escuchar y leer en esta fase</h2><ul>${ph.content.map((c) => `<li>${esc(c)}</li>`).join("")}</ul><button class="btn ghost small" data-go2="recursos">Ver recursos gratuitos con enlaces</button></div>
+  <div class="card note"><h3 style="margin-top:0">💡 Claves de esta fase</h3><ul>${ph.tips.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="card"><h2>🚀 ¿Listo para la siguiente fase?</h2><p class="muted small">Marca solo lo que de verdad ya puedes hacer. Cuando cumplas todo, pasa a la siguiente fase.</p>
+    ${ph.criteria.map((c, i) => `<label class="cando"><input type="checkbox" data-c="${i}" ${crit[i] ? "checked" : ""}> ${esc(c)}</label>`).join("")}
+    ${next ? `<button class="btn" id="nextph" ${allCrit ? "" : "disabled"}>Pasar a ${esc(next.title.split(" · ")[0])}</button>` : `<p><b>🏁 Estás en la fase final.</b> Mantén el hábito: el inglés de C1 se conserva usándolo todos los días.</p>`}
+    <div class="row"><label class="small muted">Cambiar de fase manualmente:</label><select id="phsel" style="max-width:280px">${IMM_PHASES.map((p) => `<option value="${p.n}" ${p.n === ph.n ? "selected" : ""}>${esc(p.title)}</option>`).join("")}</select></div></div>`;
+  $$("[data-r]", box).forEach((c) => c.onchange = () => {
+    S.immDaily.done[+c.dataset.r] = c.checked;
+    if (ph.routine.every((_, i) => S.immDaily.done[i]) && !S.immDaily.rewarded) { S.immDaily.rewarded = true; addXP(10); toast("🎉 Rutina de inmersión completada"); } else save();
+  });
+  $$("[data-c]", box).forEach((c) => c.onchange = () => { S.immCrit = S.immCrit || {}; S.immCrit[ph.n] = S.immCrit[ph.n] || []; S.immCrit[ph.n][+c.dataset.c] = c.checked; save(); const y = window.scrollY; render(); window.scrollTo(0, y); });
+  if ($("#nextph")) $("#nextph").onclick = () => { S.immPhase = next.n; S.immDaily = { day: today(), done: [] }; addXP(30); save(); toast("🚀 ¡Nueva fase de inmersión!"); render(); };
+  $("#phsel").onchange = (e) => { S.immPhase = +e.target.value; save(); render(); };
+  $$("[data-go2]", box).forEach((b) => b.onclick = () => { iTab = b.dataset.go2; render(); });
+  bindLogForm(box);
+}
+function immLog(box) {
+  const ws = weekBounds();
+  const week = S.immersion.filter((x) => new Date(x.d) >= ws).reduce((a, x) => a + x.min, 0);
+  const total = S.immersion.reduce((a, x) => a + x.min, 0);
+  const by = (key, list) => { const acc = S.immersion.reduce((a, x) => { if (x[key]) a[x[key]] = (a[x[key]] || 0) + x.min; return a; }, {}); return list.filter(([k]) => acc[k]).map(([k, l]) => `<div class="sk"><span>${l}</span><div class="bar"><i style="width:${(acc[k] / total) * 100}%"></i></div><small>${acc[k]} min</small></div>`).join(""); };
+  box.innerHTML = `<div class="stats"><div class="card stat"><b>${week}</b><small>Minutos esta semana</small></div><div class="card stat"><b>${(total / 60).toFixed(1)}</b><small>Horas totales</small></div><div class="card stat"><b>${S.immersion.length}</b><small>Registros</small></div></div>
+  ${immLogForm()}
+  ${total ? `<div class="card"><h2>Por tipo de contenido</h2>${by("type", IMMERSION_TYPES)}</div><div class="card"><h2>Por técnica</h2>${by("mode", IMM_MODES) || `<p class="muted small">Elige la técnica al registrar para ver aquí cómo repartes tu tiempo.</p>`}<p class="muted small">Ideal: mezcla técnicas activas (3 pasadas, shadowing, resumen) con mucha escucha relajada.</p></div>` : ""}
+  ${S.immersion.length ? `<h2>Últimos registros</h2><div class="card list">${S.immersion.slice(0, 30).map((x, i) => `<div class="li"><div><b>${esc((IMMERSION_TYPES.find((t) => t[0] === x.type) || ["", x.type])[1])}</b> · ${x.min} min${x.mode ? ` · <span class="tag">${esc((IMM_MODES.find((t) => t[0] === x.mode) || ["", x.mode])[1])}</span>` : ""}<div class="muted small">${new Date(x.d).toLocaleDateString("es-CO", { day: "numeric", month: "short" })}${x.title ? " · " + esc(x.title) : ""}</div></div><button class="btn ghost small" data-del="${i}">✕</button></div>`).join("")}</div>` : ""}`;
+  bindLogForm(box);
+  $$("[data-del]", box).forEach((b) => b.onclick = () => { S.immersion.splice(+b.dataset.del, 1); save(); render(); });
+}
+function immGuide(box) {
+  const cur = curPhase().n;
+  box.innerHTML = `<div class="card note"><b>La idea general:</b> empiezas con contenido para estudiantes y subtítulos en inglés, vas quitando el apoyo poco a poco y terminas viviendo en inglés. Cada fase dura semanas o meses: avanza cuando cumplas los criterios, no por calendario.</div>
+  <h2>Las 5 fases</h2>${IMM_PHASES.map((p) => `<details class="card phase ${p.n === cur ? "curph" : ""}" ${p.n === cur ? "open" : ""}><summary><b>${esc(p.title)}</b> <span class="tag">${esc(p.level)}</span> <span class="muted small">${esc(p.weeks)} · ${p.minutes} min/día</span>${p.n === cur ? ` <span class="tag">← estás aquí</span>` : ""}</summary>
+    <p>${esc(p.goal)}</p><h3>Rutina diaria</h3><ol>${p.routine.map((r) => `<li>${esc(r)}</li>`).join("")}</ol><h3>Contenido</h3><ul>${p.content.map((c) => `<li>${esc(c)}</li>`).join("")}</ul><h3>Pasas a la siguiente fase cuando…</h3><ul>${p.criteria.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></details>`).join("")}
+  <h2>Técnicas</h2>${IMM_TECHNIQUES.map((t) => `<details class="card"><summary><b>${esc(t.title)}</b></summary><p>${esc(t.body)}</p></details>`).join("")}`;
+}
+function immResources(box) {
+  const lvls = [S.level, LEVELS[lvlIdx(S.level) + 1]].filter(Boolean);
+  box.innerHTML = `${lvls.map((lv) => `<h2>Para ${lv}</h2><div class="lessons">${(RESOURCES[lv] || []).map((r) => `<div class="lesson static"><span class="num">${esc(r.type.slice(0, 2))}</span><span><b>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b><small>${esc(r.desc)}</small></span></div>`).join("")}</div>`).join("")}
+  <div class="card note"><b>Consejos:</b><ul><li>Subtítulos en <b>inglés</b>, nunca en español.</li><li>Mejor 20 minutos todos los días que 3 horas el domingo.</li><li>Elige contenido que te guste de verdad.</li><li>Pega transcripciones o artículos en <b>Leer → Mi lector</b> para sacar vocabulario.</li></ul></div>`;
+}
 
 // ---------- LECTOR CON DICCIONARIO ----------
 let lookupCache = {};
@@ -302,4 +361,52 @@ function pronQuiz(m, u) {
     });
   };
   show();
+}
+
+// ---------- VERBOS IRREGULARES ----------
+function irrCard(m, it, key, isNew) {
+  const v = it.c, r = vq.typed;
+  const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
+  m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nuevo" : "Repaso"} · Verbo irregular · ${v.level}</div>
+  <div class="flash rev"><div class="label">Escribe el pasado y el participio</div><div class="word">${esc(v.base)}</div>${speakBtn(v.base)}<div class="muted">${esc(v.es)}</div>
+  ${r ? `<div class="irrres"><span class="${r.okP ? "ok" : "miss"}">${r.okP ? "✓" : "✗"} ${esc(v.past.replace("/", " / "))}</span><span class="${r.okPP ? "ok" : "miss"}">${r.okPP ? "✓" : "✗"} ${esc(v.pp.replace("/", " / "))}</span></div>` :
+  `<form id="irf" class="irrform"><label>Pasado<input id="irp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="pasado"></label><label>Participio<input id="irpp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="participio"></label><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}</div>
+  ${r ? `<div class="feedback ${r.okP && r.okPP ? "good" : "bad"}"><b>${esc(irrForms(v))}</b> ${speakBtn(irrSay(v), "🔊 Escuchar las 3 formas")}${!(r.okP && r.okPP) && r.given ? `<div class="small">Escribiste: ${esc(r.given)}</div>` : ""}<div class="small muted">Patrón: ${esc(IRR_PATTERNS[irrPattern(v)])}</div></div>
+    ${r.okP && r.okPP ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}` : ""}`;
+  $("#lst").onclick = () => { sub = "list"; vlFilter.lv = "IRR"; render(); };
+  document.onkeydown = null;
+  if (!r) {
+    $("#irp").focus();
+    $("#irf").onsubmit = (e) => {
+      e.preventDefault(); const p = $("#irp").value.trim(), pp = $("#irpp").value.trim();
+      if (!p || !pp) { (!p ? $("#irp") : $("#irpp")).focus(); return; }
+      vq.typed = { okP: formOK(v.past, p), okPP: formOK(v.pp, pp), given: `${p} – ${pp}` };
+      if (!(vq.typed.okP && vq.typed.okPP)) addMistake({ type: "Verbos irregulares", wrong: `${v.base} – ${p} – ${pp}`, right: irrForms(v).replace(/ \/ [^ ]+/g, ""), note: v.es });
+      render(); speak(irrSay(v));
+    };
+    $("#idk").onclick = () => { vq.typed = { okP: false, okPP: false, given: "" }; render(); speak(irrSay(v)); };
+  }
+  $$("[data-q]", m).forEach((b) => b.onclick = () => nextCard(+b.dataset.q));
+}
+function irrList(m) {
+  const tabs = `<div class="tabs">${LEVELS.map((l) => `<button class="tab" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab" data-l="MIS">Mías (${S.custom.length})</button><button class="tab on" data-l="IRR">Irregulares (${IRREG.length})</button></div>`;
+  const avail = IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level));
+  const learned = avail.filter((v) => S.cards[v.id] && S.cards[v.id].reps >= 2).length;
+  const groups = Object.keys(IRR_PATTERNS).map((p) => [p, IRREG.filter((v) => irrPattern(v) === p)]);
+  m.innerHTML = `<div class="row between"><h1>Vocabulario</h1><button class="btn ghost small" id="back">← Repasar</button></div>${tabs}
+  <div class="card hero"><h2>Verbos irregulares</h2><p class="muted small">Cada día entran ${IRR_NEW_PER_DAY} verbos nuevos a tus tarjetas: ves el verbo y escribes el pasado y el participio. Aprenderlos por <b>patrones</b> (abajo) es mucho más fácil que de memoria uno por uno.</p>
+    <div class="bar"><i style="width:${pct(learned, avail.length)}%"></i></div><div class="small muted">${learned} de ${avail.length} aprendidos hasta ${S.level}${avail.length < IRREG.length ? ` · ${IRREG.length - avail.length} más al subir de nivel` : ""}</div>
+    <div class="row"><button class="btn" id="quick">⚡ Práctica rápida (12)</button></div></div>
+  ${groups.map(([p, list]) => `<h2>${esc(IRR_PATTERNS[p])}</h2><div class="card list">${list.map((v) => { const st = S.cards[v.id], ok = lvlIdx(v.level) <= lvlIdx(S.level); return `<div class="li ${ok ? "" : "dim"}"><div><b>${esc(irrForms(v))}</b><div class="muted small">${esc(v.es)}</div></div>${speakBtn(irrSay(v))}<span class="tag">${v.level}</span><span class="tag">${st ? (st.reps >= 2 ? "Aprendido" : "En curso") : "Nuevo"}</span></div>`; }).join("")}</div>`).join("")}`;
+  $("#back").onclick = () => { sub = null; vlFilter.lv = null; render(); };
+  $$("[data-l]", m).forEach((b) => b.onclick = () => { vlFilter = { q: vlFilter.q, lv: b.dataset.l, topic: "" }; render(); });
+  $("#quick").onclick = () => {
+    const pool = shuffle(avail).slice(0, 12);
+    const items = pool.map((v, k) => k % 2 ? ["fill", `${v.base} – ${firstForm(v.past)} – ___ (${v.es})`, v.pp.split("/"), `Participio · ${irrForms(v)}`] : ["fill", `${v.base} – ___ – ${firstForm(v.pp)} (${v.es})`, v.past.split("/"), `Pasado · ${irrForms(v)}`]);
+    exerciseRunner(m, items, { title: "Verbos irregulares", subtitle: "Escribe la forma que falta", onExit: () => render(), onFinish: (c, n, wrongs) => {
+      wrongs.forEach((w) => addMistake({ type: "Verbos irregulares", wrong: w.given, right: w.answer, note: w.why }));
+      skill("grammar", c, n); addXP(c * 2);
+      m.innerHTML = `<div class="card center"><div class="big">${c / n >= 0.8 ? "💪" : "🔁"}</div><h2>${c} de ${n}</h2><p>${c / n >= 0.8 ? "¡Muy bien!" : "Repasa los patrones y vuelve a intentarlo."}</p><button class="btn" id="ok">Volver</button></div>`; $("#ok").onclick = () => render();
+    } });
+  };
 }
