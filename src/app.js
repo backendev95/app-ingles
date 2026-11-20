@@ -598,7 +598,7 @@ RENDER.tarjetas = (m) => {
   const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level === "DEV" ? "💻 Inglés TI · " + esc(c.topic || "") : c.level + " · " + esc(c.topic || "")}</div>`;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
-    m.innerHTML = `${head}<div class="flash" id="flash">${picHTML(c.en, "big")}<div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${pronHTML(c.en, { tips: vq.flipped })}${vq.flipped ? `<div class="back">${photoHTML(c.en)}<div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>${csBox(c.ex, false)}` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
+    m.innerHTML = `${head}<div class="flash" id="flash">${picHTML(c.en, "big")}<div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${pronHTML(c.en, { tips: vq.flipped })}${vq.flipped ? `<div class="back"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>${csBox(c.ex, false)}` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
     ${vq.flipped ? `<div class="grades"><button class="btn red" data-q="1">Otra vez<small>${intervalLabel(key, 1)}</small></button><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<button class="btn wide" id="show">Mostrar respuesta (espacio)</button>`}`;
     const flip = () => { if (!vq.flipped) { vq.flipped = true; render(); } };
     $("#flash").onclick = (e) => { if (!e.target.closest("[data-speak]")) flip(); };
@@ -611,7 +611,7 @@ RENDER.tarjetas = (m) => {
     const enA = c.en.replace(/\s*\(.*?\)/g, "").trim(), hint = enA.split(" ").map((w) => w[0] + "_".repeat(Math.max(1, w.length - 1))).join(" ");
     const r = vq.typed;
     m.innerHTML = `${head}<div class="flash rev">${picHTML(c.en, "big")}<div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex.replace(new RegExp(c.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "_____"))}”</p>` : ""}<div class="muted small">Pista: ${esc(hint)}</div></div>
-    ${r ? `<div class="feedback ${r.ok ? "good" : "bad"}"><b>${r.ok ? "¡Correcto!" : "Era:"}</b> ${esc(c.en)} ${speakBtn(c.en)}${pronHTML(c.en, { tips: true })}${photoHTML(c.en)}${!r.ok ? `<div class="small">Escribiste: ${esc(r.v)}</div>` : ""}</div>
+    ${r ? `<div class="feedback ${r.ok ? "good" : "bad"}"><b>${r.ok ? "¡Correcto!" : "Era:"}</b> ${esc(c.en)} ${speakBtn(c.en)}${pronHTML(c.en, { tips: true })}${!r.ok ? `<div class="small">Escribiste: ${esc(r.v)}</div>` : ""}</div>
       ${r.ok ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}`
     : `<form id="rf" class="row"><input id="ri" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe en inglés"><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}`;
     if (!r) {
@@ -942,9 +942,8 @@ RENDER.ajustes = (m) => {
     <label class="cando"><input type="checkbox" id="pronshow" ${S.settings.pronShow === false ? "" : "checked"}> <span>Mostrar <b>cómo se pronuncia</b> cada palabra (a la española, con la sílaba fuerte en MAYÚSCULAS)</span></label>
     <label class="cando"><input type="checkbox" id="ipashow" ${S.settings.ipaShow === false ? "" : "checked"}> <span>Incluir la fonética internacional (IPA)</span></label>
     <label class="cando"><input type="checkbox" id="picsshow" ${S.settings.picsShow === false ? "" : "checked"}> <span>Mostrar <b>imágenes</b> junto a las palabras</span></label>
-    <label class="label">Tipo de imagen</label><select id="picstyle"><option value="aras" ${S.settings.picStyle !== "emoji" ? "selected" : ""}>Pictogramas ARASAAC (recomendado)</option><option value="emoji" ${S.settings.picStyle === "emoji" ? "selected" : ""}>Emojis</option></select>
-    <p class="muted small">${ARAS_CREDIT} Se guardan en el celular la primera vez que aparecen; luego funcionan sin internet. Si un pictograma no carga, se muestra el emoji.</p>
-    <label class="cando"><input type="checkbox" id="photos" ${S.settings.photos === false ? "" : "checked"}> <span>Mostrar <b>fotos reales</b> de objetos y lugares (Wikipedia, necesita internet)</span></label>
+    <label class="label">Tipo de imagen</label><select id="picstyle"><option value="photo" ${(S.settings.picStyle || "photo") === "photo" ? "selected" : ""}>Fotos reales + imágenes 3D (recomendado)</option><option value="3d" ${S.settings.picStyle === "3d" ? "selected" : ""}>Solo imágenes 3D</option><option value="emoji" ${S.settings.picStyle === "emoji" ? "selected" : ""}>Emojis del teléfono</option></select>
+    <p class="muted small">Fotos: Pixabay (licencia de contenido de Pixabay). Imágenes 3D: Microsoft Fluent Emoji (licencia MIT). Vienen con la app y se guardan en el celular la primera vez que aparecen.</p>
     <label class="cando"><input type="checkbox" id="csshow" ${S.settings.csShow === false ? "" : "checked"}> <span>Mostrar <b>🔗 Así suena</b> (connected speech) debajo de las frases</span></label>
     <label class="cando"><input type="checkbox" id="csopen" ${S.settings.csOpen === false ? "" : "checked"}> <span>Abrirlo automáticamente en dictados, shadowing y respuestas modelo</span></label>
     <label class="label">Retención objetivo de las tarjetas</label><select id="ret">${[[0.85, "85% · menos repasos"], [0.9, "90% · recomendado"], [0.95, "95% · más repasos, recuerdas más"]].map(([v, l]) => `<option value="${v}" ${S.settings.retention === v ? "selected" : ""}>${l}</option>`).join("")}</select>
@@ -976,7 +975,7 @@ RENDER.ajustes = (m) => {
   $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
   $("#csshow").onchange = (e) => { S.settings.csShow = e.target.checked; save(); };
   $("#picstyle").onchange = (e) => { S.settings.picStyle = e.target.value; save(); };
-  [["pronshow", "pronShow"], ["ipashow", "ipaShow"], ["picsshow", "picsShow"], ["photos", "photos"]].forEach(([id, k]) => { $("#" + id).onchange = (e) => { S.settings[k] = e.target.checked; save(); }; });
+  [["pronshow", "pronShow"], ["ipashow", "ipaShow"], ["picsshow", "picsShow"]].forEach(([id, k]) => { $("#" + id).onchange = (e) => { S.settings[k] = e.target.checked; save(); }; });
   $("#csopen").onchange = (e) => { S.settings.csOpen = e.target.checked; save(); };
   $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };
   $("#copy").onclick = () => { navigator.clipboard.writeText($("#bk").value).then(() => toast("Copiado"), () => { $("#bk").select(); toast("Selecciona y copia el texto"); }); };

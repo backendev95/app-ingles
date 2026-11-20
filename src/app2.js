@@ -239,7 +239,7 @@ async function openLookup(word, sentence) {
   const w = word.toLowerCase().replace(/[’']s$/, "").replace(/[’']/g, "'");
   const local = allCards().find((c) => c.en.toLowerCase() === w);
   const el = document.createElement("div"); el.id = "lookup"; el.className = "lookup";
-  el.innerHTML = `<div class="row between"><div>${picHTML(local ? local.en : w, "lst")}<b class="lw">${esc(w)}</b> <span id="lph" class="muted"></span> ${speakBtn(w)} <button class="icon-btn" id="lau" hidden>🔈 Audio real</button></div><button class="icon-btn" id="lx">✕</button></div>${pronHTML(w, { tips: true })}${photoHTML(local ? local.en : w)}
+  el.innerHTML = `<div class="row between"><div>${picHTML(local ? local.en : w, "lst")}<b class="lw">${esc(w)}</b> <span id="lph" class="muted"></span> ${speakBtn(w)} <button class="icon-btn" id="lau" hidden>🔈 Audio real</button></div><button class="icon-btn" id="lx">✕</button></div>${pronHTML(w, { tips: true })}
     <div id="les" class="les">${local ? `<b>${esc(local.es)}</b> <span class="tag">${local.level === "MIS" ? "tus tarjetas" : local.level}</span>` : `<span class="muted">Traduciendo…</span>`}</div>
     <div id="ldef" class="small"></div>
     <div class="row"><button class="btn small" id="ladd">+ Tarjeta</button><button class="btn ghost small" id="lsent">Traducir la frase</button></div><div id="lsout" class="small"></div>`;
