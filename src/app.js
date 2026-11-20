@@ -50,10 +50,10 @@ const defaultState = () => ({
   xp: 0, streak: 0, lastDay: null, history: {},
   cards: {}, custom: [], lessons: {}, exams: {}, mistakes: [],
   newToday: { day: null, n: 0, r: 0 },
-  done: { reading: {}, listening: {}, roleplay: {}, writing: {} },
+  done: { reading: {}, listening: {}, roleplay: {}, writing: {}, story: {} },
   skills: { vocab: [0, 0], grammar: [0, 0], listening: [0, 0], reading: [0, 0], speaking: [0, 0], writing: [0, 0] },
   daily: { day: null, tasks: {} }, cando: {},
-  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
+  exStats: {}, typeStats: {}, mocks: {}, chunks: {}, retell: [], speak: [], immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
   settings: { rate: 0.95, newPerDay: 10, retention: 0.9, mmEmail: "" }, updatedAt: 0
 });
 let S = defaultState();
@@ -62,6 +62,7 @@ function migrate(x) {
   o.done = Object.assign(defaultState().done, o.done || {});
   o.skills = Object.assign(defaultState().skills, o.skills || {});
   o.settings = Object.assign(defaultState().settings, o.settings || {});
+  ["retell", "speak"].forEach((k) => { if (!Array.isArray(o[k])) o[k] = []; }); if (!o.chunks) o.chunks = {};
   if (!o.newToday || o.newToday.r === undefined) o.newToday = { day: null, n: 0, r: 0 };
   if (!o.v || o.v < 2) { o.v = 2; if (Object.keys(o.lessons).length || Object.keys(o.cards).length) o.placementDone = true; }
   return o;
@@ -320,23 +321,23 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
-const levelOK = (c) => c.level === "MIS" || (c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
+const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
   const now = Date.now();
   if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0, i: 0 };
-  const due = [], fresh = [], rev = [], irrNew = [], devFresh = [];
+  const due = [], fresh = [], rev = [], irrNew = [], devFresh = [], chFresh = [];
   IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level)).forEach((v) => { const st = S.cards[v.id]; if (st) { if (st.due <= now) due.push({ c: v, dir: "irr" }); } else irrNew.push({ c: v, dir: "irr" }); });
   allCards().filter(levelOK).forEach((c) => {
     const f = S.cards[c.id], r = S.cards[c.id + ":r"];
-    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else (c.level === "DEV" ? devFresh : fresh).push({ c, dir: "f" });
-    if (r) { if (r.due <= now) due.push({ c, dir: "r" }); } else if (f && f.reps >= 2) rev.push({ c, dir: "r" });
+    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else (c.chunk ? chFresh : c.level === "DEV" ? devFresh : fresh).push({ c, dir: "f" });
+    if (r) { if (r.due <= now) due.push({ c, dir: "r" }); } else if (f && f.reps >= 2 && !c.chunk) rev.push({ c, dir: "r" });
   });
   fresh.sort((a, b) => (b.c.level === "MIS") - (a.c.level === "MIS") || (b.c.level === S.level) - (a.c.level === S.level));
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
-  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0)), roomD = Math.max(0, 5 - (S.newToday.d || 0));
-  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI), devFresh.slice(0, roomD)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
+  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0)), roomD = Math.max(0, 5 - (S.newToday.d || 0)), roomC = Math.max(0, 3 - (S.newToday.c || 0));
+  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI), devFresh.slice(0, roomD), chFresh.slice(0, roomC)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
 }
 // FSRS-4.5 (parámetros por defecto)
 const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
@@ -362,7 +363,7 @@ function fsrsNext(prev, G, now) {
 const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
 function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
 function grade(key, q) {
-  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else if (key.startsWith("DEV-")) S.newToday.d = (S.newToday.d || 0) + 1; else S.newToday.n++; }
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else if (key.startsWith("DEV-")) S.newToday.d = (S.newToday.d || 0) + 1; else if (key.startsWith("CH-")) S.newToday.c = (S.newToday.c || 0) + 1; else S.newToday.n++; }
   S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
   skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
@@ -379,7 +380,7 @@ const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
-const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["ti", "💻", "Inglés TI"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
+const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["chunks", "🧩", "Chunks"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["ti", "💻", "Inglés TI"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
 let view = "inicio", sub = null;
 function route() { let h = (location.hash || "").slice(1); if (h === "errores") { h = "progreso"; pTab = "errores"; } view = VIEWS.some((v) => v[0] === h) ? h : "inicio"; sub = null; stopSpeech(); closeLookup(); render(); }
 function go(v) { if (location.hash.slice(1) === v) route(); else location.hash = v; }
@@ -409,7 +410,7 @@ function confirmBox(el, msg, yes) {
 // ---------- Motor de ejercicios ----------
 function exerciseRunner(box, items, o) {
   let i = 0, correct = 0, answered = false; const wrongs = [];
-  const typed = (t) => ["fill", "tr", "fix"].includes(t);
+  const typed = (t) => ["fill", "tr", "fix", "sub"].includes(t);
   function show() {
     const ex = items[i];
     if (!ex) return o.onFinish(correct, items.length, wrongs);
@@ -419,6 +420,8 @@ function exerciseRunner(box, items, o) {
     if (t === "fill") body = `<p class="q">${esc(ex[1])}</p><form class="ans row"><input id="ai" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra que falta"><button class="btn">Comprobar</button></form>`;
     if (t === "tr") body = `<p class="label">Traduce al inglés</p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write it in English…"></textarea><button class="btn wide">Comprobar</button></form>`;
     if (t === "fix") body = `<p class="label">Esta frase tiene un error. Corrígela.</p><p class="q wrongq">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false">${esc(ex[1])}</textarea><button class="btn wide">Comprobar</button></form>`;
+    if (t === "sub") body = `<p class="label">Transforma la frase usando: <b>${esc(ex[4])}</b></p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write the new sentence…"></textarea><button class="btn wide">Comprobar</button></form>`;
+    if (t === "blocks") body = `<p class="label">Arma la frase con los bloques</p><p class="q">${esc(ex[1])}</p><div class="built" id="built"></div><div class="bank">${shuffle(ex[2].slice()).map((w) => `<button class="w chunkw">${esc(w)}</button>`).join("")}</div><button class="btn" id="oc">Comprobar</button>`;
     if (t === "ord") body = `<p class="label">Ordena las palabras</p><p class="q">${esc(ex[1])}</p><div class="built" id="built"></div><div class="bank">${shuffle(ex[2].split(" ")).map((w) => `<button class="w">${esc(w)}</button>`).join("")}</div><button class="btn" id="oc">Comprobar</button>`;
     box.innerHTML = `<div class="row between"><div><h1>${esc(o.title)}</h1>${o.subtitle ? `<div class="muted small">${esc(o.subtitle)}</div>` : ""}</div>${o.onExit ? `<button class="btn ghost small" id="exit">Salir</button>` : ""}</div>
       <div class="bar"><i style="width:${(i / items.length) * 100}%"></i></div><div class="muted small">${i + 1} / ${items.length}</div>
@@ -435,11 +438,11 @@ function exerciseRunner(box, items, o) {
         finish(ok, ex[2][0], t === "fill" ? ex[3] : ex[3], v, close);
       };
     }
-    if (t === "ord") {
+    if (t === "ord" || t === "blocks") {
       const built = [];
       const draw = () => { $("#built").innerHTML = built.map((b, k) => `<button class="w" data-r="${k}">${esc(b.textContent)}</button>`).join(""); $$("#built [data-r]", box).forEach((x) => x.onclick = () => { if (answered) return; const [rm] = built.splice(+x.dataset.r, 1); rm.classList.remove("used"); draw(); }); };
       $$(".bank .w", box).forEach((b) => b.onclick = () => { if (answered || b.classList.contains("used")) return; b.classList.add("used"); built.push(b); draw(); });
-      $("#oc").onclick = () => { if (answered || !built.length) return; const v = built.map((b) => b.textContent).join(" "); finish(norm(v) === norm(ex[2]), ex[2], "", v); };
+      $("#oc").onclick = () => { if (answered || !built.length) return; const v = built.map((b) => b.textContent).join(" "); const want = t === "blocks" ? ex[2].join(" ") : ex[2]; finish(norm(v) === norm(want), want, "", v); };
     }
   }
   function choose(k) {
@@ -453,8 +456,8 @@ function exerciseRunner(box, items, o) {
     recordEx(ex, ok);
     const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)/g, "").trim() : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
-      ${!ok && ex[0] !== "mc" && ex[0] !== "ord" && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
-      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
+      ${!ok && !["mc", "ord", "blocks"].includes(ex[0]) && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
+      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill", "sub"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
       <button class="btn wide" id="nx">Continuar ⏎</button>`;
     if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); recordEx(ex, true, true); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
     $("#nx").onclick = next; $("#nx").focus();
@@ -479,7 +482,7 @@ function comprehension(box, item, o) {
       ${item.gloss && !o.exam ? `<details class="card"><summary><b>Glosario</b> (${item.gloss.length})</summary><div class="list">${item.gloss.map(([en, es]) => `<div class="li"><div><b>${esc(en)}</b> — ${esc(es)}</div>${speakBtn(en)}<button class="btn ghost small" data-add="${esc(en)}|${esc(es)}">+ Tarjeta</button></div>`).join("")}</div></details>` : ""}` : ""}
     <h2>Preguntas</h2>${item.q.map((q, k) => `<div class="card excard"><p class="q">${k + 1}. ${esc(q[0])}</p><div class="opts">${q[1].map((x, j) => `<button class="opt ${ans[k] !== undefined ? (j === q[2] ? "right" : j === ans[k] ? "wrong" : "") : ""}" data-q="${k}" data-j="${j}">${esc(x)}</button>`).join("")}</div></div>`).join("")}
     ${isL && (shownT || all) && !o.exam ? `<details class="card" ${all ? "open" : ""}><summary><b>Transcripción</b></summary>${item.lines.map(([sp, t], i) => `<div class="line" data-line="${i}"><p><b>${esc(sp)}:</b> ${esc(t)} ${speakBtn(t)}</p>${csBox(t, false)}</div>`).join("")}</details>` : ""}
-    ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div>` : ""}`;
+    ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><div class="row center">${!o.exam ? `<button class="btn ghost" id="retell">🗣️ Cuéntalo con tus palabras</button>` : ""}<button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div></div>` : ""}`;
     if (o.onExit) $("#exit").onclick = () => { stopSpeech(); o.onExit(); };
     if (isL) {
       const lines = item.lines.map(([sp, t]) => [sp.charCodeAt(0) - 65, t]);
@@ -488,6 +491,7 @@ function comprehension(box, item, o) {
     $$("[data-q]", box).forEach((b) => b.onclick = () => { const k = +b.dataset.q; if (ans[k] !== undefined) return; ans[k] = +b.dataset.j; const y = window.scrollY; draw(); window.scrollTo(0, y); });
     $$("[data-add]", box).forEach((b) => b.onclick = () => { const [en, es] = b.dataset.add.split("|"); addCustomCard(en, es, ""); b.textContent = "✓"; b.disabled = true; });
     if ($("#done")) $("#done").onclick = () => { stopSpeech(); o.onFinish(c, item.q.length); };
+    if ($("#retell")) $("#retell").onclick = () => { stopSpeech(); retellPage(box, item, () => { draw(); window.scrollTo(0, 0); }); };
   }
   draw();
 }
@@ -767,6 +771,8 @@ RENDER.escuchar = (m) => {
 let rTab = "lecturas";
 RENDER.leer = (m) => {
   if (sub && sub.text) return readerPage(m, sub.text);
+  if (sub && sub.story) return comprehension(m, sub.story, { kind: "reading", subtitle: `${STORY_SERIES.title} · Episodio ${sub.story.ep} · ${sub.story.level}`, onExit: () => { sub = null; render(); }, onFinish: (c, n) => { S.done.story[sub.story.id] = Math.max(S.done.story[sub.story.id] || 0, c / n); skill("reading", c, n); if (extraTask().go === "leer") markDaily("extra"); addXP(c * 5); sub = null; render(); } });
+  if (rTab === "historias") { m.innerHTML = `<h1>Leer</h1>${readTabs()}<div id="rbody"></div>`; bindReadTabs(m); return storiesList($("#rbody")); }
   if (rTab === "lector" && !sub) { m.innerHTML = `<h1>Leer</h1>${readTabs()}<div id="rbody"></div>`; bindReadTabs(m); return myTextsView($("#rbody"), m); }
   if (sub && sub.item) return comprehension(m, sub.item, { kind: "reading", onExit: () => { sub = null; render(); }, onFinish: (c, n) => { S.done.reading[sub.item.id] = Math.max(S.done.reading[sub.item.id] || 0, c / n); skill("reading", c, n); if (extraTask().go === "leer") markDaily("extra"); addXP(c * 5); sub = null; render(); } });
   const list = ALL_READINGS.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
@@ -776,7 +782,7 @@ RENDER.leer = (m) => {
   $$("[data-i]", m).forEach((b) => b.onclick = () => { sub = { item: ALL_READINGS.find((x) => x.id === b.dataset.i) }; render(); });
   bindReadTabs(m);
 };
-const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lecturas" ? "on" : ""}" data-rt="lecturas">Lecturas del curso</button><button class="tab ${rTab === "lector" ? "on" : ""}" data-rt="lector">Mi lector (con diccionario)</button></div>`;
+const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lecturas" ? "on" : ""}" data-rt="lecturas">Lecturas del curso</button><button class="tab ${rTab === "historias" ? "on" : ""}" data-rt="historias">📚 Historias</button><button class="tab ${rTab === "lector" ? "on" : ""}" data-rt="lector">Mi lector (con diccionario)</button></div>`;
 function bindReadTabs(m) { $$("[data-rt]", m).forEach((b) => b.onclick = () => { rTab = b.dataset.rt; render(); }); }
 
 // ---------- HABLAR ----------
@@ -794,11 +800,14 @@ RENDER.hablar = (m) => {
   if (sub && sub.rp) return roleplay(m, sub.rp);
   if (sub && sub.pron) return pronPage(m, sub.pron);
   if (sub && sub.cs) return csPage(m, sub.cs);
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button></div><div id="hbody"></div>`;
+  if (sub && sub.retell) return retellPage(m, sub.retell, () => { sub = null; render(); });
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
   if (hTab === "sonidos") return pronList(box);
   if (hTab === "cs") return csList(box);
+  if (hTab === "min") return speakMinute(box);
+  if (hTab === "retell") return retellList(box);
   if (hTab === "conversa") {
     const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;

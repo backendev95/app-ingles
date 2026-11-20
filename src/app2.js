@@ -2,7 +2,7 @@
 
 // ---------- Grabadora (comparar tu voz con el modelo) ----------
 let recState = { rec: null, chunks: [], blobs: {}, active: null, stream: null };
-const recorderHTML = (k) => `<span class="recbox"><button class="icon-btn" data-rec="${k}" title="Grabarme">⏺️ Grabar</button><button class="icon-btn" data-play="${k}" ${recState.blobs[k] ? "" : "hidden"} title="Escuchar mi voz">▶️ Mi voz</button></span>`;
+const recorderHTML = (k, max) => `<span class="recbox"><button class="icon-btn" data-rec="${k}" ${max ? `data-max="${max}"` : ""} title="Grabarme">⏺️ Grabar</button><button class="icon-btn" data-play="${k}" ${recState.blobs[k] ? "" : "hidden"} title="Escuchar mi voz">▶️ Mi voz</button></span>`;
 function bindRecorders(box) {
   $$("[data-rec]", box).forEach((b) => b.onclick = async () => {
     const k = b.dataset.rec;
@@ -14,7 +14,7 @@ function bindRecorders(box) {
       r.ondataavailable = (e) => recState.chunks.push(e.data);
       r.onstop = () => { recState.blobs[k] = new Blob(recState.chunks, { type: r.mimeType || "audio/webm" }); recState.rec = null; recState.active = null; b.textContent = "⏺️ Grabar"; b.classList.remove("on"); const p = $(`[data-play="${CSS.escape(k)}"]`, box); if (p) { p.hidden = false; } playBlob(k); };
       r.start(); b.textContent = "⏹️ Detener"; b.classList.add("on");
-      setTimeout(() => { if (recState.active === k && recState.rec) recState.rec.stop(); }, 15000);
+      setTimeout(() => { if (recState.active === k && recState.rec) recState.rec.stop(); }, (+b.dataset.max || 15) * 1000);
     } catch (e) { toast("No se pudo usar el micrófono para grabar (funciona en Chrome desde tu versión publicada)"); }
   });
   $$("[data-play]", box).forEach((b) => b.onclick = () => playBlob(b.dataset.play));

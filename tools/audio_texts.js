@@ -26,6 +26,10 @@ if (${all}) {
   DEV.readings.forEach((r) => add("A", r.text, "reading"));
   DEV.writing.forEach((w) => w.model.split(/\\n+/).forEach((p) => p.split(/(?<=[.!?])\\s+/).forEach((s) => add("A", s, "model"))));
 }
+// Chunks, historias graduadas y temas para hablar
+CHUNKS.forEach((g) => { g.items.forEach(([en, es, ex]) => { add("A", en, "chunk"); add("A", ex, "chunk"); }); g.drills.forEach((d) => { if (d[0] === "sub") add("A", d[3][0], "chunk"); else if (d[0] === "blocks") add("A", d[2].join(" "), "chunk"); else if (d[0] === "mc" && d[1].includes("___")) add("A", d[1].replace(/_{2,}/, d[2][d[3]]), "chunk"); }); });
+STORIES.forEach((s) => { add("A", s.text, "story"); s.gloss.forEach(([en]) => add("A", en, "word")); });
+Object.values(SPEAK_PROMPTS).forEach((l) => l.forEach(([t]) => add("A", t, "prompt")));
 CS_UNITS.forEach((u) => { u.examples.forEach(([w]) => add("A", w, "cs")); u.practice.forEach((p) => add("A", p, "cs")); (u.explain.match(/<i>([^<]+)<\\/i>/g) || []).forEach((m) => add("A", m.replace(/<\\/?i>/g, ""), "cs")); });
 PRON.forEach((u) => { (u.pairs || []).forEach((p) => p.forEach((w) => add("A", w, "pron"))); (u.items || []).forEach((it) => add("A", String(it[0]).replace(/\\s*\\(.*\\)/, ""), "pron")); (u.lines || []).forEach((l) => add("A", l, "pron")); });
 if (${all}) {

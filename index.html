@@ -149,6 +149,10 @@ details.phase summary{line-height:1.8} details.curph{border:2px solid var(--pri)
   .wrap{padding:calc(12px + env(safe-area-inset-top)) 14px calc(110px + env(safe-area-inset-bottom))} .grades{grid-template-columns:repeat(2,1fr)} .exam{flex-direction:column;align-items:stretch}
   h1{font-size:23px}
 }
+.timer{font-size:56px;font-weight:800;font-variant-numeric:tabular-nums;margin:6px 0}.timer.warn{color:var(--bad,#d33)}
+.live{min-height:1.4em;font-style:italic;color:var(--muted)} .badge{background:var(--pri2);border-radius:99px;padding:3px 10px;font-weight:700;font-size:13px}
+.chunkcard .chunk{color:var(--pri);font-size:17px} .w.chunkw{white-space:nowrap} .steps{margin:4px 0 10px 18px;padding:0} .steps li{margin:3px 0}
+.list.left{text-align:left}
 </style>
 </head>
 <body>
@@ -1553,6 +1557,44 @@ CANDO.C2 = [
   "Puedo resumir y reconstruir argumentos de varias fuentes de forma coherente."
 ];
 
+// ===== CHUNKS: bloques de lenguaje por función =====
+// items: [chunk, español, ejemplo]
+// drills: ["mc", frase con ___, [opciones], índice, explicación]
+//         ["sub", frase modelo, pista, [respuestas aceptadas], nota]  → transformar la frase con la pista
+//         ["blocks", significado en español, [bloques en orden correcto]]
+const CHUNKS = [
+  { id: "ch-opinion", level: "A2", icon: "💭", title: "Dar tu opinión", intro: "Para opinar, los nativos no dicen solo «I think». Usan bloques fijos que puedes aprender enteros y reutilizar.",
+    items: [["I think that...", "Creo que...", "I think that remote work is the future."], ["In my opinion,...", "En mi opinión,...", "In my opinion, the movie was too long."], ["If you ask me,...", "Si me preguntas,...", "If you ask me, it's a great idea."], ["It seems to me that...", "Me parece que...", "It seems to me that he's not happy."], ["I'm not sure about...", "No estoy seguro de...", "I'm not sure about the new plan."], ["The way I see it,...", "Tal como yo lo veo,...", "The way I see it, we need more time."], ["As far as I'm concerned,...", "En lo que a mí respecta,...", "As far as I'm concerned, the price is fair."], ["I'd say that...", "Yo diría que...", "I'd say that it's the best option."]],
+    drills: [["mc", "___, the meeting was a waste of time.", ["If you ask me", "If you ask to me", "If ask me"], 0, "Chunk fijo: If you ask me."], ["mc", "It ___ to me that the price is too high.", ["seems", "looks", "thinks"], 0, "It seems to me that..."], ["sub", "In my opinion, the book is boring.", "the way I see it", ["The way I see it, the book is boring."], "Cambia el chunk inicial."], ["sub", "I think that he's right.", "I'd say that", ["I'd say that he's right.", "I would say that he's right.", "I'd say he's right."], ""], ["blocks", "Si me preguntas, deberíamos esperar.", ["If you ask me,", "we should", "wait"]], ["mc", "As far as I'm ___, it's a good deal.", ["concerned", "concerning", "concern"], 0, "As far as I'm concerned."]] },
+  { id: "ch-agree", level: "A2", icon: "🤝", title: "Estar de acuerdo o en desacuerdo", intro: "Para no sonar brusco, el desacuerdo en inglés casi siempre se suaviza con un chunk antes del «but».",
+    items: [["I totally agree.", "Estoy totalmente de acuerdo.", "I totally agree with you."], ["That's a good point.", "Buen punto.", "That's a good point, I hadn't thought of that."], ["You're right about...", "Tienes razón sobre...", "You're right about the deadline."], ["I see what you mean, but...", "Entiendo lo que dices, pero...", "I see what you mean, but it's too expensive."], ["I'm not so sure.", "No estoy tan seguro.", "Hmm, I'm not so sure."], ["I'm afraid I disagree.", "Me temo que no estoy de acuerdo.", "I'm afraid I disagree with that."], ["That's true, but...", "Es cierto, pero...", "That's true, but it takes time."], ["Fair enough.", "Me parece justo / Vale.", "Fair enough, let's try it your way."]],
+    drills: [["mc", "I see what you ___, but I still think it's risky.", ["mean", "say", "think"], 0, "I see what you mean."], ["mc", "La forma más educada de no estar de acuerdo:", ["No. You're wrong.", "I'm afraid I disagree.", "I don't agree you."], 1, ""], ["mc", "I ___ agree. It's a fantastic idea!", ["totally", "very", "much"], 0, "Totally agree."], ["sub", "You're wrong about the price.", "suavízalo: I see what you mean, but...", ["I see what you mean, but the price is too high.", "I see what you mean, but I think the price is wrong."], "Hay varias respuestas posibles; marca la tuya si es correcta."], ["blocks", "Es cierto, pero toma tiempo.", ["That's true,", "but", "it takes time"]], ["mc", "'Fair enough' significa:", ["Me parece justo / vale", "Eso es injusto", "Bastante bien"], 0, ""]] },
+  { id: "ch-requests", level: "A2", icon: "🙏", title: "Pedir, ofrecer y aceptar", intro: "Las peticiones educadas en inglés son más indirectas que en español. Estos bloques te hacen sonar amable sin pensar.",
+    items: [["Could you...?", "¿Podrías...?", "Could you send me the file?"], ["Would you mind + -ing?", "¿Te importaría...?", "Would you mind closing the door?"], ["Do you happen to know...?", "¿Por casualidad sabes...?", "Do you happen to know where the station is?"], ["I was wondering if...", "Me preguntaba si...", "I was wondering if you could help me."], ["Can I get...?", "¿Me das...? (pedir en un local)", "Can I get a coffee, please?"], ["Would you like me to...?", "¿Quieres que...?", "Would you like me to call you later?"], ["Let me know if...", "Avísame si...", "Let me know if you need anything."], ["No worries.", "Tranquilo / No hay problema.", "No worries, I can do it tomorrow."]],
+    drills: [["mc", "Would you mind ___ me the salt?", ["passing", "to pass", "pass"], 0, "Would you mind + -ing."], ["mc", "I was ___ if you could help me with this.", ["wondering", "asking me", "thinking if"], 0, "I was wondering if..."], ["sub", "Give me the report.", "hazlo educado con Could you...?", ["Could you give me the report?", "Could you give me the report, please?", "Could you send me the report?"], ""], ["sub", "Do you know where the bank is?", "Do you happen to know...", ["Do you happen to know where the bank is?"], "Mantén el orden de afirmación: where the bank is."], ["blocks", "Avísame si necesitas algo.", ["Let me know", "if you need", "anything"]], ["mc", "___ like me to book a table?", ["Would you", "Do you", "Will you"], 0, "Would you like me to...?"]] },
+  { id: "ch-plans", level: "B1", icon: "🗓️", title: "Preferencias y planes", intro: "Para hablar de lo que quieres o planeas, estos chunks suenan mucho más naturales que repetir «I want».",
+    items: [["I'd rather... than...", "Prefiero... a...", "I'd rather stay home than go out."], ["I feel like + -ing", "Tengo ganas de...", "I feel like eating pizza tonight."], ["I'm thinking of + -ing", "Estoy pensando en...", "I'm thinking of changing jobs."], ["I'm looking forward to + -ing", "Tengo muchas ganas de...", "I'm looking forward to seeing you."], ["I can't wait to...", "No veo la hora de...", "I can't wait to start."], ["I'm planning to...", "Planeo...", "I'm planning to travel in June."], ["It's up to you.", "Tú decides.", "Pizza or sushi? It's up to you."], ["I don't mind.", "Me da igual / No me importa.", "I don't mind, whatever you prefer."]],
+    drills: [["mc", "I'm looking forward to ___ you next week.", ["see", "seeing", "saw"], 1, "Look forward to + -ing."], ["mc", "I'd rather walk ___ take the bus.", ["than", "that", "to"], 0, "I'd rather X than Y."], ["mc", "I feel ___ going for a walk.", ["like", "as", "to"], 0, "Feel like + -ing."], ["sub", "I want to buy a new laptop.", "I'm thinking of...", ["I'm thinking of buying a new laptop."], "Thinking of + -ing."], ["blocks", "Prefiero quedarme en casa que salir.", ["I'd rather", "stay at home", "than", "go out"]], ["mc", "Coffee or tea? — I don't ___.", ["mind", "matter", "care of"], 0, "I don't mind = me da igual."]] },
+  { id: "ch-explain", level: "B1", icon: "🧠", title: "Explicar y aclarar", intro: "Cuando no encuentras la palabra exacta o quieres aclarar algo, estos chunks te dan tiempo y te ayudan a reformular.",
+    items: [["What I mean is...", "Lo que quiero decir es...", "What I mean is that we need more people."], ["In other words,...", "En otras palabras,...", "In other words, it's not ready."], ["Let me put it another way.", "Déjame decirlo de otra forma.", "Let me put it another way: we're late."], ["The thing is,...", "La cosa es que...", "The thing is, I don't have time."], ["It's a kind of...", "Es una especie de...", "It's a kind of tool for designers."], ["What I'm trying to say is...", "Lo que intento decir es...", "What I'm trying to say is that it's risky."], ["Does that make sense?", "¿Tiene sentido?", "We'll do it in two steps. Does that make sense?"], ["To put it simply,...", "Para decirlo simple,...", "To put it simply, it's too expensive."]],
+    drills: [["mc", "The ___ is, I don't really like my job.", ["thing", "point of", "fact of"], 0, "The thing is,..."], ["mc", "Let me put it ___ way.", ["another", "other", "different"], 0, "Let me put it another way."], ["mc", "We'll split the work. Does that make ___?", ["sense", "meaning", "logic"], 0, "Does that make sense?"], ["sub", "I mean that we need more time.", "What I mean is...", ["What I mean is that we need more time.", "What I mean is we need more time."], ""], ["blocks", "En otras palabras, todavía no está listo.", ["In other words,", "it isn't", "ready yet"]], ["mc", "'To put it simply' significa:", ["Para decirlo simple", "Ponerlo fácil", "Simplemente poner"], 0, ""]] },
+  { id: "ch-fillers", level: "B1", icon: "⏳", title: "Ganar tiempo al hablar", intro: "Los nativos también se quedan en blanco: usan muletillas para pensar sin quedarse callados. Usarlas te da fluidez inmediata.",
+    items: [["Let me think...", "Déjame pensar...", "Let me think... maybe Tuesday?"], ["That's a good question.", "Buena pregunta.", "That's a good question. I'm not sure."], ["How can I put it?", "¿Cómo lo digo?", "How can I put it? It's complicated."], ["Well, you know,...", "Bueno, ya sabes,...", "Well, you know, it depends."], ["I mean,...", "O sea,...", "I mean, it's not bad, but it's not great."], ["Kind of / sort of", "Más o menos / algo así", "It's kind of hard to explain."], ["Actually,...", "En realidad,...", "Actually, I've never been there."], ["Anyway,...", "En fin / De todos modos,...", "Anyway, let's get back to work."]],
+    drills: [["mc", "That's a good ___. Let me think about it.", ["question", "ask", "asking"], 0, ""], ["mc", "'Actually' significa:", ["Actualmente", "En realidad", "Activamente"], 1, "Falso amigo."], ["mc", "It's ___ of difficult to explain.", ["kind", "type", "class"], 0, "Kind of = más o menos."], ["mc", "___, let's move on to the next topic.", ["Anyway", "Anyways of", "In any way"], 0, "Anyway = en fin."], ["blocks", "¿Cómo lo digo? Es complicado.", ["How can", "I put it?", "It's complicated"]], ["sub", "I don't know.", "gana tiempo con Let me think...", ["Let me think... I don't know.", "Let me think. I don't know."], "Cualquier respuesta con Let me think vale."]] },
+  { id: "ch-connect", level: "B2", icon: "🔗", title: "Conectar ideas al hablar", intro: "Estos chunks hacen que tus argumentos suenen organizados y avanzados, sin parecer un texto escrito.",
+    items: [["On top of that,...", "Además de eso,...", "It's expensive. On top of that, it's slow."], ["Having said that,...", "Dicho esto,...", "It's risky. Having said that, I think we should try."], ["The point is,...", "El punto es que...", "The point is, we can't wait any longer."], ["Not to mention...", "Por no mencionar...", "It's cheap, not to mention very fast."], ["When it comes to...", "Cuando se trata de...", "When it comes to food, I'm very picky."], ["At the end of the day,...", "Al fin y al cabo,...", "At the end of the day, it's your decision."], ["As a matter of fact,...", "De hecho,...", "As a matter of fact, I was there."], ["That's why...", "Por eso...", "I was tired. That's why I left early."]],
+    drills: [["mc", "When it ___ to sports, I prefer football.", ["comes", "goes", "turns"], 0, "When it comes to..."], ["mc", "It's a great job, not to ___ the salary.", ["mention", "say", "talk"], 0, "Not to mention..."], ["mc", "At the end of the ___, family is what matters.", ["day", "time", "life"], 0, ""], ["sub", "It's expensive. Also, it's very slow.", "On top of that", ["It's expensive. On top of that, it's very slow."], ""], ["blocks", "Dicho esto, creo que deberíamos intentarlo.", ["Having said that,", "I think", "we should", "give it a try"]], ["mc", "The traffic was terrible. ___ I was late.", ["That's why", "That's because", "So that"], 0, "That's why = por eso."]] },
+  { id: "ch-meetings", level: "B2", icon: "💼", title: "Reuniones y trabajo", intro: "Las reuniones en inglés siguen guiones muy repetidos. Aprender estos bloques te permite participar con seguridad desde el primer día.",
+    items: [["Let's get started.", "Empecemos.", "OK everyone, let's get started."], ["Moving on to...", "Pasando a...", "Moving on to the next point, the budget."], ["Just to recap,...", "Para resumir,...", "Just to recap, we agreed on three things."], ["Can I jump in here?", "¿Puedo intervenir?", "Sorry, can I jump in here?"], ["Let's circle back to that.", "Retomemos eso luego.", "Good question, let's circle back to that."], ["I'll keep you posted.", "Te mantengo al tanto.", "I'll keep you posted on the progress."], ["Does anyone have any questions?", "¿Alguien tiene preguntas?", "Does anyone have any questions before we finish?"], ["Let's wrap it up.", "Cerremos aquí.", "We're out of time, let's wrap it up."]],
+    drills: [["mc", "Sorry, can I ___ in here?", ["jump", "go", "enter"], 0, "Jump in = intervenir."], ["mc", "Just to ___, the deadline is Friday.", ["recap", "repeat", "return"], 0, ""], ["mc", "I'll keep you ___.", ["posted", "posting", "post"], 0, "Keep someone posted."], ["sub", "We will talk about that later.", "Let's circle back...", ["Let's circle back to that later.", "Let's circle back to that."], ""], ["blocks", "Pasando al siguiente punto, el presupuesto.", ["Moving on to", "the next point,", "the budget"]], ["mc", "We're out of time, let's ___ it up.", ["wrap", "close", "finish"], 0, "Wrap it up."]] },
+  { id: "ch-experience", level: "B1", icon: "📖", title: "Contar experiencias", intro: "Para contar historias, estos bloques ordenan el relato y le dan vida.",
+    items: [["I'll never forget the time...", "Nunca olvidaré la vez...", "I'll never forget the time I got lost in London."], ["Back then,...", "En aquel entonces,...", "Back then, I didn't speak English."], ["The first time I...", "La primera vez que...", "The first time I flew, I was terrified."], ["It turned out that...", "Resultó que...", "It turned out that he was the boss."], ["All of a sudden,...", "De repente,...", "All of a sudden, the lights went out."], ["In the end,...", "Al final,...", "In the end, everything was fine."], ["I've never... before.", "Nunca había... antes.", "I've never seen snow before."], ["To cut a long story short,...", "Para no hacer el cuento largo,...", "To cut a long story short, we missed the flight."]],
+    drills: [["mc", "All of a ___, it started to rain.", ["sudden", "suddenly", "surprise"], 0, ""], ["mc", "It ___ out that the restaurant was closed.", ["turned", "came", "went"], 0, "It turned out that..."], ["mc", "To ___ a long story short, I got the job.", ["cut", "make", "do"], 0, ""], ["sub", "Finally, we arrived at the hotel.", "In the end,...", ["In the end, we arrived at the hotel."], ""], ["blocks", "Nunca olvidaré la vez que conocí a mi esposa.", ["I'll never forget", "the time", "I met my wife"]], ["mc", "___ then, I lived in Cali.", ["Back", "Before", "At"], 0, "Back then = en aquel entonces."]] },
+  { id: "ch-collocations", level: "B1", icon: "🧲", title: "Colocaciones: make, do, take, have", intro: "Muchas combinaciones verbo + sustantivo no se traducen palabra por palabra: hay que aprenderlas como bloque.",
+    items: [["make a decision", "tomar una decisión", "We need to make a decision today."], ["make a mistake", "cometer un error", "Everyone makes mistakes."], ["do homework / do the dishes", "hacer la tarea / lavar los platos", "I'll do the dishes after dinner."], ["do business", "hacer negocios", "We do business with Mexico."], ["take a break", "tomar un descanso", "Let's take a five-minute break."], ["take a picture", "tomar una foto", "Can you take a picture of us?"], ["have a look", "echar un vistazo", "Can you have a look at my code?"], ["pay attention", "prestar atención", "Please pay attention to the details."]],
+    drills: [["mc", "I ___ a mistake in the report.", ["made", "did", "took"], 0, "Make a mistake."], ["mc", "Let's ___ a break.", ["take", "make", "do"], 0, ""], ["mc", "Can you ___ a look at this?", ["have", "make", "do"], 0, "Have/take a look."], ["mc", "I need to ___ my homework.", ["do", "make", "take"], 0, "Do homework."], ["mc", "You have to ___ attention.", ["pay", "put", "make"], 0, "Pay attention."], ["sub", "We need to decide now.", "make a decision", ["We need to make a decision now."], ""], ["blocks", "¿Puedes tomarnos una foto?", ["Can you", "take a picture", "of us?"]]] }
+];
+
 // ===== CONNECTED SPEECH: curso =====
 // examples: [escrito, cómo suena, nota]
 // practice: frases para dictado a velocidad natural
@@ -2273,6 +2315,269 @@ const RESOURCES = {
   ]
 };
 
+// ===== HABLA 1 MINUTO: temas por nivel =====
+// [tema en inglés, ayuda en español, [chunks sugeridos], [preguntas guía]]
+const SPEAK_PROMPTS = {
+  A2: [
+    ["Describe your typical day.", "Describe tu día típico.", ["I usually...", "After that,...", "In the evening,..."], ["What time do you get up?", "What do you do in the afternoon?", "What do you do before bed?"]],
+    ["Talk about your best friend.", "Habla de tu mejor amigo/a.", ["My best friend is...", "We met when...", "I like him/her because..."], ["How did you meet?", "What is he/she like?", "What do you do together?"]],
+    ["Describe your home.", "Describe tu casa o apartamento.", ["I live in...", "There is / There are...", "My favourite room is..."], ["Where is it?", "How many rooms are there?", "What do you like about it?"]],
+    ["Talk about your favourite food.", "Habla de tu comida favorita.", ["My favourite food is...", "I usually eat it...", "It tastes..."], ["What is it?", "Who cooks it?", "When do you eat it?"]],
+    ["Describe your last weekend.", "Cuenta tu último fin de semana.", ["On Saturday, I...", "Then I...", "It was..."], ["Where did you go?", "Who were you with?", "Did you enjoy it?"]],
+    ["Talk about your job or studies.", "Habla de tu trabajo o estudios.", ["I work as...", "Every day I have to...", "The best part is..."], ["What do you do?", "What do you like?", "What is difficult?"]],
+    ["Describe your city.", "Describe tu ciudad.", ["My city is...", "You can...", "The weather is usually..."], ["What is it famous for?", "What can tourists do?", "Do you like living there?"]],
+    ["Talk about a hobby.", "Habla de un pasatiempo.", ["In my free time, I like...", "I started when...", "I do it because..."], ["How often do you do it?", "When did you start?", "Why do you like it?"]]
+  ],
+  B1: [
+    ["Describe a trip you will never forget.", "Describe un viaje que nunca olvidarás.", ["I'll never forget the time...", "All of a sudden,...", "In the end,..."], ["Where did you go?", "What happened?", "How did you feel?"]],
+    ["What are your plans for the next year?", "¿Cuáles son tus planes para el próximo año?", ["I'm planning to...", "I'm thinking of + -ing", "I'm looking forward to..."], ["What do you want to achieve?", "What will be difficult?", "Why is it important to you?"]],
+    ["Is it better to live in a city or in the countryside?", "¿Es mejor vivir en la ciudad o en el campo?", ["If you ask me,...", "On the other hand,...", "I'd rather... than..."], ["What are the advantages of each?", "Where would you prefer to live?", "Why?"]],
+    ["Talk about a person who has influenced you.", "Habla de una persona que te ha influido.", ["The person who... is...", "What I admire most is...", "Thanks to him/her,..."], ["Who is it?", "What did they do?", "How did they change you?"]],
+    ["Describe a problem you solved at work or school.", "Describe un problema que resolviste.", ["The thing is,...", "So I decided to...", "It turned out that..."], ["What was the problem?", "What did you do?", "What did you learn?"]],
+    ["Why are you learning English?", "¿Por qué estás aprendiendo inglés?", ["The main reason is...", "I've been learning for...", "My goal is to..."], ["Since when?", "What is hard for you?", "What will you do with it?"]],
+    ["Talk about a film or series you recommend.", "Recomienda una película o serie.", ["It's about...", "What I liked most was...", "I'd definitely recommend it because..."], ["What is it about?", "Who is in it?", "Why should people watch it?"]],
+    ["Describe a mistake you learned from.", "Describe un error del que aprendiste.", ["Back then,...", "I made a mistake when...", "Since then, I've..."], ["What happened?", "What were the consequences?", "What do you do differently now?"]]
+  ],
+  B2: [
+    ["Should remote work be the norm?", "¿Debería ser normal el trabajo remoto?", ["The way I see it,...", "Having said that,...", "At the end of the day,..."], ["What are the benefits?", "What are the risks?", "What is your conclusion?"]],
+    ["How has technology changed the way we communicate?", "¿Cómo ha cambiado la tecnología la comunicación?", ["When it comes to...", "On top of that,...", "That's why..."], ["What has improved?", "What has got worse?", "Give a personal example."]],
+    ["Describe a decision that changed your life.", "Describe una decisión que cambió tu vida.", ["Looking back,...", "If I hadn't..., I wouldn't...", "It turned out to be..."], ["What did you decide?", "Was it difficult?", "Would you do it again?"]],
+    ["Is social media good for young people?", "¿Son buenas las redes sociales para los jóvenes?", ["There's no doubt that...", "Not to mention...", "I'm not entirely convinced that..."], ["What are the positive effects?", "What are the dangers?", "What should parents do?"]],
+    ["What makes a good team leader?", "¿Qué hace a un buen líder de equipo?", ["First and foremost,...", "What really matters is...", "A good example of this is..."], ["Which qualities are essential?", "Have you had a good boss?", "What did they do well?"]],
+    ["Talk about an achievement you're proud of.", "Habla de un logro del que estás orgulloso.", ["I'm particularly proud of...", "It wasn't easy because...", "What I learned was..."], ["What did you achieve?", "What obstacles did you face?", "Why does it matter to you?"]],
+    ["Should university be free for everyone?", "¿Debería ser gratis la universidad?", ["Supporters argue that...", "Critics point out that...", "On balance,..."], ["What are the arguments for?", "And against?", "What do you think?"]],
+    ["Explain how something works (a tool you use, a recipe, an app).", "Explica cómo funciona algo.", ["Basically,...", "The first step is...", "What I mean is..."], ["What is it?", "What are the steps?", "Why is it useful?"]]
+  ],
+  C1: [
+    ["To what extent should governments regulate artificial intelligence?", "¿Hasta qué punto deben los gobiernos regular la IA?", ["It could be argued that...", "By the same token,...", "That being said,..."], ["What are the risks of no regulation?", "What are the risks of too much?", "Where would you draw the line?"]],
+    ["Is it ever acceptable to lie?", "¿Es aceptable mentir alguna vez?", ["It depends to a large extent on...", "Take, for instance,...", "Ultimately,..."], ["Give an example where it may be justified.", "What are the consequences?", "Where is the limit?"]],
+    ["Describe a turning point in your career or studies.", "Describe un punto de inflexión en tu carrera.", ["In hindsight,...", "It was only when... that...", "Had I known..., I would have..."], ["What happened?", "How did it change your direction?", "What would you tell your past self?"]],
+    ["What role should tradition play in modern society?", "¿Qué papel debe tener la tradición hoy?", ["There's a fine line between...", "Far from being...,", "On the whole,..."], ["Which traditions are worth keeping?", "Which should change?", "Give examples from your country."]],
+    ["Has globalisation done more harm than good?", "¿La globalización ha hecho más daño que bien?", ["While it's true that...,", "Nevertheless,...", "All things considered,..."], ["Who benefits?", "Who loses?", "What is your overall judgement?"]],
+    ["Talk about a skill that schools don't teach but should.", "Una habilidad que las escuelas no enseñan pero deberían.", ["It strikes me as odd that...", "What's more,...", "The upshot is that..."], ["What skill?", "Why is it missing?", "How could it be taught?"]],
+    ["How do you deal with failure?", "¿Cómo manejas el fracaso?", ["I've come to realise that...", "The key, as far as I'm concerned, is...", "It's not so much... as..."], ["Describe a failure.", "How did you react?", "What has changed since?"]],
+    ["Pitch a product or app idea in one minute.", "Presenta una idea de producto en un minuto.", ["Imagine a world where...", "What sets it apart is...", "The bottom line is..."], ["What problem does it solve?", "Who is it for?", "Why now?"]]
+  ],
+  C2: [
+    ["Is objectivity in journalism achievable or merely an ideal?", "¿Es alcanzable la objetividad en el periodismo?", ["One might contend that...", "Be that as it may,...", "It is precisely for this reason that..."], ["What threatens objectivity?", "Is neutrality the same as objectivity?", "What should readers do?"]],
+    ["Does language shape the way we think?", "¿El idioma moldea la forma en que pensamos?", ["There is a compelling case for...", "Conversely,...", "If anything,..."], ["Give an example from Spanish and English.", "Do you feel different in each language?", "What is your conclusion?"]],
+    ["Should we value happiness or meaning more highly?", "¿Valorar más la felicidad o el sentido?", ["To put it another way,...", "Notwithstanding...,", "In the final analysis,..."], ["How do they differ?", "Can you have both?", "Which do you prioritise?"]],
+    ["Critique a common piece of advice everyone gives.", "Critica un consejo que todos repiten.", ["Conventional wisdom has it that...", "This overlooks the fact that...", "A more nuanced view would be..."], ["What is the advice?", "Why is it flawed?", "What would you say instead?"]],
+    ["What will work look like in thirty years?", "¿Cómo será el trabajo dentro de treinta años?", ["It's not inconceivable that...", "Assuming current trends continue,...", "Whatever the case,..."], ["What will disappear?", "What will emerge?", "How should we prepare?"]],
+    ["Defend an unpopular opinion you hold.", "Defiende una opinión impopular que tengas.", ["I'm well aware that this may sound...", "Hear me out:...", "I'd go as far as to say..."], ["What is the opinion?", "Why do people disagree?", "What's your strongest argument?"]]
+  ]
+};
+
+// ===== HISTORIAS GRADUADAS: "Code & Coffee" =====
+// Serie con personajes recurrentes. El nivel sube episodio a episodio.
+// Personajes: Sofía (desarrolladora de Medellín), Daniel (su compañero de piso, chef),
+// Mark (su jefe en Londres), Priya (diseñadora en Toronto), Tom (desarrollador junior).
+const STORY_SERIES = {
+  title: "Code & Coffee",
+  intro: "Sofía es una desarrolladora de Medellín que consigue su primer trabajo remoto con una empresa de Londres. Episodio a episodio la acompañas en su vida, su trabajo y su inglés. El vocabulario y la gramática suben de nivel contigo, y los personajes se repiten, así que cada episodio se entiende mejor que el anterior.",
+  cast: [["Sofía", "Desarrolladora de Medellín, 27 años"], ["Daniel", "Su compañero de piso, chef"], ["Mark", "Su jefe, en Londres"], ["Priya", "Diseñadora del equipo, en Toronto"], ["Tom", "Desarrollador junior, en Manchester"]]
+};
+const STORIES = [
+  { id: "st01", level: "A2", ep: 1, title: "The email",
+    text: `Sofía is twenty-seven years old. She lives in Medellín with her friend Daniel. Daniel is a chef, and he cooks amazing food. Sofía is a software developer, but she works for a small local company and she wants something new.
+
+One Monday morning, she opens her laptop and sees an email from a company in London. The subject says: "Job offer". Sofía reads the email three times. She can't believe it. The company wants her to join their team as a remote developer.
+
+"Daniel! Come here!" she shouts. Daniel runs from the kitchen with a spoon in his hand. "What happened? Are you OK?"
+
+"I got the job! The job in London!"
+
+"That's fantastic! But wait... do you have to move to London?"
+
+"No, it's remote. I can work from here. But there's one problem," Sofía says. "All the meetings are in English. My English is... OK, but not great."
+
+Daniel smiles. "Then you need to practise every day. You can start tonight. I'm making arepas, and you can tell me about the job. In English!"`,
+    q: [["Where does Sofía live?", ["In London", "In Medellín", "In Bogotá"], 1], ["What is Daniel's job?", ["He's a developer", "He's a teacher", "He's a chef"], 2], ["Does Sofía have to move to London?", ["Yes, next month", "No, the job is remote", "She doesn't know"], 1], ["What is Sofía worried about?", ["Her English", "The salary", "Her laptop"], 0]],
+    gloss: [["job offer", "oferta de trabajo"], ["she can't believe it", "no lo puede creer"], ["to join a team", "unirse a un equipo"], ["to shout", "gritar"], ["to move", "mudarse"], ["to practise", "practicar"]] },
+  { id: "st02", level: "A2", ep: 2, title: "The first meeting",
+    text: `It's Sofía's first day. The meeting starts at 9 a.m. in London, so it's 3 a.m. in Medellín... No, wait. Sofía checks again. London is five hours ahead, so the meeting is at 4 a.m. her time? No! The meeting is at 3 p.m. in London, so it's 9 a.m. in Medellín. Perfect.
+
+She makes a big cup of coffee and turns on her camera. There are four people in the call. A man with grey hair says, "Hi everyone, I'm Mark. I'm the team lead. Welcome, Sofía!"
+
+"Thank you. Nice to meet you," Sofía says. Her voice is a little nervous.
+
+"This is Priya, our designer. She lives in Toronto. And this is Tom. He's a junior developer, like you were a few years ago."
+
+Tom waves. "Hi Sofía! Don't worry, everybody is friendly here."
+
+Mark speaks very fast. Sofía doesn't understand everything, but she writes the important words in a notebook: "sprint", "backlog", "deploy on Thursday". After the meeting, she sends a message to Tom: "Sorry, can you explain what a sprint is here? I want to be sure."
+
+Tom answers in two minutes. "Sure! No problem. Asking questions is a good thing."`,
+    q: [["What time is the meeting in Medellín?", ["3 a.m.", "9 a.m.", "3 p.m."], 1], ["Who is Mark?", ["The designer", "The team lead", "A junior developer"], 1], ["Where does Priya live?", ["In Toronto", "In London", "In Manchester"], 0], ["What does Sofía do when she doesn't understand?", ["She says nothing", "She writes words and asks Tom", "She leaves the meeting"], 1]],
+    gloss: [["ahead", "adelante (hora)"], ["to turn on", "encender"], ["team lead", "líder del equipo"], ["to wave", "saludar con la mano"], ["nervous", "nerviosa"], ["to be sure", "estar seguro"]] },
+  { id: "st03", level: "A2", ep: 3, title: "Daniel's restaurant",
+    text: `On Saturday, Sofía doesn't work. She goes with Daniel to the market early in the morning. Daniel wants to open a small restaurant, and he needs fresh fruit and vegetables for a new menu.
+
+"Why do you want a restaurant?" Sofía asks. "You have a good job at the hotel."
+
+"Yes, but I always cook what my boss wants. I want to cook my own food. Colombian food with a modern style."
+
+At the market, a tourist from Canada asks Daniel about a strange fruit. "Excuse me, what is this?"
+
+Daniel looks at Sofía. He doesn't speak much English. Sofía helps him. "It's called lulo. It's a little sour, but it's great for juice."
+
+The tourist buys five lulos and says thank you. Daniel is surprised. "Your English is good, Sofía!"
+
+"It's getting better. I practise every day now. Hey... maybe your restaurant needs a menu in English, too. Lots of tourists come to Medellín."
+
+Daniel thinks about it. "OK. You help me with the English menu, and I cook dinner for you every Friday. Deal?"
+
+"Deal!"`,
+    q: [["Why does Daniel want a restaurant?", ["He doesn't like his boss", "He wants to cook his own food", "He wants more money"], 1], ["What is lulo like, according to Sofía?", ["Sweet", "Sour", "Salty"], 1], ["Who helps the tourist?", ["Daniel", "Sofía", "Another tourist"], 1], ["What is the deal between Sofía and Daniel?", ["English menu for dinners", "Money for coffee", "Help with the laptop"], 0]],
+    gloss: [["fresh", "fresco"], ["sour", "ácido / agrio"], ["juice", "jugo"], ["to get better", "mejorar"], ["deal", "trato"], ["menu", "carta / menú"]] },
+  { id: "st04", level: "B1", ep: 4, title: "A bug on Friday",
+    text: `It was Friday afternoon, and Sofía was looking forward to a quiet weekend. She had finished her tasks, and Daniel was already cooking dinner. Then her phone buzzed. It was a message from Mark: "Urgent. Customers can't log in. Can you have a look?"
+
+Sofía's heart started beating faster. The login page was part of the code she had changed that week. She opened the logs and saw hundreds of errors. While she was reading them, Tom joined the call.
+
+"I think it's my fault," Tom said quietly. "I deployed a small change an hour ago. I didn't run all the tests."
+
+Sofía didn't get angry. She remembered her first job, when she had deleted a whole database by mistake. "Don't worry. Let's find the problem together. Can you share your screen?"
+
+After forty minutes, they found it. A configuration file had the wrong value. Tom fixed it, and Sofía checked everything twice. The customers could log in again.
+
+Later, Mark wrote in the team chat: "Great job, both of you. Next week let's talk about how to stop this happening again. No blame, just better processes."
+
+Sofía closed her laptop and went to the kitchen. "Sorry I'm late. The food smells amazing."
+
+"It was hot an hour ago," Daniel laughed. "But it's still good."`,
+    q: [["What was the problem?", ["The website was slow", "Customers couldn't log in", "The database was deleted"], 1], ["Why did Tom think it was his fault?", ["He deployed without running all the tests", "He deleted the logs", "He didn't come to work"], 0], ["How did Sofía react?", ["She got angry", "She stayed calm and helped", "She called Mark"], 1], ["What did Mark want to do next week?", ["Fire Tom", "Talk about better processes", "Change the login page"], 1]],
+    gloss: [["to look forward to", "esperar con ganas"], ["to buzz", "vibrar (el celular)"], ["fault", "culpa"], ["by mistake", "por error"], ["to share your screen", "compartir pantalla"], ["no blame", "sin culpar a nadie"]] },
+  { id: "st05", level: "B1", ep: 5, title: "Priya's idea",
+    text: `Priya, the designer from Toronto, sent Sofía a private message one morning. "Do you have ten minutes? I've got an idea, but I'm not sure if it's crazy."
+
+They started a video call. Priya explained that many users had complained about the app's checkout process. "It has six steps," she said. "If you ask me, it should have three. People get tired and leave before they pay."
+
+Sofía agreed, but she could see a problem. "I see what you mean, but changing it will take a lot of time. Mark wants us to focus on the new features."
+
+"That's exactly why I need your help," Priya said. "If we show him numbers, he'll listen. Can you find out how many people leave at each step?"
+
+Sofía spent the afternoon working with the data. The result surprised both of them: almost forty percent of users left at step four, where they had to create an account.
+
+The next day they presented the numbers to Mark. He was quiet for a moment. Then he said, "OK. I wasn't expecting that. Let's try a guest checkout without an account. Priya, can you design it? Sofía, can you build it in the next sprint?"
+
+After the meeting, Priya sent a message with three coffee emojis. Sofía answered: "Your crazy idea wasn't so crazy after all."`,
+    q: [["What was Priya's idea about?", ["A new logo", "Making the checkout shorter", "Hiring more designers"], 1], ["Why did Sofía think it could be difficult?", ["Mark wanted to focus on new features", "Priya was in another country", "She didn't like the idea"], 0], ["Where did many users leave the process?", ["At the first step", "At the account creation step", "After paying"], 1], ["What did Mark decide?", ["To wait until next year", "To try a guest checkout", "To remove the checkout"], 1]],
+    gloss: [["to complain", "quejarse"], ["checkout", "proceso de pago"], ["to find out", "averiguar"], ["to leave (an app)", "abandonar"], ["guest checkout", "compra como invitado"], ["after all", "después de todo"]] },
+  { id: "st06", level: "B1", ep: 6, title: "The phone call",
+    text: `Daniel had finally found a place for his restaurant, a small house with a garden near Parque Lleras. The owner lived in Miami and only spoke English, so Daniel asked Sofía to help him with the phone call.
+
+"I'm so nervous," he said. "What if he asks me something I don't understand?"
+
+"Then I'll translate. But try to say the first part yourself. We practised it."
+
+The owner, Mr. Harris, answered after three rings. Daniel took a deep breath. "Good morning, Mr. Harris. My name is Daniel Restrepo. I'm calling about the house on Calle 10. I'd like to rent it for a restaurant."
+
+Sofía gave him a thumbs up. Mr. Harris asked several questions: how long Daniel wanted to rent it for, whether he would make changes to the kitchen, and when he could start. Sofía helped with the difficult parts, but Daniel understood more than he expected.
+
+Then Mr. Harris said something that made them both stop. "The rent is two thousand dollars a month, and I need six months in advance."
+
+Daniel looked at Sofía. It was much more than he had. Sofía whispered, "Ask him if it's negotiable."
+
+"Is the price... negotiable?" Daniel asked.
+
+There was a long silence. "Well," Mr. Harris said, "if you can sign a contract for two years, I could accept three months in advance."
+
+When they hung up, Daniel was smiling. "I can't believe I negotiated in English!"`,
+    q: [["Why did Daniel need help?", ["The owner only spoke English", "He couldn't find the house", "His phone didn't work"], 0], ["What surprised them during the call?", ["The size of the garden", "The price and the advance payment", "The owner's accent"], 1], ["What did Sofía suggest?", ["To hang up", "To ask if the price was negotiable", "To look for another house"], 1], ["What did the owner finally offer?", ["A lower monthly rent", "Three months in advance with a two-year contract", "The house for free"], 1]],
+    gloss: [["owner", "dueño"], ["to rent", "arrendar"], ["to take a deep breath", "respirar hondo"], ["thumbs up", "pulgar arriba"], ["in advance", "por adelantado"], ["to hang up", "colgar"]] },
+  { id: "st07", level: "B2", ep: 7, title: "The promotion",
+    text: `Six months after joining the company, Sofía received an unexpected invitation to a one-to-one meeting with Mark. She spent the morning wondering whether she had done something wrong.
+
+"I'll get straight to the point," Mark said. "We're setting up a new team to rebuild the payments system, and I'd like you to lead it."
+
+Sofía was speechless. Leading a team meant running meetings, giving feedback and, above all, speaking English all day long, often under pressure. "I'm flattered," she managed to say. "Having said that, I'm not sure I'm ready. My English still lets me down sometimes, especially when people speak fast."
+
+Mark nodded. "I appreciate your honesty. But when it comes to communication, what matters most is being clear, not sounding like a native speaker. You ask good questions, you explain things simply and you never pretend to understand when you don't. Those are rare skills."
+
+Sofía asked for a couple of days to think it over. That evening she talked to Daniel, who was exhausted after a long day at the restaurant, which had opened the month before.
+
+"Do you remember the phone call with Mr. Harris?" he said. "I was terrified, and you told me to say the first part myself. Maybe you should take your own advice."
+
+The following Monday, Sofía accepted the offer, on one condition: that the company paid for a public speaking course. Mark agreed immediately.`,
+    q: [["What was the meeting about?", ["A problem with Sofía's work", "An offer to lead a new team", "A salary reduction"], 1], ["Why did Sofía hesitate?", ["She didn't like the payments system", "She worried about her English under pressure", "She wanted to leave the company"], 1], ["According to Mark, what matters most in communication?", ["Sounding like a native speaker", "Being clear", "Speaking fast"], 1], ["What condition did Sofía set?", ["A higher salary", "Working only four days", "A public speaking course"], 2]],
+    gloss: [["to get straight to the point", "ir directo al grano"], ["speechless", "sin palabras"], ["to be flattered", "sentirse halagado"], ["to let someone down", "fallarle a alguien"], ["to pretend", "fingir"], ["to think it over", "pensarlo bien"]] },
+  { id: "st08", level: "B2", ep: 8, title: "Tom's mistake",
+    text: `Leading a team turned out to be harder than Sofía had anticipated, and not because of the technical challenges. Tom, who had joined her team, had been missing deadlines for weeks. His code was good when it arrived, but it rarely arrived on time, and the rest of the team had started to notice.
+
+Sofía kept putting off the conversation. She liked Tom; he had been the first person to make her feel welcome. But at the end of the day, it was her responsibility.
+
+She prepared carefully, using a structure from her public speaking course: describe the situation, explain the impact, and ask questions before drawing conclusions.
+
+"Tom, can I share something I've noticed? The last three tasks were delivered between four and six days late. That's had an impact on Priya, who couldn't start her designs, and on our release date. I'm not here to blame you. I'd really like to understand what's going on."
+
+There was a long pause. Then Tom admitted that his mother had been ill and that he had been travelling to Leeds every weekend to look after her. He hadn't said anything because he was afraid it would sound like an excuse.
+
+"It doesn't sound like an excuse at all," Sofía said. "It sounds like something we should have known about. Let's look at your workload and see what we can move. And please, next time, tell me earlier. I'd much rather adjust a plan than lose a teammate."
+
+Tom looked relieved. A month later, he was meeting every deadline, and he had become the team's most reliable reviewer.`,
+    q: [["What was the problem with Tom's work?", ["His code had many bugs", "He was missing deadlines", "He was rude to Priya"], 1], ["Why did Sofía delay the conversation?", ["She liked Tom and found it difficult", "She was on holiday", "Mark told her to wait"], 0], ["What structure did she use?", ["Situation, impact, questions", "Criticism, warning, deadline", "Praise, criticism, praise"], 0], ["Why hadn't Tom explained his situation?", ["He thought it would sound like an excuse", "He didn't trust Sofía", "He didn't know about the deadlines"], 0]],
+    gloss: [["to anticipate", "prever"], ["deadline", "fecha límite"], ["to put off", "aplazar"], ["to draw conclusions", "sacar conclusiones"], ["workload", "carga de trabajo"], ["relieved", "aliviado"]] },
+  { id: "st09", level: "B2", ep: 9, title: "A night at the restaurant",
+    text: `Daniel's restaurant had been open for almost a year when a food critic from an international travel magazine booked a table without warning. Daniel only found out because the critic's assistant called to confirm the reservation and accidentally mentioned the magazine's name.
+
+Panic spread through the kitchen. Daniel asked Sofía to come and help at the front of the restaurant, since she was the only person he trusted who could chat comfortably in English.
+
+The critic turned out to be a soft-spoken woman called Helen, who asked detailed questions about every dish. Sofía explained that the menu was inspired by Daniel's grandmother's recipes, reinterpreted with modern techniques. When Helen asked why the dessert combined lulo with dark chocolate, Sofía realised she didn't know the answer, so she did what she had learned at work: instead of making something up, she said, "That's a great question. Let me ask the chef."
+
+Daniel came out of the kitchen, wiping his hands on his apron, and answered in slow but confident English. "The lulo is sour, the chocolate is bitter. Together, they are like Medellín: a little intense, but you want more."
+
+Helen laughed and wrote something in her notebook.
+
+Two months later the article was published. The headline read: "A taste of Medellín, one honest answer at a time." Daniel framed it and hung it next to the kitchen door.`,
+    q: [["How did Daniel find out about the critic?", ["She announced it on social media", "Her assistant mentioned the magazine by accident", "Sofía recognised her"], 1], ["Why did Daniel ask Sofía to help?", ["She could speak English comfortably", "She was a professional waitress", "She knew the critic"], 0], ["What did Sofía do when she didn't know an answer?", ["She invented one", "She said she would ask the chef", "She changed the subject"], 1], ["What did Daniel compare the dessert to?", ["His grandmother", "The city of Medellín", "The critic's personality"], 1]],
+    gloss: [["without warning", "sin previo aviso"], ["to spread", "extenderse"], ["soft-spoken", "de voz suave"], ["to make something up", "inventarse algo"], ["apron", "delantal"], ["to frame", "enmarcar"]] },
+  { id: "st10", level: "C1", ep: 10, title: "The conference talk",
+    text: `When the organisers of a developer conference in Lisbon invited Sofía to give a talk on how her team had rebuilt the payments system, her first instinct was to decline. Speaking to a room of three hundred engineers, many of them native speakers, struck her as an entirely different proposition from running a stand-up meeting.
+
+What changed her mind was a remark Priya made over a video call. "You keep assuming the audience wants a flawless accent. What they actually want is someone who's been through the mess and can tell them what went wrong. Nobody else can tell that story."
+
+Sofía spent weeks preparing. Rather than memorising a script, she rehearsed the key transitions until she could deliver them in her sleep, and she deliberately left room for improvisation. She also recorded herself and noticed she tended to rush whenever she felt insecure, so she wrote a single word at the top of each slide note: "Breathe."
+
+On the day, ten minutes into the talk, the projector died. For a few seconds the room was silent. Sofía felt the familiar panic rising, then heard herself say, "Well, I did promise you a talk about systems failing in production." The audience burst out laughing, and by the time a technician had fixed the projector, she had already explained the architecture by drawing it on a whiteboard.
+
+Afterwards, a senior engineer from a major bank approached her. "I've been to dozens of these conferences," he said, "and that was the first time I actually understood how a payments migration works." On the flight back, Sofía caught herself thinking, for the first time, not in Spanish or in English, but simply in ideas.`,
+    q: [["Why did Sofía initially want to decline?", ["She had no time to prepare", "Speaking to a large expert audience intimidated her", "She disagreed with the organisers"], 1], ["What was Priya's main argument?", ["Sofía's accent was already perfect", "The audience values real experience over a perfect accent", "Talks should be memorised word for word"], 1], ["What did Sofía notice when she recorded herself?", ["She spoke too quietly", "She rushed when she felt insecure", "She used too many slides"], 1], ["How did she handle the projector failing?", ["She ended the talk early", "She made a joke and used a whiteboard", "She waited silently for the technician"], 1]],
+    gloss: [["to decline", "rechazar (una invitación)"], ["to strike someone as", "parecerle a alguien"], ["flawless", "impecable"], ["to rehearse", "ensayar"], ["to burst out laughing", "echarse a reír"], ["to catch yourself + -ing", "sorprenderse a uno mismo haciendo algo"]] },
+  { id: "st11", level: "C1", ep: 11, title: "Two offers",
+    text: `The conference talk had consequences Sofía hadn't foreseen. Within a fortnight she had received two job offers. The first came from the bank whose engineer had approached her in Lisbon: a senior architect role in London, with a salary nearly double her current one and a relocation package thrown in. The second, less glamorous but intriguing, came from a small start-up in Medellín that was building software for local farmers to sell directly to restaurants.
+
+On paper, the decision was straightforward. In practice, it was anything but. Moving to London would mean leaving Daniel, whose restaurant was finally thriving, and starting from scratch in a city where she knew no one. On the other hand, it was the kind of opportunity that had seemed unthinkable two years earlier, when she had read that first email three times in disbelief.
+
+She drew up a list of pros and cons, which, predictably, solved nothing. So she turned to the people whose judgement she trusted most. Mark, to her surprise, urged her to consider the start-up seriously. "Big companies will always be there," he said. "Chances to build something from the ground up, with people you care about, are far rarer." Priya took the opposite view: "You've earned the right to be ambitious. Don't talk yourself out of it."
+
+Daniel, characteristically, said very little and cooked her favourite meal. Only at the end of the evening did he add: "Whatever you choose, make sure it's because you want it, not because you're afraid of the alternative."
+
+Sofía went to bed that night realising that, for the first time, the language she would work in was no longer the deciding factor. The decision had become, quite simply, a question of who she wanted to be.`,
+    q: [["What did the start-up do?", ["It built banking software", "It connected local farmers with restaurants", "It organised conferences"], 1], ["What was Mark's advice?", ["To accept the bank's offer", "To seriously consider the start-up", "To stay in her current job"], 1], ["What was Priya's view?", ["Sofía should be ambitious", "Sofía should stay in Medellín", "Sofía should start her own company"], 0], ["What did Daniel emphasise?", ["The salary", "Choosing out of desire rather than fear", "The restaurant's needs"], 1]],
+    gloss: [["to foresee", "prever"], ["a fortnight", "dos semanas"], ["relocation package", "paquete de reubicación"], ["to thrive", "prosperar"], ["from scratch", "desde cero"], ["to talk yourself out of something", "convencerse de no hacer algo"]] },
+  { id: "st12", level: "C1", ep: 12, title: "Full circle",
+    text: `A year later, on a Monday morning not unlike the one on which she had first opened that email from London, Sofía was sitting in a cramped office above a bakery in Envigado, interviewing candidates for the start-up she had chosen to join as its chief technology officer.
+
+The last candidate of the day was a twenty-three-year-old developer called Valentina, whose technical test had been outstanding. Midway through the interview, Sofía switched to English, as the company now worked with clients in Canada and the United States. Valentina's confidence visibly evaporated. She stumbled over her words, apologised twice, and finally admitted, in Spanish, that her English was "more or less A2".
+
+Sofía put down her pen. "Can I tell you something? Four years ago, I was exactly where you are now. I used to write down every word I didn't understand in meetings and look them up at night. I recorded myself, I made a fool of myself on phone calls, and I once told a whole meeting I was 'constipated' when I meant I had a cold."
+
+Valentina laughed in spite of herself.
+
+"Your English will improve if you use it every single day, even when it's uncomfortable. Especially when it's uncomfortable. The code you wrote, on the other hand, is something I can't teach. We'd like to offer you the job."
+
+That evening, Sofía walked to Daniel's restaurant, where Mark and Priya, visiting Colombia for the first time, were waiting at a table in the garden. Tom had joined them by video, the laptop propped against a bottle of wine. Daniel came out with a dessert that wasn't on the menu: lulo and dark chocolate.
+
+"To Code & Coffee," Priya said, raising her glass.
+
+"And to asking questions," Tom added from the screen.
+
+Sofía raised hers and said nothing for a moment. Then, in an English that was no longer something she performed but simply the way she spoke, she said, "To the first email. And to everyone who made me answer it."`,
+    q: [["What was Sofía's role at the start-up?", ["Junior developer", "Chief technology officer", "Designer"], 1], ["Why did Valentina lose confidence?", ["Her technical test went badly", "The interview switched to English", "Sofía criticised her code"], 1], ["What point was Sofía making with her own story?", ["English can't be learned as an adult", "Daily, uncomfortable practice makes you improve", "Technical skills are less important than English"], 1], ["What did Daniel serve that evening?", ["Arepas", "The lulo and chocolate dessert", "A new dish from Canada"], 1]],
+    gloss: [["cramped", "estrecho / apretado"], ["outstanding", "sobresaliente"], ["to evaporate", "evaporarse / desaparecer"], ["to stumble over your words", "trabarse al hablar"], ["to make a fool of yourself", "hacer el ridículo"], ["in spite of herself", "sin poder evitarlo"]] }
+];
+
 // ===== VOCABULARIO ADICIONAL POR NIVEL =====
 VOCAB.A2 += `
 # Verbos esenciales
@@ -2584,10 +2889,10 @@ const defaultState = () => ({
   xp: 0, streak: 0, lastDay: null, history: {},
   cards: {}, custom: [], lessons: {}, exams: {}, mistakes: [],
   newToday: { day: null, n: 0, r: 0 },
-  done: { reading: {}, listening: {}, roleplay: {}, writing: {} },
+  done: { reading: {}, listening: {}, roleplay: {}, writing: {}, story: {} },
   skills: { vocab: [0, 0], grammar: [0, 0], listening: [0, 0], reading: [0, 0], speaking: [0, 0], writing: [0, 0] },
   daily: { day: null, tasks: {} }, cando: {},
-  exStats: {}, typeStats: {}, mocks: {}, immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
+  exStats: {}, typeStats: {}, mocks: {}, chunks: {}, retell: [], speak: [], immersion: [], texts: [], pron: {}, immPhase: 0, immCrit: {}, immDaily: null,
   settings: { rate: 0.95, newPerDay: 10, retention: 0.9, mmEmail: "" }, updatedAt: 0
 });
 let S = defaultState();
@@ -2596,6 +2901,7 @@ function migrate(x) {
   o.done = Object.assign(defaultState().done, o.done || {});
   o.skills = Object.assign(defaultState().skills, o.skills || {});
   o.settings = Object.assign(defaultState().settings, o.settings || {});
+  ["retell", "speak"].forEach((k) => { if (!Array.isArray(o[k])) o[k] = []; }); if (!o.chunks) o.chunks = {};
   if (!o.newToday || o.newToday.r === undefined) o.newToday = { day: null, n: 0, r: 0 };
   if (!o.v || o.v < 2) { o.v = 2; if (Object.keys(o.lessons).length || Object.keys(o.cards).length) o.placementDone = true; }
   return o;
@@ -2854,23 +3160,23 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
-const levelOK = (c) => c.level === "MIS" || (c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
+const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
   const now = Date.now();
   if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0, i: 0 };
-  const due = [], fresh = [], rev = [], irrNew = [], devFresh = [];
+  const due = [], fresh = [], rev = [], irrNew = [], devFresh = [], chFresh = [];
   IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level)).forEach((v) => { const st = S.cards[v.id]; if (st) { if (st.due <= now) due.push({ c: v, dir: "irr" }); } else irrNew.push({ c: v, dir: "irr" }); });
   allCards().filter(levelOK).forEach((c) => {
     const f = S.cards[c.id], r = S.cards[c.id + ":r"];
-    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else (c.level === "DEV" ? devFresh : fresh).push({ c, dir: "f" });
-    if (r) { if (r.due <= now) due.push({ c, dir: "r" }); } else if (f && f.reps >= 2) rev.push({ c, dir: "r" });
+    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else (c.chunk ? chFresh : c.level === "DEV" ? devFresh : fresh).push({ c, dir: "f" });
+    if (r) { if (r.due <= now) due.push({ c, dir: "r" }); } else if (f && f.reps >= 2 && !c.chunk) rev.push({ c, dir: "r" });
   });
   fresh.sort((a, b) => (b.c.level === "MIS") - (a.c.level === "MIS") || (b.c.level === S.level) - (a.c.level === S.level));
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
-  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0)), roomD = Math.max(0, 5 - (S.newToday.d || 0));
-  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI), devFresh.slice(0, roomD)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
+  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0)), roomD = Math.max(0, 5 - (S.newToday.d || 0)), roomC = Math.max(0, 3 - (S.newToday.c || 0));
+  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI), devFresh.slice(0, roomD), chFresh.slice(0, roomC)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
 }
 // FSRS-4.5 (parámetros por defecto)
 const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
@@ -2896,7 +3202,7 @@ function fsrsNext(prev, G, now) {
 const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
 function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
 function grade(key, q) {
-  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else if (key.startsWith("DEV-")) S.newToday.d = (S.newToday.d || 0) + 1; else S.newToday.n++; }
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else if (key.startsWith("DEV-")) S.newToday.d = (S.newToday.d || 0) + 1; else if (key.startsWith("CH-")) S.newToday.c = (S.newToday.c || 0) + 1; else S.newToday.n++; }
   S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
   skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
@@ -2913,7 +3219,7 @@ const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
-const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["ti", "💻", "Inglés TI"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
+const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["chunks", "🧩", "Chunks"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["ti", "💻", "Inglés TI"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
 let view = "inicio", sub = null;
 function route() { let h = (location.hash || "").slice(1); if (h === "errores") { h = "progreso"; pTab = "errores"; } view = VIEWS.some((v) => v[0] === h) ? h : "inicio"; sub = null; stopSpeech(); closeLookup(); render(); }
 function go(v) { if (location.hash.slice(1) === v) route(); else location.hash = v; }
@@ -2943,7 +3249,7 @@ function confirmBox(el, msg, yes) {
 // ---------- Motor de ejercicios ----------
 function exerciseRunner(box, items, o) {
   let i = 0, correct = 0, answered = false; const wrongs = [];
-  const typed = (t) => ["fill", "tr", "fix"].includes(t);
+  const typed = (t) => ["fill", "tr", "fix", "sub"].includes(t);
   function show() {
     const ex = items[i];
     if (!ex) return o.onFinish(correct, items.length, wrongs);
@@ -2953,6 +3259,8 @@ function exerciseRunner(box, items, o) {
     if (t === "fill") body = `<p class="q">${esc(ex[1])}</p><form class="ans row"><input id="ai" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra que falta"><button class="btn">Comprobar</button></form>`;
     if (t === "tr") body = `<p class="label">Traduce al inglés</p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write it in English…"></textarea><button class="btn wide">Comprobar</button></form>`;
     if (t === "fix") body = `<p class="label">Esta frase tiene un error. Corrígela.</p><p class="q wrongq">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false">${esc(ex[1])}</textarea><button class="btn wide">Comprobar</button></form>`;
+    if (t === "sub") body = `<p class="label">Transforma la frase usando: <b>${esc(ex[4])}</b></p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write the new sentence…"></textarea><button class="btn wide">Comprobar</button></form>`;
+    if (t === "blocks") body = `<p class="label">Arma la frase con los bloques</p><p class="q">${esc(ex[1])}</p><div class="built" id="built"></div><div class="bank">${shuffle(ex[2].slice()).map((w) => `<button class="w chunkw">${esc(w)}</button>`).join("")}</div><button class="btn" id="oc">Comprobar</button>`;
     if (t === "ord") body = `<p class="label">Ordena las palabras</p><p class="q">${esc(ex[1])}</p><div class="built" id="built"></div><div class="bank">${shuffle(ex[2].split(" ")).map((w) => `<button class="w">${esc(w)}</button>`).join("")}</div><button class="btn" id="oc">Comprobar</button>`;
     box.innerHTML = `<div class="row between"><div><h1>${esc(o.title)}</h1>${o.subtitle ? `<div class="muted small">${esc(o.subtitle)}</div>` : ""}</div>${o.onExit ? `<button class="btn ghost small" id="exit">Salir</button>` : ""}</div>
       <div class="bar"><i style="width:${(i / items.length) * 100}%"></i></div><div class="muted small">${i + 1} / ${items.length}</div>
@@ -2969,11 +3277,11 @@ function exerciseRunner(box, items, o) {
         finish(ok, ex[2][0], t === "fill" ? ex[3] : ex[3], v, close);
       };
     }
-    if (t === "ord") {
+    if (t === "ord" || t === "blocks") {
       const built = [];
       const draw = () => { $("#built").innerHTML = built.map((b, k) => `<button class="w" data-r="${k}">${esc(b.textContent)}</button>`).join(""); $$("#built [data-r]", box).forEach((x) => x.onclick = () => { if (answered) return; const [rm] = built.splice(+x.dataset.r, 1); rm.classList.remove("used"); draw(); }); };
       $$(".bank .w", box).forEach((b) => b.onclick = () => { if (answered || b.classList.contains("used")) return; b.classList.add("used"); built.push(b); draw(); });
-      $("#oc").onclick = () => { if (answered || !built.length) return; const v = built.map((b) => b.textContent).join(" "); finish(norm(v) === norm(ex[2]), ex[2], "", v); };
+      $("#oc").onclick = () => { if (answered || !built.length) return; const v = built.map((b) => b.textContent).join(" "); const want = t === "blocks" ? ex[2].join(" ") : ex[2]; finish(norm(v) === norm(want), want, "", v); };
     }
   }
   function choose(k) {
@@ -2987,8 +3295,8 @@ function exerciseRunner(box, items, o) {
     recordEx(ex, ok);
     const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)/g, "").trim() : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
-      ${!ok && ex[0] !== "mc" && ex[0] !== "ord" && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
-      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
+      ${!ok && !["mc", "ord", "blocks"].includes(ex[0]) && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
+      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill", "sub"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
       <button class="btn wide" id="nx">Continuar ⏎</button>`;
     if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); recordEx(ex, true, true); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
     $("#nx").onclick = next; $("#nx").focus();
@@ -3013,7 +3321,7 @@ function comprehension(box, item, o) {
       ${item.gloss && !o.exam ? `<details class="card"><summary><b>Glosario</b> (${item.gloss.length})</summary><div class="list">${item.gloss.map(([en, es]) => `<div class="li"><div><b>${esc(en)}</b> — ${esc(es)}</div>${speakBtn(en)}<button class="btn ghost small" data-add="${esc(en)}|${esc(es)}">+ Tarjeta</button></div>`).join("")}</div></details>` : ""}` : ""}
     <h2>Preguntas</h2>${item.q.map((q, k) => `<div class="card excard"><p class="q">${k + 1}. ${esc(q[0])}</p><div class="opts">${q[1].map((x, j) => `<button class="opt ${ans[k] !== undefined ? (j === q[2] ? "right" : j === ans[k] ? "wrong" : "") : ""}" data-q="${k}" data-j="${j}">${esc(x)}</button>`).join("")}</div></div>`).join("")}
     ${isL && (shownT || all) && !o.exam ? `<details class="card" ${all ? "open" : ""}><summary><b>Transcripción</b></summary>${item.lines.map(([sp, t], i) => `<div class="line" data-line="${i}"><p><b>${esc(sp)}:</b> ${esc(t)} ${speakBtn(t)}</p>${csBox(t, false)}</div>`).join("")}</details>` : ""}
-    ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div>` : ""}`;
+    ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><div class="row center">${!o.exam ? `<button class="btn ghost" id="retell">🗣️ Cuéntalo con tus palabras</button>` : ""}<button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div></div>` : ""}`;
     if (o.onExit) $("#exit").onclick = () => { stopSpeech(); o.onExit(); };
     if (isL) {
       const lines = item.lines.map(([sp, t]) => [sp.charCodeAt(0) - 65, t]);
@@ -3022,6 +3330,7 @@ function comprehension(box, item, o) {
     $$("[data-q]", box).forEach((b) => b.onclick = () => { const k = +b.dataset.q; if (ans[k] !== undefined) return; ans[k] = +b.dataset.j; const y = window.scrollY; draw(); window.scrollTo(0, y); });
     $$("[data-add]", box).forEach((b) => b.onclick = () => { const [en, es] = b.dataset.add.split("|"); addCustomCard(en, es, ""); b.textContent = "✓"; b.disabled = true; });
     if ($("#done")) $("#done").onclick = () => { stopSpeech(); o.onFinish(c, item.q.length); };
+    if ($("#retell")) $("#retell").onclick = () => { stopSpeech(); retellPage(box, item, () => { draw(); window.scrollTo(0, 0); }); };
   }
   draw();
 }
@@ -3301,6 +3610,8 @@ RENDER.escuchar = (m) => {
 let rTab = "lecturas";
 RENDER.leer = (m) => {
   if (sub && sub.text) return readerPage(m, sub.text);
+  if (sub && sub.story) return comprehension(m, sub.story, { kind: "reading", subtitle: `${STORY_SERIES.title} · Episodio ${sub.story.ep} · ${sub.story.level}`, onExit: () => { sub = null; render(); }, onFinish: (c, n) => { S.done.story[sub.story.id] = Math.max(S.done.story[sub.story.id] || 0, c / n); skill("reading", c, n); if (extraTask().go === "leer") markDaily("extra"); addXP(c * 5); sub = null; render(); } });
+  if (rTab === "historias") { m.innerHTML = `<h1>Leer</h1>${readTabs()}<div id="rbody"></div>`; bindReadTabs(m); return storiesList($("#rbody")); }
   if (rTab === "lector" && !sub) { m.innerHTML = `<h1>Leer</h1>${readTabs()}<div id="rbody"></div>`; bindReadTabs(m); return myTextsView($("#rbody"), m); }
   if (sub && sub.item) return comprehension(m, sub.item, { kind: "reading", onExit: () => { sub = null; render(); }, onFinish: (c, n) => { S.done.reading[sub.item.id] = Math.max(S.done.reading[sub.item.id] || 0, c / n); skill("reading", c, n); if (extraTask().go === "leer") markDaily("extra"); addXP(c * 5); sub = null; render(); } });
   const list = ALL_READINGS.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
@@ -3310,7 +3621,7 @@ RENDER.leer = (m) => {
   $$("[data-i]", m).forEach((b) => b.onclick = () => { sub = { item: ALL_READINGS.find((x) => x.id === b.dataset.i) }; render(); });
   bindReadTabs(m);
 };
-const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lecturas" ? "on" : ""}" data-rt="lecturas">Lecturas del curso</button><button class="tab ${rTab === "lector" ? "on" : ""}" data-rt="lector">Mi lector (con diccionario)</button></div>`;
+const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lecturas" ? "on" : ""}" data-rt="lecturas">Lecturas del curso</button><button class="tab ${rTab === "historias" ? "on" : ""}" data-rt="historias">📚 Historias</button><button class="tab ${rTab === "lector" ? "on" : ""}" data-rt="lector">Mi lector (con diccionario)</button></div>`;
 function bindReadTabs(m) { $$("[data-rt]", m).forEach((b) => b.onclick = () => { rTab = b.dataset.rt; render(); }); }
 
 // ---------- HABLAR ----------
@@ -3328,11 +3639,14 @@ RENDER.hablar = (m) => {
   if (sub && sub.rp) return roleplay(m, sub.rp);
   if (sub && sub.pron) return pronPage(m, sub.pron);
   if (sub && sub.cs) return csPage(m, sub.cs);
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button></div><div id="hbody"></div>`;
+  if (sub && sub.retell) return retellPage(m, sub.retell, () => { sub = null; render(); });
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
   if (hTab === "sonidos") return pronList(box);
   if (hTab === "cs") return csList(box);
+  if (hTab === "min") return speakMinute(box);
+  if (hTab === "retell") return retellList(box);
   if (hTab === "conversa") {
     const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;
@@ -3503,7 +3817,7 @@ RENDER.ajustes = (m) => {
 
 // ---------- Grabadora (comparar tu voz con el modelo) ----------
 let recState = { rec: null, chunks: [], blobs: {}, active: null, stream: null };
-const recorderHTML = (k) => `<span class="recbox"><button class="icon-btn" data-rec="${k}" title="Grabarme">⏺️ Grabar</button><button class="icon-btn" data-play="${k}" ${recState.blobs[k] ? "" : "hidden"} title="Escuchar mi voz">▶️ Mi voz</button></span>`;
+const recorderHTML = (k, max) => `<span class="recbox"><button class="icon-btn" data-rec="${k}" ${max ? `data-max="${max}"` : ""} title="Grabarme">⏺️ Grabar</button><button class="icon-btn" data-play="${k}" ${recState.blobs[k] ? "" : "hidden"} title="Escuchar mi voz">▶️ Mi voz</button></span>`;
 function bindRecorders(box) {
   $$("[data-rec]", box).forEach((b) => b.onclick = async () => {
     const k = b.dataset.rec;
@@ -3515,7 +3829,7 @@ function bindRecorders(box) {
       r.ondataavailable = (e) => recState.chunks.push(e.data);
       r.onstop = () => { recState.blobs[k] = new Blob(recState.chunks, { type: r.mimeType || "audio/webm" }); recState.rec = null; recState.active = null; b.textContent = "⏺️ Grabar"; b.classList.remove("on"); const p = $(`[data-play="${CSS.escape(k)}"]`, box); if (p) { p.hidden = false; } playBlob(k); };
       r.start(); b.textContent = "⏹️ Detener"; b.classList.add("on");
-      setTimeout(() => { if (recState.active === k && recState.rec) recState.rec.stop(); }, 15000);
+      setTimeout(() => { if (recState.active === k && recState.rec) recState.rec.stop(); }, (+b.dataset.max || 15) * 1000);
     } catch (e) { toast("No se pudo usar el micrófono para grabar (funciona en Chrome desde tu versión publicada)"); }
   });
   $$("[data-play]", box).forEach((b) => b.onclick = () => playBlob(b.dataset.play));
@@ -4171,6 +4485,187 @@ function devLessonPage(m, l) {
     skill("grammar", c, n); addXP(c * 5);
     m.innerHTML = `<div class="card center"><div class="big">${c / n >= 0.7 ? "🏆" : "💪"}</div><h2>${c} de ${n}</h2><p>${c / n >= 0.7 ? "¡Muy bien! Usa estas frases en tu próxima reunión." : "Repasa las frases clave y vuelve a intentarlo."}</p><div class="row center"><button class="btn" id="again">Repetir</button><button class="btn ghost" id="back2">Volver</button></div></div>`;
     $("#again").onclick = () => devLessonPage(m, l); $("#back2").onclick = () => { sub = null; render(); };
+  } });
+}
+
+// ===== CHUNKS, HISTORIAS, RETELLING Y HABLA 1 MINUTO =====
+
+// ---------- Tarjetas de chunks (3 nuevas por día) ----------
+const CHUNK_CARDS = CHUNKS.flatMap((g) => g.items.map((it, k) => ({ id: "CH-" + g.id.slice(3) + "-" + k, level: g.level, topic: g.title, en: it[0], es: it[1], ex: it[2], chunk: true })));
+const chunkCore = (c) => c.replace(/\.\.\.|…|\?|\+.*$|\(.*?\)/g, "").split("/")[0].trim();
+
+// Convierte los ejercicios del contenido al formato del motor de ejercicios
+function chunkDrills(g) {
+  const conv = g.drills.map((d) => d[0] === "sub" ? ["sub", d[1], d[3], d[4] || "", d[2]] : d[0] === "blocks" ? ["blocks", d[1], d[2]] : d);
+  const meaning = shuffle(g.items.slice()).slice(0, 3).map((it) => {
+    const others = shuffle(g.items.filter((x) => x !== it)).slice(0, 2).map((x) => x[1]);
+    const opts = shuffle([it[1], ...others]);
+    return ["mc", `¿Qué significa «${it[0]}»?`, opts, opts.indexOf(it[1]), it[2]];
+  });
+  return shuffle(conv.concat(meaning));
+}
+
+// ---------- Vista Chunks ----------
+RENDER.chunks = (m) => {
+  if (sub && sub.chunkRun) {
+    const g = sub.chunkRun;
+    return exerciseRunner(m, sub.items, { title: g.title, subtitle: "Práctica de chunks", onExit: () => { sub = { chunk: g }; render(); },
+      onFinish: (c, n, wrongs) => {
+        const sc = c / n; S.chunks[g.id] = Math.max(S.chunks[g.id] || 0, sc); skill("grammar", c, n); addXP(c * 3); save();
+        m.innerHTML = `<div class="card center"><div class="big">🧩</div><h2>${c} de ${n} correctas</h2><p class="muted">Los chunks se aprenden usándolos. Ahora intenta decir en voz alta 3 frases tuyas con los bloques de este grupo.</p>${wrongs.length ? `<div class="list left">${wrongs.map((w) => `<div class="li"><div><b>${esc(w.answer)}</b><div class="small muted">${esc(w.q)}</div></div>${speakBtn(w.answer)}</div>`).join("")}</div>` : ""}<div class="row center"><button class="btn" id="again">Repetir</button><button class="btn ghost" id="back">Volver al grupo</button></div></div>`;
+        $("#again").onclick = () => { sub = { chunkRun: g, items: chunkDrills(g) }; render(); };
+        $("#back").onclick = () => { sub = { chunk: g }; render(); };
+      } });
+  }
+  if (sub && sub.chunk) return chunkPage(m, sub.chunk);
+  const list = CHUNKS.slice().sort((a, b) => lvlIdx(a.level) - lvlIdx(b.level));
+  const learned = CHUNK_CARDS.filter((c) => S.cards[c.id] && S.cards[c.id].reps >= 2).length;
+  m.innerHTML = `<h1>Chunks</h1>
+  <div class="card hero"><p>Un <b>chunk</b> es un bloque de palabras que los nativos usan como si fuera una sola pieza: <i>“If you ask me”</i>, <i>“I'm looking forward to”</i>, <i>“make a decision”</i>. Aprenderlos enteros te da fluidez, porque no construyes la frase palabra por palabra.</p>
+  <p class="small muted">Cómo practicar: 1) escucha y repite cada chunk con su ejemplo, 2) haz la práctica (plantillas, sustitución y bloques), 3) úsalos en <b>Habla 1 minuto</b>.</p>
+  <label class="cando"><input type="checkbox" id="chcards" ${S.settings.chunkCards === false ? "" : "checked"}> <span><b>Incluir chunks en mis tarjetas diarias</b> (3 nuevos por día, de tu nivel o inferior)</span></label>
+  <div class="bar"><i style="width:${pct(learned, CHUNK_CARDS.length)}%"></i></div><div class="small muted">${learned} de ${CHUNK_CARDS.length} chunks consolidados en tarjetas</div></div>
+  <div class="lessons">${list.map((g) => { const ok = lvlIdx(g.level) <= lvlIdx(S.level), b = S.chunks[g.id]; return `<button class="lesson ${ok ? "" : "dim"}" data-g="${g.id}"><span class="num">${g.level}</span><span><b>${g.icon} ${esc(g.title)}</b><small>${g.items.length} chunks · ${g.drills.length + 3} ejercicios${b !== undefined ? ` · Mejor: ${Math.round(b * 100)}%` : ""}${ok ? "" : " · Por encima de tu nivel"}</small></span><span class="st">${b >= 0.8 ? "✅" : ""}</span></button>`; }).join("")}</div>`;
+  $("#chcards").onchange = (e) => { S.settings.chunkCards = e.target.checked; vq = null; save(); };
+  $$("[data-g]", m).forEach((b) => b.onclick = () => { sub = { chunk: CHUNKS.find((g) => g.id === b.dataset.g) }; render(); });
+};
+function chunkPage(m, g) {
+  m.innerHTML = `<div class="row between"><div><h1>${g.icon} ${esc(g.title)}</h1><div class="muted small">Nivel ${g.level}</div></div><button class="btn ghost small" id="exit">Volver</button></div>
+  <div class="card note">${esc(g.intro)}</div>
+  <div class="row"><button class="btn" id="practice">⚡ Practicar (${g.drills.length + 3})</button><button class="btn ghost" id="playall">🔊 Escuchar todos</button></div>
+  <div class="list">${g.items.map(([en, es, ex]) => `<div class="card chunkcard"><div class="row between"><div><b class="chunk">${esc(en)}</b> <span class="muted">— ${esc(es)}</span></div>${speakBtn(en)}</div><p class="exs">“${esc(ex)}” ${speakBtn(ex)} <button class="icon-btn" data-speak="${esc(ex)}" data-rate="0.7">🐢</button></p>${csBox(ex, false)}</div>`).join("")}</div>
+  <div class="card"><h2>Reto</h2><p>Elige 3 chunks de esta lista y di en voz alta una frase <b>sobre tu vida</b> con cada uno. Grábate y escúchate.</p><div class="center">${recorderHTML("chunk-" + g.id, 60)}</div></div>`;
+  $("#exit").onclick = () => { stopSpeech(); sub = null; render(); };
+  $("#practice").onclick = () => { sub = { chunkRun: g, items: chunkDrills(g) }; render(); };
+  $("#playall").onclick = () => speakLines(g.items.flatMap(([en, , ex]) => [[0, en], [0, ex]]));
+  bindRecorders(m);
+}
+
+// ---------- Historias graduadas ----------
+function storiesList(box) {
+  const done = STORIES.filter((s) => S.done.story[s.id] !== undefined).length;
+  box.innerHTML = `<div class="card hero"><h2>📚 ${esc(STORY_SERIES.title)}</h2><p>${esc(STORY_SERIES.intro)}</p>
+    <details><summary><b>Personajes</b></summary><div class="list">${STORY_SERIES.cast.map(([n, d]) => `<div class="li"><div><b>${esc(n)}</b> — ${esc(d)}</div></div>`).join("")}</div></details>
+    <div class="bar"><i style="width:${pct(done, STORIES.length)}%"></i></div><div class="small muted">${done} de ${STORIES.length} episodios leídos</div>
+    <p class="small muted">Consejo: escucha el episodio primero sin leer, luego léelo, responde las preguntas y termina con <b>“Cuéntalo con tus palabras”</b>.</p></div>
+  <div class="lessons">${STORIES.map((s) => { const ok = S.unlocked.includes(s.level), b = S.done.story[s.id]; return `<button class="lesson ${ok ? "" : "dim"}" data-s="${s.id}" ${ok ? "" : "disabled"}><span class="num">${s.ep}</span><span><b>${esc(s.title)}</b><small>${s.level} · ~${s.text.split(/\s+/).length} palabras${b !== undefined ? ` · Mejor: ${Math.round(b * 100)}%` : ""}${ok ? "" : " · 🔒 Se desbloquea en " + s.level}</small></span><span class="st">${b >= 0.75 ? "✅" : ""}</span></button>`; }).join("")}</div>`;
+  $$("[data-s]", box).forEach((b) => b.onclick = () => { sub = { story: STORIES.find((s) => s.id === b.dataset.s) }; render(); });
+}
+
+// ---------- Sesión de habla cronometrada (grabación + transcripción) ----------
+function timedSpeak(box, o) {
+  // o: { key, seconds, onDone(text, secs) }
+  let left = o.seconds, timer = null, text = "", running = false, started = 0;
+  box.innerHTML = `<div class="card center"><div class="timer" id="tm">${fmtSec(left)}</div><p class="muted small" id="tmh">Cuando toques “Empezar” se grabará tu voz${dictApi ? " y se transcribirá lo que digas" : ""}. Habla sin parar: si te bloqueas, usa una muletilla (<i>Let me think…</i>) y sigue.</p>
+    <div class="row center"><button class="btn big-btn" id="go">▶️ Empezar</button><button class="btn ghost" id="end" hidden>⏹️ Terminar</button></div>
+    <div class="hidden-rec" hidden>${recorderHTML(o.key, o.seconds + 2)}</div><p class="live" id="live"></p></div>`;
+  bindRecorders(box);
+  const recBtn = $("[data-rec]", box);
+  const stopAll = () => {
+    if (!running) return; running = false; clearInterval(timer);
+    if (recState.active === o.key && recState.rec) recState.rec.stop();
+    if (dictApi) dictApi.stop().catch(() => {});
+    const secs = Math.round((Date.now() - started) / 1000);
+    $("#end").hidden = true; $("#tmh").textContent = "✓ Terminado. Revisa tu resultado abajo."; $("#tm").classList.remove("warn");
+    setTimeout(() => o.onDone(text.trim(), secs), dictApi ? 900 : 100);
+  };
+  $("#go").onclick = () => {
+    running = true; started = Date.now(); $("#go").hidden = true; $("#end").hidden = false; $("#tmh").textContent = "Grabando… habla en inglés.";
+    try { recBtn.click(); } catch (e) {}
+    if (dictApi) {
+      dictH.partial = ({ text: t }) => { const l = $("#live"); if (l) l.textContent = (text + " " + t).trim(); };
+      dictH.final = ({ text: t }) => { text = (text + " " + t).trim(); const l = $("#live"); if (l) l.textContent = text; };
+      dictH.state = ({ state }) => { if (state !== "listening" && running) dictApi.start().catch(() => {}); };
+      dictApi.start().catch(() => {});
+    }
+    timer = setInterval(() => { left--; const t = $("#tm"); if (t) { t.textContent = fmtSec(Math.max(0, left)); t.classList.toggle("warn", left <= 10); } if (left <= 0) stopAll(); }, 1000);
+  };
+  $("#end").onclick = stopAll;
+}
+const fmtSec = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+const speakSeconds = (lv) => ({ A2: 60, B1: 90, B2: 120, C1: 150, C2: 180 }[lv] || 90);
+
+function rubricHTML(items) { return `<div class="list">${items.map((r, k) => `<label class="cando"><input type="checkbox" data-rb="${k}"> <span>${r}</span></label>`).join("")}</div>`; }
+const readRubric = (box) => $$("[data-rb]", box).filter((x) => x.checked).length;
+
+// ---------- Retelling ----------
+const retellText = (item) => item.text || (item.lines || []).map(([sp, t]) => `${sp}: ${t}`).join("\n");
+function retellPoints(item) { return (item.q || []).map((q) => `${q[0]} → ${q[1][q[2]]}`); }
+function retellList(box) {
+  const pool = STORIES.map((s) => ({ ...s, kind: "📚 Historia" })).concat(ALL_READINGS.map((r) => ({ ...r, kind: "📖 Lectura" })), ALL_LISTENING.map((l) => ({ ...l, kind: "🎧 Audio" }))).filter((x) => S.unlocked.includes(x.level));
+  pool.sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
+  const log = S.retell.slice(0, 5);
+  box.innerHTML = `<div class="card note"><p><b>Retelling</b> = contar con tus palabras algo que acabas de leer o escuchar. Es una de las técnicas de <b>output forzado</b> más eficaces: te obliga a recuperar vocabulario, ordenar ideas y usar el pasado.</p><p class="small muted">También lo encuentras al final de cada lectura, historia o audio con el botón “Cuéntalo con tus palabras”.</p></div>
+  ${log.length ? `<h2>Últimos retellings</h2><div class="list">${log.map((r) => `<div class="li"><div><b>${esc(r.title)}</b><div class="small muted">${new Date(r.at).toLocaleDateString()} · ${r.words} palabras · ${r.points}/${r.total} ideas · rúbrica ${r.rubric}/5</div></div></div>`).join("")}</div>` : ""}
+  <h2>Elige un texto</h2><div class="lessons">${pool.slice(0, 40).map((x) => `<button class="lesson" data-r="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${x.kind}${S.retell.some((r) => r.id === x.id) ? " · ✓ hecho" : ""}</small></span></button>`).join("")}</div>`;
+  $$("[data-r]", box).forEach((b) => b.onclick = () => { sub = { retell: pool.find((x) => x.id === b.dataset.r) }; render(); });
+}
+function retellPage(m, item, back) {
+  const secs = speakSeconds(item.level), pts = retellPoints(item), kw = (item.gloss || []).map((g) => g[0]);
+  const isL = !item.text;
+  m.innerHTML = `<div class="row between"><div><h1>🗣️ Cuéntalo con tus palabras</h1><div class="muted small">${esc(item.title)} · ${item.level} · ${secs} segundos</div></div><button class="btn ghost small" id="exit">Volver</button></div>
+  <div class="card"><ol class="steps"><li>${isL ? "Escucha el audio una vez más" : "Lee o escucha el texto una vez más"}, sin tomar notas largas.</li><li>Mira las palabras clave (no las frases).</li><li>Toca “Empezar” y cuenta la historia en pasado, con tus palabras, hasta que termine el tiempo.</li><li>Revisa qué ideas incluiste y evalúate con la rúbrica.</li></ol>
+  <div class="row">${isL ? `<button class="btn ghost" id="lis">▶️ Escuchar</button>` : speakBtn(item.text, "🔊 Escuchar el texto")}<button class="btn ghost" id="peek">👀 Ver el texto</button></div><div id="txt" hidden class="reading small">${esc(retellText(item)).replace(/\n/g, "<br>")}</div></div>
+  ${kw.length ? `<div class="card"><b>Palabras clave para usar:</b><div class="chips">${kw.map((k) => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>` : ""}
+  <div class="card"><b>Conectores útiles:</b><div class="chips">${["At first,", "Then,", "After that,", "It turned out that...", "All of a sudden,", "In the end,", "The main point is..."].map((k) => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
+  <div id="ts"></div><div id="res"></div>`;
+  $("#exit").onclick = () => { stopSpeech(); back(); };
+  $("#peek").onclick = () => { const t = $("#txt"); t.hidden = !t.hidden; };
+  if ($("#lis")) $("#lis").onclick = () => speakLines(item.lines.map(([sp, t]) => [sp.charCodeAt(0) - 65, t]));
+  timedSpeak($("#ts"), { key: "retell-" + item.id, seconds: secs, onDone: (said, used) => {
+    const words = said ? said.split(/\s+/).length : 0, used_kw = kw.filter((k) => norm(said).includes(norm(k)));
+    $("#txt").hidden = true;
+    $("#res").innerHTML = `<div class="card"><h2>Tu retelling</h2>
+      ${said ? `<p class="reading">${esc(said)}</p><p class="small muted">${words} palabras en ${used} s (${Math.round(words / Math.max(1, used) * 60)} palabras/minuto)${kw.length ? ` · Palabras clave usadas: ${used_kw.length}/${kw.length}` : ""}</p>` : `<p class="muted small">${dictApi ? "No se captó texto. " : ""}Escucha tu grabación para evaluarte.</p>`}
+      <div class="center">${recorderHTML("retell-" + item.id, secs + 2)}</div>
+      ${pts.length ? `<h3>¿Qué ideas incluiste?</h3><div class="list">${pts.map((p, k) => `<label class="cando"><input type="checkbox" data-pt="${k}" ${said && p.split("→")[1] && norm(said).includes(norm(p.split("→")[1]).split(" ").slice(0, 2).join(" ")) ? "checked" : ""}> <span>${esc(p)}</span></label>`).join("")}</div>` : ""}
+      <h3>Rúbrica (marca lo que lograste)</h3>${rubricHTML(["Hablé casi todo el tiempo sin pausas largas", "Conté los hechos en orden y usé conectores", "Usé el pasado correctamente la mayoría de las veces", "Usé al menos 3 palabras clave o chunks nuevos", "Expliqué la idea principal o mi opinión al final"])}
+      <div class="row"><button class="btn" id="save">Guardar</button><button class="btn ghost" id="again">Repetir</button></div></div>`;
+    bindRecorders($("#res"));
+    $("#again").onclick = () => retellPage(m, item, back);
+    $("#save").onclick = () => {
+      const points = $$("[data-pt]", m).filter((x) => x.checked).length, rubric = readRubric(m);
+      S.retell.unshift({ id: item.id, title: item.title, at: Date.now(), words, points, total: pts.length, rubric }); S.retell = S.retell.slice(0, 100);
+      skill("speaking", rubric, 5); addXP(10 + rubric * 2); if (extraTask().go === "hablar") markDaily("extra"); save(); toast("✓ Retelling guardado"); back();
+    };
+  } });
+}
+
+// ---------- Habla 1 minuto ----------
+let minIdx = null;
+function speakMinute(box) {
+  const lv = LEVELS.includes(S.level) && SPEAK_PROMPTS[S.level] ? S.level : "A2";
+  const pool = SPEAK_PROMPTS[lv];
+  if (minIdx === null) { const d = Math.floor(Date.now() / DAY); minIdx = d % pool.length; }
+  const [topic, es, chunks, guide] = pool[minIdx % pool.length];
+  const todayDone = S.speak.some((x) => new Date(x.at).toDateString() === new Date().toDateString());
+  const days = new Set(S.speak.map((x) => new Date(x.at).toDateString())).size;
+  box.innerHTML = `<div class="card note"><p><b>Habla 1 minuto</b> cada día sobre un tema, sin parar. Es output forzado: tu cerebro tiene que buscar las palabras en vez de reconocerlas. Usa los chunks sugeridos.</p><p class="small muted">${todayDone ? "✅ Ya hablaste hoy. " : ""}Días practicados: <b>${days}</b> · Total de sesiones: <b>${S.speak.length}</b></p></div>
+  <div class="card excard"><div class="row between"><span class="badge">${lv} · Tema del día</span><button class="btn ghost small" id="other">🔀 Otro tema</button></div>
+    <p class="big-text">${esc(topic)} ${speakBtn(topic)}</p><p class="muted">${esc(es)}</p>
+    <b>Para guiarte:</b><ul>${guide.map((g) => `<li>${esc(g)}</li>`).join("")}</ul>
+    <b>Chunks sugeridos:</b><div class="chips">${chunks.map((c) => `<span class="chip">${esc(c)}</span>`).join("")}</div>
+    <p class="small muted">Tienes 15 segundos para pensar antes de empezar (opcional). Luego, 60 segundos.</p></div>
+  <div id="ts"></div><div id="res"></div>
+  ${S.speak.length ? `<details class="card"><summary><b>Historial</b></summary><div class="list">${S.speak.slice(0, 15).map((x) => `<div class="li"><div><b>${esc(x.topic)}</b><div class="small muted">${new Date(x.at).toLocaleDateString()} · ${x.words} palabras · ${x.chunks} chunks · rúbrica ${x.rubric}/5</div></div></div>`).join("")}</div></details>` : ""}`;
+  $("#other").onclick = () => { minIdx++; render(); };
+  timedSpeak($("#ts"), { key: "min-" + lv + minIdx, seconds: 60, onDone: (said, used) => {
+    const words = said ? said.split(/\s+/).length : 0;
+    const allChunks = chunks.concat(CHUNK_CARDS.filter((c) => lvlIdx(c.level) <= lvlIdx(lv)).map((c) => c.en));
+    const found = [...new Set(allChunks.map(chunkCore).filter((c) => c.length > 3 && said && norm(said).includes(norm(c))))];
+    $("#res").innerHTML = `<div class="card"><h2>Resultado</h2>
+      ${said ? `<p class="reading">${esc(said)}</p><p class="small muted">${words} palabras en ${used} s (${Math.round(words / Math.max(1, used) * 60)} palabras/minuto). ${words / Math.max(1, used) * 60 >= 100 ? "¡Buen ritmo!" : "Meta: ir subiendo hacia 100–130 palabras por minuto."}</p>${found.length ? `<p><b>Chunks que usaste:</b> ${found.map((f) => `<span class="chip">${esc(f)}</span>`).join(" ")}</p>` : `<p class="small muted">No se detectaron chunks. La próxima vez intenta usar al menos dos de los sugeridos.</p>`}` : `<p class="muted small">Escucha tu grabación para evaluarte.</p>`}
+      <div class="center">${recorderHTML("min-" + lv + minIdx, 62)}</div>
+      <h3>Rúbrica</h3>${rubricHTML(["Hablé todo el minuto sin quedarme callado más de 3 segundos", "Respondí las preguntas guía", "Usé al menos 2 chunks", "Usé conectores (because, so, but, then…)", "Si me bloqueé, usé una muletilla y seguí"])}
+      <div class="row"><button class="btn" id="save">Guardar</button><button class="btn ghost" id="again">Repetir el mismo tema</button></div>
+      <p class="small muted">Truco: repite el mismo tema mañana. La segunda vez notarás que hablas más y con menos pausas.</p></div>`;
+    bindRecorders($("#res"));
+    $("#again").onclick = () => render();
+    $("#save").onclick = () => {
+      const rubric = readRubric($("#res"));
+      S.speak.unshift({ topic, level: lv, at: Date.now(), words, chunks: found.length, rubric }); S.speak = S.speak.slice(0, 200);
+      skill("speaking", rubric, 5); addXP(8 + rubric * 2); if (extraTask().go === "hablar") markDaily("extra"); save(); toast("✓ Sesión guardada"); render();
+    };
   } });
 }
 
