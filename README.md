@@ -83,14 +83,14 @@ Debajo de las frases de dictado, shadowing, diálogos, conversaciones, ejercicio
 
 ## Voz y micrófono
 
-- **Audios de alta calidad:** las palabras, verbos irregulares, frases de dictado, diálogos, conversaciones guiadas, unidades de pronunciación, correcciones de los ejercicios, ejemplos de las lecciones y el glosario tienen audios pregrabados (unas 2.900 en total, incluidas las de Inglés TI y connected speech) con una voz neuronal de código abierto (Kokoro): voz estadounidense para la persona A, británica para la B y estadounidense masculina para la C. Están en la carpeta `audio/` y se activan o desactivan en **Ajustes → Voz y audio**.
+- **Audios de alta calidad:** las palabras, verbos irregulares, frases de dictado, diálogos, conversaciones guiadas, unidades de pronunciación, correcciones de los ejercicios, ejemplos de las lecciones y el glosario tienen audios pregrabados (unas 3.000 en total, incluidas las de Inglés TI, connected speech, lecturas y textos modelo de escritura) con una voz neuronal de código abierto (Kokoro): voz estadounidense para la persona A, británica para la B y estadounidense masculina para la C. Están en la carpeta `audio/` y se activan o desactivan en **Ajustes → Voz y audio**.
 - **Voces del dispositivo:** lo que no tiene audio pregrabado usa las voces de tu celular o computador. En **Ajustes → Voz y audio** eliges la voz principal y las voces de los diálogos (★ = alta calidad) y encuentras cómo instalar voces más naturales en Android, iPhone y Windows. En computador, Microsoft Edge trae voces "Natural" muy realistas.
 - **Velocidad:** se ajusta en Ajustes y aplica tanto a los audios como a las voces del dispositivo.
 - **Micrófono:** funciona en Chrome y Edge, en computador y Android. En iPhone puedes usar el dictado del teclado.
 
 ### Generar más audios (opcional)
 
-Si agregas contenido, o quieres audio también para los ejemplos del vocabulario, las lecturas y los textos modelo de escritura (lo único que todavía usa la voz del dispositivo):
+Si agregas contenido, o quieres audio también para los ejemplos de las tarjetas (lo único que todavía usa la voz del dispositivo):
 
 ```bash
 pip install kokoro-onnx soundfile        # y ten ffmpeg instalado
@@ -100,4 +100,4 @@ node tools/audio_texts.js --all > audio/texts.json
 python tools/generate_audio.py --model RUTA/kokoro-v1.0.int8.onnx --voices RUTA/voices-v1.0.bin
 ```
 
-Es incremental: solo crea los audios que faltan y actualiza `audio/index.json`. Faltan unos 900 (≈2–3 horas en un computador normal). Puedes dividir el trabajo entre dos computadores con `--part 1/2` y `--part 2/2`.
+Es incremental: solo crea los audios que faltan y actualiza `audio/index.json`. Faltan unos 730 (≈1 hora en un computador normal). Puedes dividir el trabajo entre dos computadores con `--part 1/2` y `--part 2/2`.
