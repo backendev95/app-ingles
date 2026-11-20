@@ -15,6 +15,14 @@ Object.values(IRREGULAR).forEach((block) => block.trim().split("\\n").forEach((l
 LEVELS.forEach((lv) => SENTENCES[lv].forEach((s) => add("A", s, "sentence")));
 LEVELS.forEach((lv) => (LISTENING[lv] || []).forEach((d) => d.lines.forEach(([sp, t]) => add(sp === "A" ? "A" : sp === "B" ? "B" : "C", t, "dialogue"))));
 LEVELS.forEach((lv) => (ROLEPLAY[lv] || []).forEach((r) => r.turns.forEach(([p, task, models]) => { add("B", p, "roleplay"); models.forEach((x) => add("A", x, "model")); })));
+// Inglés para desarrolladores y connected speech
+DEV.vocab.split("\\n").forEach((line) => { if (!line.includes("|")) return; const [en, es, ex] = line.split("|").map((x) => (x || "").trim()); add("A", en, "dev"); add("A", ex, "dev"); });
+DEV.lessons.forEach((l) => { l.phrases.forEach(([en]) => add("A", en, "dev")); (l.explain.match(/<i>([^<]+)<\\/i>/g) || []).forEach((m) => add("A", m.replace(/<\\/?i>/g, ""), "dev")); l.ex.forEach((ex) => { const t = ex[0], answer = t === "mc" ? ex[2][ex[3]] : t === "ord" ? ex[2] : ex[2][0]; add("A", t === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\\s*\\([^)]*\\)/g, "").trim() : t === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer, "dev"); }); });
+DEV.roleplays.forEach((r) => r.turns.forEach(([p, task, models]) => { add("B", p, "dev"); models.forEach((x) => add("A", x, "dev")); }));
+DEV.listening.forEach((d) => d.lines.forEach(([sp, t]) => add(sp === "A" ? "A" : sp === "B" ? "B" : "C", t, "dev")));
+DEV.interview.forEach((x) => { add("A", x.q, "dev"); add("A", x.model, "dev"); });
+DEV.pron.forEach(([term, say]) => add("A", say, "dev"));
+CS_UNITS.forEach((u) => { u.examples.forEach(([w]) => add("A", w, "cs")); u.practice.forEach((p) => add("A", p, "cs")); (u.explain.match(/<i>([^<]+)<\\/i>/g) || []).forEach((m) => add("A", m.replace(/<\\/?i>/g, ""), "cs")); });
 PRON.forEach((u) => { (u.pairs || []).forEach((p) => p.forEach((w) => add("A", w, "pron"))); (u.items || []).forEach((it) => add("A", String(it[0]).replace(/\\s*\\(.*\\)/, ""), "pron")); (u.lines || []).forEach((l) => add("A", l, "pron")); });
 if (${all}) {
   LEVELS.forEach((lv) => (READINGS[lv] || []).forEach((r) => add("A", r.text, "reading")));

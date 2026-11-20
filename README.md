@@ -13,8 +13,9 @@ App web para aprender inglés por niveles, **sin IA y sin costos**: todo el cont
 | **Gramática** | 49 lecciones y 300 ejercicios (opción múltiple, completar, ordenar, traducir y corregir), con repasos programados a los 2, 7, 21, 60 y 120 días. |
 | **Escuchar** | Diálogos con varias voces y dictados con corrección palabra por palabra. |
 | **Leer** | Lecturas del curso con preguntas, y **Mi lector**: pegas cualquier texto en inglés, tocas una palabra y ves definición, pronunciación real y traducción, y la conviertes en tarjeta. |
-| **Hablar** | Conversaciones guiadas con respuestas modelo, **Sonidos** (14 unidades de pronunciación para hispanohablantes: pares mínimos, -ed, -s, acento, schwa, unión de palabras) y shadowing. Puedes **grabarte** y compararte con el modelo. |
+| **Hablar** | Conversaciones guiadas con respuestas modelo, **Sonidos** (14 unidades de pronunciación para hispanohablantes: pares mínimos, -ed, -s, acento, schwa, unión de palabras) y shadowing. Puedes **grabarte** y compararte con el modelo. También incluye un curso de **🔗 connected speech** (9 unidades: uniones, formas débiles, reducciones como gonna/wanna, asimilación, elisión, T americana y ritmo) con dictados a velocidad natural. |
 | **Escribir** | Temas por nivel con modelo y lista de control, escritura libre, y **corrector automático** de gramática y ortografía (LanguageTool) que guarda tus errores. |
+| **💻 Inglés TI** | Inglés para desarrolladores de software: 8 situaciones de trabajo (daily, bugs, code review, pedir ayuda, estimar y decir que no, commits/PRs/Slack, demos, gramática técnica) con frases clave y ejercicios; ~150 palabras técnicas que entran a tus tarjetas (5 por día); 6 conversaciones guiadas (daily, explicar un bug, code review, entrevista, requisitos, negociar fechas); diálogos de reuniones; lecturas (oferta de empleo, postmortem, README, blog); escritura (commits, bug report, PR, Slack, correo a reclutador, LinkedIn); 15 preguntas de entrevista con consejo y respuesta modelo; pronunciación de 30 términos técnicos. |
 | **Exámenes** | Exámenes de nivel (4 habilidades) y **4 simulacros tipo Cambridge** (B2 First y C1 Advanced, Use of English) con cronómetro. |
 | **Inmersión** | Plan guiado en 5 fases (de contenido para estudiantes con subtítulos en inglés hasta vivir en inglés), con rutina diaria, meta semanal de minutos, criterios para avanzar de fase, guía de técnicas (método de 3 pasadas, regla del 70%, shadowing…), registro de actividades y recursos gratuitos. |
 | **Progreso** | Diagnóstico de tus temas más débiles con repaso enfocado, acierto por habilidad y por tipo de ejercicio, retención de tarjetas e historial de exámenes. También incluye **Mis errores**, para practicar todo lo que fallaste. |
@@ -76,9 +77,13 @@ git add . && git commit -m "Actualizo contenido" && git push
 ["fix",  "Frase con un error", ["Frase corregida"], "explicación"]                    // corregir
 ```
 
+## Connected speech en toda la app
+
+Debajo de las frases de dictado, shadowing, diálogos, conversaciones, ejercicios, tarjetas, textos modelo, entrevistas y frases de Inglés TI aparece el recuadro **🔗 Así suena**, que marca automáticamente cómo se pronuncia la frase a velocidad normal: palabras que se unen (‿), formas débiles (to → tə), reducciones (going to → gonna), sonidos que casi desaparecen y la T americana. Es una guía aproximada basada en reglas del inglés estadounidense. Se activa o desactiva en **Ajustes**.
+
 ## Voz y micrófono
 
-- **Audios de alta calidad:** las palabras, verbos irregulares, frases de dictado, diálogos, conversaciones guiadas, unidades de pronunciación, correcciones de los ejercicios, ejemplos de las lecciones y el glosario tienen audios pregrabados (2.129 en total) con una voz neuronal de código abierto (Kokoro): voz estadounidense para la persona A, británica para la B y estadounidense masculina para la C. Están en la carpeta `audio/` y se activan o desactivan en **Ajustes → Voz y audio**.
+- **Audios de alta calidad:** las palabras, verbos irregulares, frases de dictado, diálogos, conversaciones guiadas, unidades de pronunciación, correcciones de los ejercicios, ejemplos de las lecciones y el glosario tienen audios pregrabados (unas 2.900 en total, incluidas las de Inglés TI y connected speech) con una voz neuronal de código abierto (Kokoro): voz estadounidense para la persona A, británica para la B y estadounidense masculina para la C. Están en la carpeta `audio/` y se activan o desactivan en **Ajustes → Voz y audio**.
 - **Voces del dispositivo:** lo que no tiene audio pregrabado usa las voces de tu celular o computador. En **Ajustes → Voz y audio** eliges la voz principal y las voces de los diálogos (★ = alta calidad) y encuentras cómo instalar voces más naturales en Android, iPhone y Windows. En computador, Microsoft Edge trae voces "Natural" muy realistas.
 - **Velocidad:** se ajusta en Ajustes y aplica tanto a los audios como a las voces del dispositivo.
 - **Micrófono:** funciona en Chrome y Edge, en computador y Android. En iPhone puedes usar el dictado del teclado.

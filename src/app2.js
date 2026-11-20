@@ -247,7 +247,7 @@ async function openLookup(word, sentence) {
   $("#lx").onclick = closeLookup;
   let es = local ? local.es : "";
   $("#ladd").onclick = () => { if (local) { toast("Ya está en tus tarjetas"); return; } addCustomCard(w, es || "(ver definición)", sentence); $("#ladd").textContent = "✓ Agregada"; $("#ladd").disabled = true; };
-  $("#lsent").onclick = async () => { $("#lsout").textContent = "Traduciendo…"; try { $("#lsout").innerHTML = `<i>${esc(sentence)}</i><br>→ ${esc(await translateText(sentence))}`; } catch (e) { $("#lsout").textContent = "No se pudo traducir: " + e.message; } };
+  $("#lsent").onclick = async () => { $("#lsout").textContent = "Traduciendo…"; try { $("#lsout").innerHTML = `<i>${esc(sentence)}</i><br>→ ${esc(await translateText(sentence))}${csBox(sentence, true)}`; } catch (e) { $("#lsout").textContent = "No se pudo traducir: " + e.message; } };
   if (inClaude()) { $("#ldef").innerHTML = `<span class="muted">El diccionario en línea funciona en tu versión publicada (GitHub Pages). Aquí solo se muestran las palabras de la app.</span>`; if (!local) $("#les").innerHTML = ""; return; }
   if (!local) translateText(w).then((t) => { es = t; if ($("#les")) $("#les").innerHTML = `<b>${esc(t)}</b> <span class="muted small">(traducción automática)</span>`; }).catch((e) => { if ($("#les")) $("#les").innerHTML = `<span class="muted">Sin traducción: ${esc(e.message)}</span>`; });
   try {
@@ -327,7 +327,7 @@ function pronPage(m, u) {
   if (u.type === "pairs") extra = `<div class="card"><h3>Escucha cada par</h3><div class="pairs">${u.pairs.map(([a, b], i) => `<div class="pair">${speakBtn(a, esc(a))}<span class="muted">vs</span>${speakBtn(b, esc(b))}${recorderHTML("pp" + i)}</div>`).join("")}</div></div>`;
   if (u.type === "class") extra = `<div class="card"><h3>Ejemplos</h3><div class="chips">${u.items.slice(0, 9).map(([w, k]) => `<button class="chipbtn" data-speak="${esc(w)}">${esc(w)} <small class="muted">${u.options[k].split(" ")[0]}</small></button>`).join("")}</div></div>`;
   if (u.type === "stress") extra = `<div class="card"><h3>Ejemplos</h3><div class="chips">${u.items.slice(0, 8).map(([w, syl, k]) => `<button class="chipbtn" data-speak="${esc(w.replace(/\s*\(.*\)/, ""))}">${syl.map((x, j) => j === k ? `<b>${esc(x.toUpperCase())}</b>` : esc(x)).join("·")}</button>`).join("")}</div></div>`;
-  if (u.type === "shadow") extra = `<div class="card"><h3>Escucha, repite y grábate</h3>${u.lines.map((l, i) => `<div class="li shadowline"><div>${esc(l)}</div><div class="row">${speakBtn(l)}<button class="icon-btn" data-speak="${esc(l)}" data-rate="0.7">🐢</button>${recorderHTML("sh" + i)}</div></div>`).join("")}<p class="muted small">Graba, escúchate y compara con el modelo: ¿el ritmo y la entonación se parecen? Repite hasta que suene natural.</p></div>`;
+  if (u.type === "shadow") extra = `<div class="card"><h3>Escucha, repite y grábate</h3>${u.lines.map((l, i) => `<div class="li shadowline"><div>${esc(l)}${csBox(l, false)}</div><div class="row">${speakBtn(l)}<button class="icon-btn" data-speak="${esc(l)}" data-rate="0.7">🐢</button>${recorderHTML("sh" + i)}</div></div>`).join("")}<p class="muted small">Graba, escúchate y compara con el modelo: ¿el ritmo y la entonación se parecen? Repite hasta que suene natural.</p></div>`;
   m.innerHTML = `<div class="row between"><h1>${esc(u.title)}</h1><button class="btn ghost small" id="back">← Sonidos</button></div><div class="card explain">${u.explain}</div>${extra}
   ${u.type !== "shadow" ? `<button class="btn big-btn" id="quiz">Practicar: ¿lo distingues? (${u.type === "pairs" ? 12 : Math.min(12, u.items.length)} preguntas)</button>` : `<button class="btn" id="done">✓ Practiqué esta unidad</button>`}`;
   $("#back").onclick = () => { sub = null; render(); };
@@ -437,4 +437,238 @@ function bindVoiceSettings(m) {
     const samples = { A: "Hello! I'm going to help you practise your English every day.", B: "Good morning. How can I help you today?", C: "That sounds like a great plan. Let's do it!" };
     stopSpeech(); const token = speakToken; ttsLine(i, samples[k], S.settings.rate, token);
   });
+}
+
+// ---------- CONNECTED SPEECH: anotador automático ----------
+// Guía aproximada (inglés americano) basada en reglas: uniones, formas débiles, reducciones, asimilación, elisión y T americana.
+const CS_WEAK = { a: "ə", an: "ən", the: "thə", to: "tə", for: "fər", from: "frəm", of: "əv", and: "ən", or: "ər", but: "bət", at: "ət", as: "əz", can: "kən", was: "wəz", were: "wər", are: "ər", am: "əm", some: "səm", than: "thən", them: "əm", him: "im", her: "ər", you: "yə", your: "yər", do: "də", does: "dəz", have: "əv", has: "əz", had: "əd" };
+const CS_DETS = new Set(["the", "a", "an", "my", "your", "his", "her", "our", "their", "this", "that", "these", "those", "school", "work", "bed", "church", "town", "class", "university", "hospital", "office", "beach", "park", "gym", "market", "airport", "doctor", "dentist", "bank", "party", "cinema", "store", "shop", "concert", "meeting", "it"]);
+const CS_RED = [
+  [["going", "to"], "gonna", (n) => n && !CS_DETS.has(n)], [["want", "to"], "wanna"], [["got", "to"], "gotta"], [["have", "to"], "hafta", (n) => n && !CS_DETS.has(n)], [["has", "to"], "hasta", (n) => n && !CS_DETS.has(n)],
+  [["used", "to"], "useta", (n) => n && !CS_DETS.has(n)], [["ought", "to"], "oughta"], [["kind", "of"], "kinda"], [["sort", "of"], "sorta"], [["out", "of"], "outta"], [["lot", "of"], "lotta"],
+  [["let", "me"], "lemme"], [["give", "me"], "gimme"], [["don't", "know"], "dunno"], [["what", "do", "you"], "whaddya"], [["what", "are", "you"], "whatcha"], [["do", "you"], "d'you", (n) => n && n !== "?"]
+];
+const CS_YU = /^(u(s|ni|ti|r[aeiou])|eu|ewe|one\b|once\b)/i;
+const CS_SILENT_H = /^(hour|honest|honou?r|heir)/i;
+const isVowelStart = (w) => (/^[aeiou]/i.test(w) && !CS_YU.test(w)) || CS_SILENT_H.test(w);
+function endsConsonantSound(w) {
+  const l = w.toLowerCase().replace(/[’']/g, "'");
+  if (/n't$/.test(l)) return true;
+  if (/(augh|ough)$/.test(l)) return /(laugh|enough|rough|tough|cough)$/.test(l);
+  if (/[aeiouwy]$/.test(l) || /h$/.test(l) && !/(sh|ch|th|gh)$/.test(l)) return /(sh|ch|th)$/.test(l);
+  if (/e$/.test(l)) return l.length > 2 && !/^(the|be|me|he|she|we|see|free|three|tree|agree)$/.test(l) && !/[aeiou]e$/.test(l);
+  return true;
+}
+function glideAfter(w) { const l = w.toLowerCase(); if (/(i|y|ee|ey|ay|oy)$/.test(l) || /^(the|be|me|he|she|we|see|free|three)$/.test(l)) return "y"; if (/(o|u|w|oo)$/.test(l)) return "w"; return ""; }
+function csTokens(text) {
+  const raw = String(text).match(/[A-Za-z][A-Za-z'’]*|\s+|[^A-Za-z\s]+/g) || [];
+  return raw.map((t) => ({ t, word: /^[A-Za-z]/.test(t), space: /^\s+$/.test(t) }));
+}
+function csAnalyze(text) {
+  const tk = csTokens(text);
+  const words = tk.map((x, i) => x.word ? i : -1).filter((i) => i >= 0);
+  const lw = (i) => tk[i].t.toLowerCase().replace(/’/g, "'");
+  const adjacent = (a, b) => b === a + 2 && tk[a + 1] && tk[a + 1].space;
+  const nextWordAfter = (k) => { const j = words[k + 1]; if (j === undefined) return null; const between = tk.slice(words[k] + 1, j).map((x) => x.t).join(""); return /^\s+$/.test(between) ? lw(j) : null; };
+  // reducciones y asimilación
+  const red = {}; // índice de palabra inicial -> {len, text, orig}
+  for (let k = 0; k < words.length; k++) {
+    for (const [pat, rep, cond] of CS_RED) {
+      if (k + pat.length > words.length) continue;
+      let ok = true;
+      for (let p = 0; p < pat.length; p++) { if (lw(words[k + p]) !== pat[p] || (p > 0 && !adjacent(words[k + p - 1], words[k + p]))) { ok = false; break; } }
+      if (!ok) continue;
+      if (cond && !cond(nextWordAfter(k + pat.length - 1))) continue;
+      red[k] = { len: pat.length, text: rep, orig: pat.join(" ") }; break;
+    }
+    if (red[k]) { k += red[k].len - 1; continue; }
+    const n = words[k + 1];
+    if (n !== undefined && adjacent(words[k], n) && /^(you|your|yourself)$/.test(lw(n))) {
+      const w = lw(words[k]).replace(/'/g, "");
+      if (/t$/.test(w) && w.length > 1) red[k] = { len: 2, text: w + (lw(n) === "you" ? "cha" : "chor"), orig: lw(words[k]) + " " + lw(n) };
+      else if (/d$/.test(w) && w.length > 1) red[k] = { len: 2, text: w + (lw(n) === "you" ? "ja" : "jor"), orig: lw(words[k]) + " " + lw(n) };
+      if (red[k]) k++;
+    }
+  }
+  return { tk, words, red, lw, adjacent };
+}
+function csWordHTML(word, opts) {
+  let h = esc(word);
+  if (opts.flapFinal) h = esc(word.slice(0, -1)) + `<span class="cs-flap" title="T que suena como una d rápida">t</span>`;
+  else if (opts.elide) h = esc(word.slice(0, -1)) + `<span class="cs-elide" title="Casi no suena">${esc(word.slice(-1))}</span>`;
+  else if (opts.elideEd) h = esc(word.slice(0, -2)) + `<span class="cs-elide" title="Casi no suena">${esc(word.slice(-2))}</span>`;
+  else h = h.replace(/([aeiou])(tt?)(er|y|ing|le|ed|ies|ier|iest|en|ity|ar|or|o|a)(?=s?$)/i, (m, v, t, s) => `${v}<span class="cs-flap" title="T que suena como una d rápida">${t}</span>${s}`);
+  if (opts.weak) h = `<span class="cs-weak" title="Forma débil">${h}<sub>${esc(opts.weak)}</sub></span>`;
+  return h;
+}
+function csRespellWord(word, opts) {
+  let w = word;
+  if (opts.weak) return opts.weak;
+  if (opts.flapFinal) return w.slice(0, -1) + "d";
+  if (opts.elide) return w.slice(0, -1);
+  if (opts.elideEd) return w.slice(0, -2);
+  return w.replace(/([aeiou])(tt?)(er|y|ing|le|ed|ies|ier|iest|en|ity|ar|or|o|a)(?=s?$)/i, (m, v, t, s) => v + "d" + s);
+}
+function csAnnotate(text) {
+  const { tk, words, red, lw, adjacent } = csAnalyze(text);
+  const opts = {}; // por índice de token
+  words.forEach((ti, k) => {
+    const w = lw(ti), next = words[k + 1], nw = next !== undefined && adjacent(ti, next) ? lw(next) : null;
+    const prevPunct = k === 0 || !adjacent(words[k - 1], ti);
+    const o = (opts[ti] = {});
+    if (CS_WEAK[w] && nw) {
+      const aux = { have: 1, has: 1, had: 1 }[w] ? /(ed|en|been|got|gone|done|seen|made|had|left|said|told|known|taken|given|written)$/.test(nw) : true;
+      const doAux = { do: 1, does: 1 }[w] ? /^(you|i|we|they|he|she|it|your|the)$/.test(nw) : true;
+      if (aux && doAux && !(w === "you" && k === 0)) o.weak = w === "the" && isVowelStart(nw) ? "thi" : w === "to" && isVowelStart(nw) ? "tu" : w === "a" && k === 0 && prevPunct ? null : CS_WEAK[w];
+      if (!o.weak) delete o.weak;
+    }
+    if (nw) {
+      const rl = tk[ti].t.toLowerCase().replace(/’/g, "'");
+      if (/[aeiou]t$/.test(rl) && isVowelStart(nw)) o.flapFinal = true;
+      else if (!CS_WEAK[w] && !isVowelStart(nw)) {
+        if (/(k|p|s|sh|ch|f|x)ed$/.test(rl) && rl.length > 4) o.elideEd = true;
+        else if (/[bcfgjklmnpqsvxz][td]$/.test(rl) || /n't$/.test(rl)) o.elide = true;
+      }
+    }
+  });
+  let html = "", say = "";
+  let k = 0;
+  for (let i = 0; i < tk.length; i++) {
+    const x = tk[i];
+    const wk = words.indexOf(i);
+    if (wk >= 0 && red[wk]) {
+      const r = red[wk], last = words[wk + r.len - 1];
+      const orig = tk.slice(i, last + 1).map((y) => y.t).join("");
+      const disp = /^[A-Z]/.test(x.t) ? r.text[0].toUpperCase() + r.text.slice(1) : r.text;
+      html += `<span class="cs-red" title="Se escribe: ${esc(orig)}"><b>${esc(disp)}</b><small>${esc(orig)}</small></span>`;
+      say += disp; i = last; continue;
+    }
+    if (x.word) { const o = opts[i] || {}; html += csWordHTML(x.t, o); say += csRespellWord(x.t, o); continue; }
+    if (x.space) {
+      const pw = tk[i - 1], nx = tk[i + 1];
+      if (pw && nx && pw.word && nx.word) {
+        const pi = i - 1;
+        let red0 = null; for (let q = 0; q < words.length; q++) if (red[q] && words[q] <= pi && words[q + red[q].len - 1] >= pi) red0 = red[q];
+        const effective = red0 ? red0.text : pw.t;
+        if (isVowelStart(nx.t)) {
+          if (endsConsonantSound(effective)) { html += `<span class="cs-link" title="Se unen">‿</span>`; say += "‿"; continue; }
+          const g = glideAfter(effective);
+          if (g) { html += `<span class="cs-link" title="Se unen con un sonido ${g}">‿<sup>${g}</sup></span>`; say += "‿"; continue; }
+        }
+      }
+      html += " "; say += " "; continue;
+    }
+    html += esc(x.t); say += x.t;
+  }
+  return { html, say: say.replace(/\s+/g, " ").trim() };
+}
+const csEnabled = () => S.settings.csShow !== false;
+function csBox(text, open) {
+  if (!csEnabled()) return "";
+  const t = String(text || "").trim(); if (t.split(/\s+/).length < 3) return "";
+  const parts = t.length > 260 ? t.split(/(?<=[.!?])\s+/) : [t];
+  const rows = parts.map((p) => { const a = csAnnotate(p); return `<div class="csrow">${a.html}</div><div class="cssay">Suena como: <i>${esc(a.say)}</i> <button class="icon-btn" data-speak="${esc(p)}" data-rate="1.05">🔊</button></div>`; }).join("");
+  return `<details class="csbox" ${open ?? S.settings.csOpen !== false ? "open" : ""}><summary>🔗 Así suena</summary>${rows}<div class="cslegend"><span class="cs-link">‿</span> se unen · <span class="cs-weak">to<sub>tə</sub></span> forma débil · <span class="cs-red"><b>gonna</b></span> reducción · <span class="cs-elide">t</span> casi no suena · <span class="cs-flap">t</span> suena como d rápida</div></details>`;
+}
+
+// ---------- CONNECTED SPEECH: curso ----------
+function csList(box) {
+  box.innerHTML = `<p class="muted">Aprende cómo suenan las frases cuando los nativos hablan rápido: así entenderás series, podcasts y reuniones, y sonarás más natural. Cada unidad termina con un dictado a velocidad natural.</p>
+  <div class="lessons">${CS_UNITS.map((u, i) => { const r = S.cs && S.cs[u.id]; return `<button class="lesson" data-cs="${u.id}"><span class="num">${i + 1}</span><span><b>${esc(u.title)}</b><small>${u.examples.length} ejemplos · ${u.practice.length} frases de dictado${r !== undefined ? ` · Mejor: ${Math.round(r * 100)}%` : ""}</small></span><span class="st">${r >= 0.8 ? "✅" : ""}</span></button>`; }).join("")}</div>`;
+  $$("[data-cs]", box).forEach((b) => b.onclick = () => { sub = { cs: CS_UNITS.find((u) => u.id === b.dataset.cs) }; render(); });
+}
+function csPage(m, u) {
+  m.innerHTML = `<div class="row between"><h1>${esc(u.title)}</h1><button class="btn ghost small" id="back">← Connected speech</button></div>
+  <div class="card explain">${u.explain}</div>
+  <div class="card"><h2>Ejemplos</h2><p class="muted small">Escucha a velocidad normal y lenta, lee cómo suena y grábate imitándolo.</p>
+  ${u.examples.map(([w, sounds, note], i) => `<div class="csex"><div><b>${esc(w)}</b>${note ? ` <span class="tag">${esc(note)}</span>` : ""}<div class="cssay">Suena como: <i>${esc(sounds)}</i></div></div><div class="row">${speakBtn(w, "🔊")}<button class="icon-btn" data-speak="${esc(w)}" data-rate="0.7">🐢</button>${recorderHTML("cs" + i)}</div></div>`).join("")}</div>
+  <button class="btn big-btn" id="dict">🎧 Dictado a velocidad natural (${u.practice.length})</button>`;
+  $("#back").onclick = () => { sub = null; render(); };
+  $$(".explain i", m).forEach((it) => { it.classList.add("sp"); it.onclick = () => speak(it.textContent); });
+  bindRecorders(m);
+  $("#dict").onclick = () => csDictation(m, u);
+}
+function csDictation(m, u) {
+  const items = shuffle(u.practice); let i = 0, total = 0;
+  const show = () => {
+    const s = items[i];
+    if (!s) { const p = total / items.length; S.cs = S.cs || {}; S.cs[u.id] = Math.max(S.cs[u.id] || 0, p); skill("listening", Math.round(total), items.length); addXP(Math.round(total * 5));
+      m.innerHTML = `<div class="card center"><div class="big">${p >= 0.8 ? "👂✨" : "👂"}</div><h2>${Math.round(p * 100)}% de precisión</h2><p>${p >= 0.8 ? "¡Tu oído ya reconoce estos sonidos!" : "Vuelve a escuchar los ejemplos, fíjate en el recuadro «Así suena» y repite el dictado."}</p><div class="row center"><button class="btn" id="again">Repetir</button><button class="btn ghost" id="back">Volver</button></div></div>`;
+      $("#again").onclick = () => csDictation(m, u); $("#back").onclick = () => csPage(m, u); return; }
+    m.innerHTML = `<div class="row between"><h1>Dictado: ${esc(u.title)}</h1><button class="btn ghost small" id="exit">Salir</button></div><div class="bar"><i style="width:${(i / items.length) * 100}%"></i></div><div class="muted small">${i + 1}/${items.length} · Velocidad natural: escribe la frase completa (con las palabras «escondidas»).</div>
+    <div class="card excard"><div class="row center"><button class="btn big-btn" id="play">🔊 Escuchar</button><button class="btn ghost" id="slow">🐢</button></div><form id="cf"><textarea id="ci" rows="2" autocapitalize="off" spellcheck="false" placeholder="Escribe lo que escuchas…"></textarea><button class="btn wide">Comprobar</button></form><div id="fb"></div></div>`;
+    $("#exit").onclick = () => csPage(m, u);
+    $("#play").onclick = () => speak(s, 1.1); $("#slow").onclick = () => speak(s, 0.7);
+    setTimeout(() => speak(s, 1.1), 250);
+    $("#ci").onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#cf").requestSubmit(); } };
+    $("#cf").onsubmit = (e) => { e.preventDefault(); if ($("#nx")) return; const v = $("#ci").value; if (!v.trim()) return; const sc = similarity(s, v); total += sc;
+      $("#fb").innerHTML = `<div class="feedback ${sc >= 0.9 ? "good" : "bad"}"><b>${Math.round(sc * 100)}%</b><p class="big-text">${diffWords(s, v)}</p>${csBox(s, true)}</div><button class="btn wide" id="nx">Siguiente ⏎</button>`;
+      $("#nx").onclick = () => { i++; show(); }; $("#nx").focus(); };
+  };
+  show();
+}
+
+// ---------- INGLÉS PARA DESARROLLADORES ----------
+const DEV_VOCAB = (() => { const out = []; let topic = "General", i = 0; DEV.vocab.split("\n").forEach((raw) => { const line = raw.trim(); if (line.startsWith("#")) { topic = line.replace(/^#\s*/, ""); return; } if (!line.includes("|")) return; const [en, es, ex] = line.split("|").map((x) => (x || "").trim()); out.push({ id: "DEV-" + i++, level: "DEV", topic, en, es, ex }); }); return out; })();
+const DEV_RP = DEV.roleplays.map((x, i) => ({ ...x, id: "dev-p" + i, level: "TI" }));
+const DEV_LI = DEV.listening.map((x, i) => ({ ...x, id: "dev-l" + i, level: "TI" }));
+const DEV_RD = DEV.readings.map((x, i) => ({ ...x, id: "dev-r" + i, level: "TI" }));
+const DEV_WR = DEV.writing.map((x, i) => ({ ...x, id: "dev-w" + i, level: "TI" }));
+const DEV_NEW_PER_DAY = 5;
+let devTab = "lecciones";
+const DEV_TABS = [["lecciones", "📘 Situaciones"], ["vocab", "🗂️ Vocabulario"], ["conversa", "💬 Conversaciones"], ["escuchar", "🎧 Escuchar"], ["leer", "📖 Leer"], ["escribir", "✍️ Escribir"], ["entrevistas", "🎯 Entrevistas"], ["pron", "🗣️ Pronunciación técnica"]];
+RENDER.ti = (m) => {
+  if (sub && sub.devLesson) return devLessonPage(m, sub.devLesson);
+  if (sub && sub.rp) return roleplay(m, sub.rp);
+  if (sub && sub.w) return writingPage(m, sub.w);
+  if (sub && sub.item) { const kind = sub.kind; return comprehension(m, sub.item, { kind, subtitle: "Inglés para desarrolladores", onExit: () => { sub = null; render(); }, onFinish: (c, n) => { (kind === "reading" ? S.done.reading : S.done.listening)[sub.item.id] = Math.max((kind === "reading" ? S.done.reading : S.done.listening)[sub.item.id] || 0, c / n); skill(kind === "reading" ? "reading" : "listening", c, n); addXP(c * 5); sub = null; render(); } }); }
+  m.innerHTML = `<h1>💻 Inglés para desarrolladores</h1><p class="muted">El inglés que usarás en tu trabajo: dailies, code reviews, bugs, planning, documentación, entrevistas y comunicación escrita con equipos internacionales.</p>
+  <div class="tabs">${DEV_TABS.map(([k, l]) => `<button class="tab ${devTab === k ? "on" : ""}" data-dt="${k}">${l}</button>`).join("")}</div><div id="dbody"></div>`;
+  $$("[data-dt]", m).forEach((b) => b.onclick = () => { devTab = b.dataset.dt; render(); });
+  const box = $("#dbody");
+  const listItems = (arr, done, extra) => `<div class="lessons">${arr.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">💻</span><span><b>${esc(x.title)}</b><small>${extra(x)}${done && done[x.id] !== undefined ? (typeof done[x.id] === "number" ? ` · Mejor: ${Math.round(done[x.id] * 100)}%` : " · Hecho") : ""}</small></span><span class="st">${done && (done[x.id] === true || done[x.id] >= 0.75 || (done[x.id] && done[x.id].done)) ? "✅" : ""}</span></button>`).join("")}</div>`;
+  if (devTab === "lecciones") {
+    box.innerHTML = `<div class="lessons">${DEV.lessons.map((l) => { const r = S.lessons[l.id]; return `<button class="lesson" data-l="${l.id}"><span class="num">${l.icon}</span><span><b>${esc(l.title)}</b><small>${l.phrases.length} frases clave · ${l.ex.length} ejercicios${r ? ` · Mejor: ${Math.round(r.best * 100)}%` : ""}</small></span><span class="st">${r && r.best >= 0.7 ? "✅" : ""}</span></button>`; }).join("")}</div>`;
+    $$("[data-l]", box).forEach((b) => b.onclick = () => { sub = { devLesson: DEV.lessons.find((l) => l.id === b.dataset.l) }; render(); });
+  }
+  if (devTab === "vocab") {
+    const learned = DEV_VOCAB.filter((v) => S.cards[v.id] && S.cards[v.id].reps >= 2).length;
+    const topics = [...new Set(DEV_VOCAB.map((v) => v.topic))];
+    box.innerHTML = `<div class="card hero"><label class="cando"><input type="checkbox" id="devcards" ${S.settings.devCards === false ? "" : "checked"}> <span><b>Incluir en mis tarjetas diarias</b> (${DEV_NEW_PER_DAY} palabras técnicas nuevas por día, con repaso espaciado)</span></label><div class="bar"><i style="width:${pct(learned, DEV_VOCAB.length)}%"></i></div><div class="small muted">${learned} de ${DEV_VOCAB.length} aprendidas</div><button class="btn" id="quiz">⚡ Práctica rápida (12)</button></div>
+    ${topics.map((t) => `<h2>${esc(t)}</h2><div class="card list">${DEV_VOCAB.filter((v) => v.topic === t).map((v) => { const st = S.cards[v.id]; return `<div class="li"><div><b>${esc(v.en)}</b> — ${esc(v.es)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}${v.ex ? speakBtn(v.ex, "💬") : ""}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("")}</div>`).join("")}`;
+    $("#devcards").onchange = (e) => { S.settings.devCards = e.target.checked; vq = null; save(); };
+    $("#quiz").onclick = () => { const pool = shuffle(DEV_VOCAB).slice(0, 12); const items = pool.map((w, k) => { const others = shuffle(DEV_VOCAB.filter((x) => x.id !== w.id && x.es !== w.es)).slice(0, 3), opts = shuffle([w, ...others]); return k % 2 ? ["mc", `¿Cómo se dice “${w.es}” en inglés?`, opts.map((x) => x.en), opts.indexOf(w), w.ex] : ["mc", `¿Qué significa “${w.en}”?`, opts.map((x) => x.es), opts.indexOf(w), w.ex]; });
+      exerciseRunner(m, items, { title: "Vocabulario técnico", onExit: () => render(), onFinish: (c, n) => { skill("vocab", c, n); addXP(c * 2); m.innerHTML = `<div class="card center"><h2>${c} de ${n}</h2><button class="btn" id="ok">Volver</button></div>`; $("#ok").onclick = () => render(); } }); };
+  }
+  if (devTab === "conversa") { box.innerHTML = `<p class="muted">Situaciones reales de trabajo: responde en voz alta o escribiendo y compárate con respuestas modelo.</p>` + listItems(DEV_RP, S.done.roleplay, (x) => esc(x.intro)); $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { rp: DEV_RP.find((x) => x.id === b.dataset.i), t: 0, scores: [] }; render(); }); }
+  if (devTab === "escuchar") { box.innerHTML = `<p class="muted">Reuniones y llamadas reales con varias voces. Al terminar, revisa la transcripción con el connected speech.</p>` + listItems(DEV_LI, S.done.listening, (x) => `${x.lines.length} intervenciones · ${x.q.length} preguntas`); $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { item: DEV_LI.find((x) => x.id === b.dataset.i), kind: "listening" }; render(); }); }
+  if (devTab === "leer") { box.innerHTML = `<p class="muted">Textos que leerás en tu trabajo: ofertas de empleo, postmortems, documentación y blogs técnicos. Tip: pega documentación real en <b>Leer → Mi lector</b>.</p>` + listItems(DEV_RD, S.done.reading, (x) => `~${x.text.split(/\s+/).length} palabras · ${x.q.length} preguntas`); $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { item: DEV_RD.find((x) => x.id === b.dataset.i), kind: "reading" }; render(); }); }
+  if (devTab === "escribir") { box.innerHTML = `<p class="muted">Commits, bug reports, PRs, Slack, correos a reclutadores y tu perfil de LinkedIn, con corrector y texto modelo.</p>` + listItems(DEV_WR, S.done.writing, (x) => `${esc(x.words)} palabras`); $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { w: DEV_WR.find((x) => x.id === b.dataset.i) }; render(); }); }
+  if (devTab === "entrevistas") {
+    box.innerHTML = `<p class="muted">Las preguntas más comunes en entrevistas para empresas internacionales. Lee el consejo, prepara tu respuesta en voz alta y grábate; luego compárala con la respuesta modelo y adáptala a tu experiencia real.</p>
+    ${DEV.interview.map((x, i) => `<div class="card iq"><div class="row between"><h3 style="margin:0">${i + 1}. ${esc(x.q)}</h3>${speakBtn(x.q)}</div><p class="small">💡 ${esc(x.tip)}</p><div class="row">${recorderHTML("iq" + i)}<span class="muted small">Grábate respondiendo (máx. 15 s por toma)</span></div><details><summary><b>Ver respuesta modelo</b></summary><p>${esc(x.model)} ${speakBtn(x.model)}</p>${csBox(x.model, false)}</details></div>`).join("")}`;
+    bindRecorders(box);
+  }
+  if (devTab === "pron") {
+    box.innerHTML = `<p class="muted">Términos técnicos que muchos hispanohablantes pronuncian mal. Escucha, repite y grábate.</p><div class="card list">${DEV.pron.map(([term, say, note], i) => `<div class="li"><div><b>${esc(term)}</b><div class="muted small">${esc(note)}</div></div>${speakBtn(say)}<button class="icon-btn" data-speak="${esc(say)}" data-rate="0.7">🐢</button>${recorderHTML("dp" + i)}</div>`).join("")}</div>`;
+    bindRecorders(box);
+  }
+};
+function devLessonPage(m, l) {
+  m.innerHTML = `<div class="row between"><h1>${l.icon} ${esc(l.title)}</h1><button class="btn ghost small" id="back">← Inglés TI</button></div>
+  <div class="card explain">${l.explain}</div>
+  <div class="card"><h2>Frases clave</h2><p class="muted small">Escúchalas, repítelas y grábate. Abre «Así suena» para ver cómo se pronuncian a velocidad normal.</p>
+  ${l.phrases.map(([en, es], i) => `<div class="phrase"><div class="row between"><div><b>${esc(en)}</b><div class="muted small">${esc(es)}</div></div><div class="row">${speakBtn(en)}<button class="icon-btn" data-speak="${esc(en)}" data-rate="0.7">🐢</button>${recorderHTML("dl" + i)}<button class="icon-btn" data-addc="${i}" title="Agregar a tarjetas">＋</button></div></div>${csBox(en, false)}</div>`).join("")}</div>
+  <button class="btn big-btn" id="start">Practicar (${l.ex.length} ejercicios)</button>`;
+  $("#back").onclick = () => { sub = null; render(); };
+  $$(".explain i", m).forEach((it) => { it.classList.add("sp"); it.onclick = () => speak(it.textContent); });
+  bindRecorders(m);
+  $$("[data-addc]", m).forEach((b) => b.onclick = () => { const [en, es] = l.phrases[+b.dataset.addc]; addCustomCard(en, es, ""); b.textContent = "✓"; b.disabled = true; });
+  $("#start").onclick = () => exerciseRunner(m, shuffle(l.ex), { title: l.title, onExit: () => devLessonPage(m, l), onFinish: (c, n, wrongs) => {
+    const r = S.lessons[l.id] || { best: 0, tries: 0 }; r.best = Math.max(r.best, c / n); r.tries++; S.lessons[l.id] = r;
+    wrongs.forEach((w) => addMistake({ type: "Inglés TI", wrong: w.given, right: w.answer, note: `${l.title}${w.why ? ": " + w.why : ""}`, q: w.q }));
+    skill("grammar", c, n); addXP(c * 5);
+    m.innerHTML = `<div class="card center"><div class="big">${c / n >= 0.7 ? "🏆" : "💪"}</div><h2>${c} de ${n}</h2><p>${c / n >= 0.7 ? "¡Muy bien! Usa estas frases en tu próxima reunión." : "Repasa las frases clave y vuelve a intentarlo."}</p><div class="row center"><button class="btn" id="again">Repetir</button><button class="btn ghost" id="back2">Volver</button></div></div>`;
+    $("#again").onclick = () => devLessonPage(m, l); $("#back2").onclick = () => { sub = null; render(); };
+  } });
 }

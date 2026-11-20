@@ -317,26 +317,26 @@ function similarity(a, b) {
   return dp[x.length][y.length] / Math.max(x.length, y.length);
 }
 const bestMatch = (said, models) => models.reduce((b, m) => { const s = similarity(m, said); return s > b.s ? { s, m } : b; }, { s: 0, m: models[0] });
-function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => `<span class="${s.has(norm(w)) || !norm(w) ? "ok" : "miss"}">${esc(w)}</span>`).join(" "); }
+function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
-const levelOK = (c) => c.level === "MIS" || lvlIdx(c.level) <= lvlIdx(S.level);
+const levelOK = (c) => c.level === "MIS" || (c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
   const now = Date.now();
   if (S.newToday.day !== today()) S.newToday = { day: today(), n: 0, r: 0, i: 0 };
-  const due = [], fresh = [], rev = [], irrNew = [];
+  const due = [], fresh = [], rev = [], irrNew = [], devFresh = [];
   IRREG.filter((v) => lvlIdx(v.level) <= lvlIdx(S.level)).forEach((v) => { const st = S.cards[v.id]; if (st) { if (st.due <= now) due.push({ c: v, dir: "irr" }); } else irrNew.push({ c: v, dir: "irr" }); });
   allCards().filter(levelOK).forEach((c) => {
     const f = S.cards[c.id], r = S.cards[c.id + ":r"];
-    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else fresh.push({ c, dir: "f" });
+    if (f) { if (f.due <= now) due.push({ c, dir: "f" }); } else (c.level === "DEV" ? devFresh : fresh).push({ c, dir: "f" });
     if (r) { if (r.due <= now) due.push({ c, dir: "r" }); } else if (f && f.reps >= 2) rev.push({ c, dir: "r" });
   });
   fresh.sort((a, b) => (b.c.level === "MIS") - (a.c.level === "MIS") || (b.c.level === S.level) - (a.c.level === S.level));
   const room = Math.max(0, S.settings.newPerDay - S.newToday.n), roomR = Math.max(0, S.settings.newPerDay - S.newToday.r);
-  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0));
-  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
+  const roomI = Math.max(0, IRR_NEW_PER_DAY - (S.newToday.i || 0)), roomD = Math.max(0, 5 - (S.newToday.d || 0));
+  return { due, fresh: fresh.slice(0, room).concat(irrNew.slice(0, roomI), devFresh.slice(0, roomD)), rev: rev.slice(0, roomR), totalNew: fresh.length, irrNew: irrNew.length };
 }
 // FSRS-4.5 (parámetros por defecto)
 const FW = [0.4872, 1.4003, 3.7145, 13.8206, 5.1618, 1.2298, 0.8975, 0.031, 1.6474, 0.1367, 1.0461, 2.1072, 0.0793, 0.3246, 1.587, 0.2272, 2.8755];
@@ -362,7 +362,7 @@ function fsrsNext(prev, G, now) {
 const QG = { 1: 1, 3: 2, 4: 3, 5: 4 };
 function intervalLabel(key, q) { const now = Date.now(); const st = fsrsNext(S.cards[key], QG[q], now); const d = (st.due - now) / DAY; return d < 0.01 ? "1 min" : d < 30 ? Math.round(d) + " d" : d < 365 ? Math.round(d / 30) + " m" : (d / 365).toFixed(1) + " a"; }
 function grade(key, q) {
-  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else S.newToday.n++; }
+  if (!S.cards[key]) { if (key.endsWith(":r")) S.newToday.r++; else if (key.startsWith("IRR:")) S.newToday.i = (S.newToday.i || 0) + 1; else if (key.startsWith("DEV-")) S.newToday.d = (S.newToday.d || 0) + 1; else S.newToday.n++; }
   S.cards[key] = fsrsNext(S.cards[key], QG[q] || 3, Date.now());
   skill("vocab", q >= 3 ? 1 : 0, 1);
   addXP(2);
@@ -379,7 +379,7 @@ const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
 
 // ---------- Navegación ----------
-const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
+const VIEWS = [["inicio", "🏠", "Inicio"], ["tarjetas", "🗂️", "Tarjetas"], ["gramatica", "📘", "Gramática"], ["escuchar", "🎧", "Escuchar"], ["leer", "📖", "Leer"], ["hablar", "🎙️", "Hablar"], ["escribir", "✍️", "Escribir"], ["ti", "💻", "Inglés TI"], ["examenes", "🎓", "Exámenes"], ["inmersion", "🌎", "Inmersión"], ["progreso", "📊", "Progreso"], ["ajustes", "⚙️", "Ajustes"]];
 let view = "inicio", sub = null;
 function route() { let h = (location.hash || "").slice(1); if (h === "errores") { h = "progreso"; pTab = "errores"; } view = VIEWS.some((v) => v[0] === h) ? h : "inicio"; sub = null; stopSpeech(); closeLookup(); render(); }
 function go(v) { if (location.hash.slice(1) === v) route(); else location.hash = v; }
@@ -454,7 +454,7 @@ function exerciseRunner(box, items, o) {
     const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)/g, "").trim() : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
       ${!ok && ex[0] !== "mc" && ex[0] !== "ord" && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
-      ${why ? `<p>${esc(why)}</p>` : ""}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
+      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
       <button class="btn wide" id="nx">Continuar ⏎</button>`;
     if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); recordEx(ex, true, true); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
     $("#nx").onclick = next; $("#nx").focus();
@@ -478,7 +478,7 @@ function comprehension(box, item, o) {
     ${!isL ? `<div class="card reading">${speakBtn(item.text, "🔊 Escuchar el texto")}${item.text.split(/\n\n+/).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}</div>
       ${item.gloss && !o.exam ? `<details class="card"><summary><b>Glosario</b> (${item.gloss.length})</summary><div class="list">${item.gloss.map(([en, es]) => `<div class="li"><div><b>${esc(en)}</b> — ${esc(es)}</div>${speakBtn(en)}<button class="btn ghost small" data-add="${esc(en)}|${esc(es)}">+ Tarjeta</button></div>`).join("")}</div></details>` : ""}` : ""}
     <h2>Preguntas</h2>${item.q.map((q, k) => `<div class="card excard"><p class="q">${k + 1}. ${esc(q[0])}</p><div class="opts">${q[1].map((x, j) => `<button class="opt ${ans[k] !== undefined ? (j === q[2] ? "right" : j === ans[k] ? "wrong" : "") : ""}" data-q="${k}" data-j="${j}">${esc(x)}</button>`).join("")}</div></div>`).join("")}
-    ${isL && (shownT || all) && !o.exam ? `<details class="card" ${all ? "open" : ""}><summary><b>Transcripción</b></summary>${item.lines.map(([sp, t], i) => `<p class="line" data-line="${i}"><b>${esc(sp)}:</b> ${esc(t)} ${speakBtn(t)}</p>`).join("")}</details>` : ""}
+    ${isL && (shownT || all) && !o.exam ? `<details class="card" ${all ? "open" : ""}><summary><b>Transcripción</b></summary>${item.lines.map(([sp, t], i) => `<div class="line" data-line="${i}"><p><b>${esc(sp)}:</b> ${esc(t)} ${speakBtn(t)}</p>${csBox(t, false)}</div>`).join("")}</details>` : ""}
     ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div>` : ""}`;
     if (o.onExit) $("#exit").onclick = () => { stopSpeech(); o.onExit(); };
     if (isL) {
@@ -542,6 +542,7 @@ RENDER.inicio = (m) => {
   <h2>Tu sesión de hoy <span class="muted small">${doneN}/4</span></h2>
   <div class="tasks">${tasks.map((x) => `<button class="task ${t[x.k] ? "done" : ""}" data-go="${x.go}"><span class="big">${x.ic}</span><span><b>${esc(x.t)}</b><small>${esc(x.s)}</small></span><span class="chk">${t[x.k] ? "✅" : "○"}</span></button>`).join("")}</div>
   ${(() => { const w = weakLessons()[0]; return w && w.rate < 0.75 ? `<div class="card note row between"><div>🎯 Tu tema más débil: <b>${esc(w.l.title)}</b> (${Math.round(w.rate * 100)}% de acierto)</div><button class="btn small" data-go="progreso">Ver diagnóstico</button></div>` : ""; })()}
+  ${(() => { const nl = DEV.lessons.find((l) => !(S.lessons[l.id] && S.lessons[l.id].best >= 0.7)); return `<div class="card row between"><div>💻 <b>Inglés para tu trabajo</b><div class="muted small">${nl ? "Siguiente: " + esc(nl.title) : "Repasa entrevistas y conversaciones técnicas"}</div></div><button class="btn small" data-go="ti">Abrir</button></div>`; })()}
   <h2>Habilidades</h2><div class="card skills">${Object.entries(skillNames).map(([k, n]) => { const [c, tt] = S.skills[k]; return `<div class="sk"><span>${n}</span><div class="bar"><i style="width:${pct(c, tt)}%"></i></div><small>${tt ? pct(c, tt) + "% · " + tt + " resp." : "Sin datos"}</small></div>`; }).join("")}</div>
   <h2>Últimos 14 días</h2><div class="card week">${days.map((d) => `<div class="col"><div class="b" style="height:${Math.max(3, (d.v / max) * 90)}px" title="${d.v} XP"></div><small>${d.l}</small></div>`).join("")}</div>
   <div class="stats"><div class="card stat"><b>${S.xp}</b><small>XP total</small></div><div class="card stat"><b>${learnedCount()}</b><small>Palabras aprendidas</small></div><div class="card stat"><b>${Object.values(S.lessons).filter((l) => l.best >= 0.7).length}</b><small>Lecciones aprobadas</small></div><div class="card stat"><b>${Object.keys(S.done.reading).length + Object.keys(S.done.listening).length}</b><small>Textos y audios</small></div></div>
@@ -589,10 +590,10 @@ RENDER.tarjetas = (m) => {
   }
   const { c, dir } = it, key = c.id + (dir === "r" ? ":r" : ""), isNew = !S.cards[key];
   if (dir === "irr") return irrCard(m, it, key, isNew);
-  const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level + " · " + esc(c.topic || "")}</div>`;
+  const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level === "DEV" ? "💻 Inglés TI · " + esc(c.topic || "") : c.level + " · " + esc(c.topic || "")}</div>`;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
-    m.innerHTML = `${head}<div class="flash" id="flash"><div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${vq.flipped ? `<div class="back"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
+    m.innerHTML = `${head}<div class="flash" id="flash"><div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${vq.flipped ? `<div class="back"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>${csBox(c.ex, false)}` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
     ${vq.flipped ? `<div class="grades"><button class="btn red" data-q="1">Otra vez<small>${intervalLabel(key, 1)}</small></button><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<button class="btn wide" id="show">Mostrar respuesta (espacio)</button>`}`;
     const flip = () => { if (!vq.flipped) { vq.flipped = true; render(); } };
     $("#flash").onclick = (e) => { if (!e.target.closest("[data-speak]")) flip(); };
@@ -757,7 +758,7 @@ RENDER.escuchar = (m) => {
     const sc = similarity(it.s, v); const ok = sc >= 0.9;
     skill("listening", ok ? 1 : 0, 1); dq.n++; if (dq.n >= 5) markDaily("listening");
     if (ok) addXP(5); else addMistake({ type: "Dictado", wrong: v, right: it.s, note: "Escucha y escribe" });
-    $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${Math.round(sc * 100)}% de precisión</b><p class="big-text">${diffWords(it.s, v)}</p><p class="muted small">En rojo: palabras que faltaron o escribiste distinto.</p></div><button class="btn wide" id="nx">Siguiente ⏎</button>`;
+    $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${Math.round(sc * 100)}% de precisión</b><p class="big-text">${diffWords(it.s, v)}</p><p class="muted small">En rojo: palabras que faltaron o escribiste distinto.</p>${csBox(it.s, true)}</div><button class="btn wide" id="nx">Siguiente ⏎</button>`;
     $("#nx").onclick = () => { dq.i++; render(); }; $("#nx").focus();
   };
 };
@@ -792,10 +793,12 @@ function bindMic(btnId, onText, live) {
 RENDER.hablar = (m) => {
   if (sub && sub.rp) return roleplay(m, sub.rp);
   if (sub && sub.pron) return pronPage(m, sub.pron);
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button></div><div id="hbody"></div>`;
+  if (sub && sub.cs) return csPage(m, sub.cs);
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
   if (hTab === "sonidos") return pronList(box);
+  if (hTab === "cs") return csList(box);
   if (hTab === "conversa") {
     const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;
@@ -804,7 +807,7 @@ RENDER.hablar = (m) => {
   }
   if (!hq) hq = { list: shuffle(LEVELS.filter((l) => S.unlocked.includes(l)).flatMap((l) => SENTENCES[l].map((s) => ({ s, l })))).sort((a, b) => (b.l === S.level) - (a.l === S.level)), i: 0 };
   const it = hq.list[hq.i % hq.list.length];
-  box.innerHTML = `<p class="muted"><b>Shadowing:</b> escucha, imita el ritmo y la entonación, y luego dila tú.</p><div class="card excard"><p class="big-text">${esc(it.s)}</p><div class="row center">${speakBtn(it.s, "🔊 Normal")}<button class="icon-btn" data-speak="${esc(it.s)}" data-rate="0.7">🐢 Lento</button>${recorderHTML("shd" + hq.i)}</div>
+  box.innerHTML = `<p class="muted"><b>Shadowing:</b> escucha, imita el ritmo y la entonación, y luego dila tú.</p><div class="card excard"><p class="big-text">${esc(it.s)}</p>${csBox(it.s, true)}<div class="row center">${speakBtn(it.s, "🔊 Normal")}<button class="icon-btn" data-speak="${esc(it.s)}" data-rate="0.7">🐢 Lento</button>${recorderHTML("shd" + hq.i)}</div>
     <div class="center">${micButton("rec")}</div><p class="muted center" id="live"></p>${dictApi ? "" : `<form id="sf" class="row"><input id="si" placeholder="Escríbela de memoria"><button class="btn">Comprobar</button></form>`}<div id="fb"></div></div><button class="btn ghost" id="nx">Otra frase →</button>`;
   const evaluate = (said) => {
     const sc = similarity(it.s, said), ok = sc >= 0.85; skill("speaking", ok ? 1 : 0, 1); if (ok) addXP(4);
@@ -828,9 +831,9 @@ function roleplay(m, rp) {
   m.innerHTML = `<div class="row between"><div><h1>${esc(rp.title)}</h1><div class="muted small">${esc(rp.intro)}</div></div><button class="btn ghost small" id="exit">Salir</button></div>
   <div class="bar"><i style="width:${(st.t / rp.turns.length) * 100}%"></i></div>
   <div class="chat">${rp.turns.slice(0, st.t).map((t, k) => `<div class="msg bot">${esc(t[0])}</div><div class="msg me">${esc(st.said[k] || "…")}</div>`).join("")}
-    <div class="msg bot">${esc(turn[0])} ${speakBtn(turn[0])}</div></div>
+    <div class="msg bot">${esc(turn[0])} ${speakBtn(turn[0])}${csBox(turn[0], false)}</div></div>
   <div class="card task-box"><b>Tu turno:</b> ${esc(turn[1])}</div>
-  ${r ? `<div class="feedback ${r.s >= 0.6 ? "good" : "bad"}"><b>Dijiste:</b> “${esc(r.said)}”<p><b>Respuesta modelo más cercana</b> (${Math.round(r.s * 100)}%): ${esc(r.m)} ${speakBtn(r.m)}</p><details><summary>Otras formas de decirlo</summary>${turn[2].filter((x) => x !== r.m).map((x) => `<p>${esc(x)} ${speakBtn(x)}</p>`).join("")}</details></div>
+  ${r ? `<div class="feedback ${r.s >= 0.6 ? "good" : "bad"}"><b>Dijiste:</b> “${esc(r.said)}”<p><b>Respuesta modelo más cercana</b> (${Math.round(r.s * 100)}%): ${esc(r.m)} ${speakBtn(r.m)}</p>${csBox(r.m, true)}<details><summary>Otras formas de decirlo</summary>${turn[2].filter((x) => x !== r.m).map((x) => `<p>${esc(x)} ${speakBtn(x)}</p>`).join("")}</details></div>
     <div class="row"><button class="btn" id="next">Continuar</button><button class="btn ghost" id="retry">Intentar de nuevo</button></div>`
   : `<div class="center">${micButton("rec")}</div><p class="muted center" id="live"></p><form id="tf" class="row"><input id="ti" placeholder="O escribe tu respuesta en inglés"><button class="btn">Enviar</button></form><button class="btn ghost small" id="help">💡 Ver una respuesta modelo</button>`}`;
   $("#exit").onclick = () => { stopSpeech(); sub = null; render(); };
@@ -861,7 +864,7 @@ function writingPage(m, w) {
   <div class="row between"><span class="muted small" id="wc"></span><div class="row"><button class="btn ghost" id="lt">🔍 Revisar gramática y ortografía</button>${reveal || !w.model ? "" : `<button class="btn" id="fin">Terminé: comparar con el modelo</button>`}</div></div><div id="ltbox"></div>
   ${!w.model ? `<button class="btn wide" id="savefree">Guardar</button>` : ""}
   ${reveal ? `<div class="card"><h2>1. Lista de control</h2><p class="muted small">Revisa tu texto con honestidad y marca lo que cumpliste. Si algo falta, corrígelo arriba.</p>${w.check.map((c, i) => `<label class="cando"><input type="checkbox" data-ck="${i}" ${d.checks[i] ? "checked" : ""}> ${esc(c)}</label>`).join("")}</div>
-    <div class="card"><h2>2. Texto modelo</h2><p class="muted small">Compara: ¿qué estructuras o palabras usa el modelo que tú no usaste? Toca una frase para escucharla.</p><div class="model">${w.model.split(/\n+/).map((p) => `<p>${p.split(/(?<=[.!?])\s+/).map((s) => `<span class="sp" data-speak="${esc(s)}">${esc(s)}</span>`).join(" ")}</p>`).join("")}</div></div>
+    <div class="card"><h2>2. Texto modelo</h2><p class="muted small">Compara: ¿qué estructuras o palabras usa el modelo que tú no usaste? Toca una frase para escucharla.</p><div class="model">${w.model.split(/\n+/).map((p) => `<p>${p.split(/(?<=[.!?])\s+/).map((s) => `<span class="sp" data-speak="${esc(s)}">${esc(s)}</span>`).join(" ")}</p>`).join("")}</div>${csEnabled() ? `<details class="csbox"><summary>🔗 Así suena el modelo (connected speech)</summary>${w.model.split(/\n+/).flatMap((p) => p.split(/(?<=[.!?])\s+/)).filter((x) => x.split(/\s+/).length >= 3).map((x) => { const a = csAnnotate(x); return `<div class="csrow">${a.html}</div>`; }).join("")}</details>` : ""}</div>
     <div class="card"><h2>3. Guarda lo que aprendiste</h2><form id="cf" class="row"><input id="cen" placeholder="Expresión del modelo (inglés)"><input id="ces" placeholder="Significado"><button class="btn">+ Tarjeta</button></form></div>
     ${d.done ? "" : `<button class="btn wide big-btn" id="save">Guardar como terminado</button>`}` : ""}`;
   const t = $("#wt");
@@ -924,6 +927,8 @@ RENDER.ajustes = (m) => {
     <label class="label">Tarjetas nuevas por día</label><select id="npd">${[5, 10, 15, 20, 30].map((n) => `<option ${S.settings.newPerDay === n ? "selected" : ""}>${n}</option>`).join("")}</select>
     <label class="label">Nivel de trabajo</label><select id="lvl">${S.unlocked.map((l) => `<option ${l === S.level ? "selected" : ""}>${l}</option>`).join("")}</select>
     <p class="muted small">Puedes bajar a un nivel ya desbloqueado si quieres reforzarlo.</p>
+    <label class="cando"><input type="checkbox" id="csshow" ${S.settings.csShow === false ? "" : "checked"}> <span>Mostrar <b>🔗 Así suena</b> (connected speech) debajo de las frases</span></label>
+    <label class="cando"><input type="checkbox" id="csopen" ${S.settings.csOpen === false ? "" : "checked"}> <span>Abrirlo automáticamente en dictados, shadowing y respuestas modelo</span></label>
     <label class="label">Retención objetivo de las tarjetas</label><select id="ret">${[[0.85, "85% · menos repasos"], [0.9, "90% · recomendado"], [0.95, "95% · más repasos, recuerdas más"]].map(([v, l]) => `<option value="${v}" ${S.settings.retention === v ? "selected" : ""}>${l}</option>`).join("")}</select>
     <button class="btn ghost small" id="redo">Repetir la prueba de ubicación</button></div>
   <div class="card"><h2>📚 Diccionario y traducción</h2><p class="muted small">El lector usa servicios gratuitos: dictionaryapi.dev (definiciones y audio) y MyMemory (traducción, 5.000 caracteres al día). Si escribes tu correo, MyMemory sube el límite a 50.000 al día (no requiere registro).</p><input id="mme" type="email" placeholder="Tu correo (opcional)" value="${esc(S.settings.mmEmail || "")}"></div>
@@ -951,6 +956,8 @@ RENDER.ajustes = (m) => {
   $("#lvl").onchange = (e) => { S.level = e.target.value; gLevel = null; vq = null; dq = null; hq = null; save(); renderTop(); toast("Nivel de trabajo: " + S.level); };
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
   $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
+  $("#csshow").onchange = (e) => { S.settings.csShow = e.target.checked; save(); };
+  $("#csopen").onchange = (e) => { S.settings.csOpen = e.target.checked; save(); };
   $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };
   $("#copy").onclick = () => { navigator.clipboard.writeText($("#bk").value).then(() => toast("Copiado"), () => { $("#bk").select(); toast("Selecciona y copia el texto"); }); };
   $("#restore").onclick = () => { try { const d = JSON.parse(decodeURIComponent(escape(atob($("#rs").value.trim())))); if (!d || !d.level || !d.cards) throw 0; S = migrate(d); vq = null; save(); $("#rres").textContent = "✅ Restaurado"; renderTop(); } catch (e) { $("#rres").textContent = "❌ Código no válido"; } };
