@@ -42,7 +42,16 @@ function picFor(text) {
   const k = String(text || "").toLowerCase().trim();
   return PICS[k] || (globalThis.PIC_VISUAL || {})[k] || PICS[k.replace(/\s*\(.*?\)/g, "")] || "";
 }
-const picHTML = (text, cls = "") => { const p = picFor(text); return p ? `<span class="pic ${cls}" aria-hidden="true">${p}</span>` : ""; };
+const arasId = (text) => { const k = String(text || "").toLowerCase().trim(); return ARAS[k] || ARAS[k.replace(/\s*\(.*?\)/g, "")] || ARAS[k.replace(/^to /, "")] || 0; };
+const arasURL = (id) => `https://static.arasaac.org/pictograms/${id}/${id}_300.png`;
+function picHTML(text, cls = "") {
+  if (S.settings.picsShow === false) return "";
+  const id = S.settings.picStyle !== "emoji" ? arasId(text) : 0, emo = picFor(text);
+  if (id) return `<img class="aras ${cls}" src="${arasURL(id)}" alt="" loading="lazy" data-emo="${esc(emo)}">`;
+  return emo ? `<span class="pic ${cls}" aria-hidden="true">${emo}</span>` : "";
+}
+document.addEventListener("error", (e) => { const t = e.target; if (t && t.tagName === "IMG" && t.classList.contains("aras") && t.isConnected) { const s = document.createElement("span"); s.className = t.className.replace("aras", "pic"); s.textContent = t.dataset.emo || ""; t.replaceWith(s); } }, true);
+const hasPic = (text) => S.settings.picsShow !== false && !!(arasId(text) || picFor(text));
 
 // Fotos reales (Wikipedia) solo para objetos y lugares del vocabulario visual
 const PHOTO_TITLE = { saw: "Hand saw", nail: "Nail (fastener)", glass: "Tumbler (glass)", pan: "Frying pan", ring: "Ring (jewellery)", watch: "Watch", cap: "Baseball cap", bank: "Bank", plant: "Houseplant", key: "Key (lock)", lock: "Padlock", plug: "AC power plugs and sockets", battery: "Battery (electricity)", star: "Star", sun: "Sun", bed: "Bed", trousers: "Trousers", trainers: "Sneakers", underground: "Metro station", bike: "Bicycle", motorbike: "Motorcycle", boat: "Boat", truck: "Truck", plane: "Airliner", fish: "Fish as food", chicken: "Chicken as food", meat: "Meat", head: "Human head", eye: "Human eye", ear: "Ear", nose: "Human nose", mouth: "Mouth", hand: "Hand", arm: "Arm", leg: "Human leg", foot: "Foot", heart: "Heart", bone: "Bone", tooth: "Tooth", sponge: "Sponge (tool)", broom: "Broom", bucket: "Bucket", soap: "Soap", towel: "Towel", toilet: "Toilet", fridge: "Refrigerator", sofa: "Couch", lamp: "Lamp", mirror: "Mirror", window: "Window", door: "Door", chair: "Chair", shower: "Shower", bathtub: "Bathtub", school: "School", church: "Church (building)", park: "Urban park", river: "River", island: "Island", city: "City", bridge: "Bridge", library: "Library", museum: "Museum", airport: "Airport", house: "House", building: "Building", hotel: "Hotel", hospital: "Hospital", supermarket: "Supermarket", stadium: "Stadium", beach: "Beach", mountain: "Mountain", coat: "Coat", hat: "Hat", scarf: "Scarf", gloves: "Glove", glasses: "Glasses", bag: "Handbag", backpack: "Backpack", wallet: "Wallet", boots: "Boot", socks: "Sock", dress: "Dress", shirt: "Shirt", "t-shirt": "T-shirt", shoes: "Shoe", fork: "Fork", spoon: "Spoon", knife: "Knife", plate: "Plate (dishware)", cup: "Cup", candle: "Candle", envelope: "Envelope", parcel: "Parcel (package)", map: "Map", compass: "Compass", tent: "Tent", rope: "Rope", thread: "Yarn", pillow: "Pillow", blanket: "Blanket", hammer: "Hammer", screwdriver: "Screwdriver", ladder: "Ladder", scissors: "Scissors", "magnifying glass": "Magnifying glass", cookie: "Cookie", cake: "Cake", "ice cream": "Ice cream", juice: "Juice", milk: "Milk", tea: "Tea", coffee: "Coffee", soup: "Soup", corn: "Maize", potato: "Potato", rice: "Rice", bread: "Bread", cheese: "Cheese", egg: "Egg as food", grapes: "Grape", lemon: "Lemon", banana: "Banana", apple: "Apple", strawberry: "Strawberry", pineapple: "Pineapple", avocado: "Avocado", tomato: "Tomato", carrot: "Carrot", onion: "Onion", garlic: "Garlic", mushroom: "Edible mushroom", salt: "Salt", water: "Drinking water", tree: "Tree", flower: "Flower", leaf: "Leaf", sea: "Sea", moon: "Moon", rain: "Rain", snow: "Snow", dog: "Dog", cat: "Cat", bird: "Bird", horse: "Horse", cow: "Cattle", pig: "Pig", "chicken (animal)": "Chicken", butterfly: "Butterfly", bee: "Bee", snake: "Snake", monkey: "Monkey", car: "Car", bus: "Bus", taxi: "Taxicab", train: "Train", doctor: "Physician", nurse: "Nursing", teacher: "Teacher", farmer: "Farmer", chef: "Chef", firefighter: "Firefighter", "police officer": "Police officer", pilot: "Aircraft pilot", mechanic: "Mechanic", scientist: "Scientist", artist: "Artist", judge: "Judge" };
@@ -83,22 +92,22 @@ const pronGuide = () => `<details class="card pguide"><summary><b>🔤 Cómo lee
   <ul class="small"><li><b>ii</b> = i larga (sheep = <i>shiip</i>); <b>i</b> = i corta y relajada (ship = <i>ship</i>).</li><li><b>uu</b> = u larga (food = <i>fuud</i>).</li><li><b>e</b> en sílabas débiles = la vocal neutra ə, muy corta.</li><li><b>z</b> = th como la z de España (think = <i>zink</i>); la <b>d</b> de <i>the</i> es suave.</li><li><b>s</b> puede ser una z que zumba: revisa el consejo de cada palabra.</li><li><b>sh</b> = como pedir silencio; <b>y</b> = la j de <i>job</i> (dʒ), como «yo» fuerte.</li><li><b>j</b> = h aspirada suave (house = <i>jaus</i>).</li><li><b>r</b> = r inglesa: no vibra.</li></ul>
   <h3>Símbolos IPA más útiles</h3>
   <div class="ipagrid">${[["i", "sheep"], ["ɪ", "ship"], ["æ", "cat"], ["ʌ", "cup"], ["ɑ", "hot"], ["ɔ", "thought"], ["ʊ", "book"], ["u", "food"], ["ə", "about"], ["ɝ", "bird"], ["eɪ", "day"], ["aɪ", "my"], ["oʊ", "go"], ["aʊ", "now"], ["θ", "think"], ["ð", "this"], ["ʃ", "she"], ["ʒ", "vision"], ["tʃ", "chair"], ["dʒ", "job"], ["ŋ", "sing"], ["j", "yes"], ["ˈ", "acento fuerte"]].map(([s, w]) => `<span><b>${s}</b> ${w}</span>`).join("")}</div>
-  <p class="small muted">Pronunciación estadounidense, según el diccionario CMU. ${S && S.settings ? "Puedes ocultar la IPA o todo esto en Ajustes." : ""}</p></details>`;
+  <p class="small muted">Pictogramas de ARASAAC (Sergio Palao, Gobierno de Aragón, licencia CC BY-NC-SA). Pronunciación estadounidense, según el diccionario CMU. ${S && S.settings ? "Puedes ocultar la IPA o todo esto en Ajustes." : ""}</p></details>`;
 
 // ---------- Quiz con imágenes ----------
 function visualPool() {
   const levelOKv = (c) => c.level === "DEV" || (LEVELS.includes(c.level) && lvlIdx(c.level) <= lvlIdx(S.level));
-  return allCards().filter((c) => !c.irr && picFor(c.en) && levelOKv(c));
+  return allCards().filter((c) => !c.irr && hasPic(c.en) && levelOKv(c));
 }
 function visualQuiz(m, onExit) {
   const pool = visualPool();
   if (pool.length < 8) { toast("Todavía no hay suficientes palabras con imagen en tu nivel"); return; }
-  const concrete = pool.filter((c) => (globalThis.PIC_VISUAL || {})[c.en.toLowerCase()]);
+  const concrete = pool.filter((c) => arasId(c.en) || (globalThis.PIC_VISUAL || {})[c.en.toLowerCase()]);
   const picks = shuffle(pool.slice()).slice(0, 6).concat(shuffle(concrete.length >= 8 ? concrete : pool).filter((x) => true).slice(0, 6));
   const items = shuffle(picks.map((w, i) => [w, i >= 6 ? 1 : 0]).filter((x, i, arr) => arr.findIndex((y) => y[0].en === x[0].en) === i)).map(([w, k]) => {
-    const others = shuffle(pool.filter((x) => x.en !== w.en && picFor(x.en) !== picFor(w.en))).slice(0, 3), opts = shuffle([w, ...others]);
-    let ex; if (k % 2) { ex = ["mc", "¿Qué palabra es?", opts.map((x) => x.en), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.pic = picFor(w.en); return ex; }
-    return ["mc", `¿Qué imagen corresponde a «${w.en}»?`, opts.map((x) => picFor(x.en) + "  " + x.es), opts.indexOf(w), `${w.en} = ${w.es}`];
+    const others = shuffle(pool.filter((x) => x.en !== w.en && x.es !== w.es && (arasId(x.en) || picFor(x.en)) !== (arasId(w.en) || picFor(w.en)))).slice(0, 3), opts = shuffle([w, ...others]);
+    let ex; if (k % 2) { ex = ["mc", "¿Qué palabra es?", opts.map((x) => x.en), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.pic = picHTML(w.en, "quiz"); return ex; }
+    ex = ["mc", `¿Qué imagen corresponde a «${w.en}»?`, opts.map((x) => x.es), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.optHTML = opts.map((x) => picHTML(x.en, "opt")); return ex;
   });
   exerciseRunner(m, items, { title: "🖼️ Quiz con imágenes", subtitle: "Asocia la palabra con su imagen", onExit, onFinish: (c, n) => {
     skill("vocab", c, n); addXP(c * 2);

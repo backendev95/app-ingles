@@ -416,7 +416,7 @@ function exerciseRunner(box, items, o) {
     if (!ex) return o.onFinish(correct, items.length, wrongs);
     answered = false;
     const t = ex[0]; let body = "";
-    if (t === "mc") body = `${ex.pic ? `<div class="qpic">${ex.pic}</div>` : ""}<p class="q">${esc(ex[1])}</p><div class="opts">${ex[2].map((x, k) => `<button class="opt" data-k="${k}"><span class="key">${k + 1}</span>${esc(x)}</button>`).join("")}</div>`;
+    if (t === "mc") body = `${ex.pic ? `<div class="qpic">${ex.pic}</div>` : ""}<p class="q">${esc(ex[1])}</p><div class="opts">${ex[2].map((x, k) => `<button class="opt" data-k="${k}"><span class="key">${k + 1}</span>${ex.optHTML ? ex.optHTML[k] + (ex.optHTML[k] ? "" : esc(x)) : esc(x)}</button>`).join("")}</div>`;
     if (t === "fill") body = `<p class="q">${esc(ex[1])}</p><form class="ans row"><input id="ai" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra que falta"><button class="btn">Comprobar</button></form>`;
     if (t === "tr") body = `<p class="label">Traduce al inglés</p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write it in English…"></textarea><button class="btn wide">Comprobar</button></form>`;
     if (t === "fix") body = `<p class="label">Esta frase tiene un error. Corrígela.</p><p class="q wrongq">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false">${esc(ex[1])}</textarea><button class="btn wide">Comprobar</button></form>`;
@@ -942,6 +942,8 @@ RENDER.ajustes = (m) => {
     <label class="cando"><input type="checkbox" id="pronshow" ${S.settings.pronShow === false ? "" : "checked"}> <span>Mostrar <b>cómo se pronuncia</b> cada palabra (a la española, con la sílaba fuerte en MAYÚSCULAS)</span></label>
     <label class="cando"><input type="checkbox" id="ipashow" ${S.settings.ipaShow === false ? "" : "checked"}> <span>Incluir la fonética internacional (IPA)</span></label>
     <label class="cando"><input type="checkbox" id="picsshow" ${S.settings.picsShow === false ? "" : "checked"}> <span>Mostrar <b>imágenes</b> junto a las palabras</span></label>
+    <label class="label">Tipo de imagen</label><select id="picstyle"><option value="aras" ${S.settings.picStyle !== "emoji" ? "selected" : ""}>Pictogramas ARASAAC (recomendado)</option><option value="emoji" ${S.settings.picStyle === "emoji" ? "selected" : ""}>Emojis</option></select>
+    <p class="muted small">${ARAS_CREDIT} Se guardan en el celular la primera vez que aparecen; luego funcionan sin internet. Si un pictograma no carga, se muestra el emoji.</p>
     <label class="cando"><input type="checkbox" id="photos" ${S.settings.photos === false ? "" : "checked"}> <span>Mostrar <b>fotos reales</b> de objetos y lugares (Wikipedia, necesita internet)</span></label>
     <label class="cando"><input type="checkbox" id="csshow" ${S.settings.csShow === false ? "" : "checked"}> <span>Mostrar <b>🔗 Así suena</b> (connected speech) debajo de las frases</span></label>
     <label class="cando"><input type="checkbox" id="csopen" ${S.settings.csOpen === false ? "" : "checked"}> <span>Abrirlo automáticamente en dictados, shadowing y respuestas modelo</span></label>
@@ -973,6 +975,7 @@ RENDER.ajustes = (m) => {
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
   $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
   $("#csshow").onchange = (e) => { S.settings.csShow = e.target.checked; save(); };
+  $("#picstyle").onchange = (e) => { S.settings.picStyle = e.target.value; save(); };
   [["pronshow", "pronShow"], ["ipashow", "ipaShow"], ["picsshow", "picsShow"], ["photos", "photos"]].forEach(([id, k]) => { $("#" + id).onchange = (e) => { S.settings[k] = e.target.checked; save(); }; });
   $("#csopen").onchange = (e) => { S.settings.csOpen = e.target.checked; save(); };
   $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };
