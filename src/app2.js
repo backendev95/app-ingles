@@ -239,7 +239,7 @@ async function openLookup(word, sentence) {
   const w = word.toLowerCase().replace(/[’']s$/, "").replace(/[’']/g, "'");
   const local = allCards().find((c) => c.en.toLowerCase() === w);
   const el = document.createElement("div"); el.id = "lookup"; el.className = "lookup";
-  el.innerHTML = `<div class="row between"><div><b class="lw">${esc(w)}</b> <span id="lph" class="muted"></span> ${speakBtn(w)} <button class="icon-btn" id="lau" hidden>🔈 Audio real</button></div><button class="icon-btn" id="lx">✕</button></div>
+  el.innerHTML = `<div class="row between"><div>${picHTML(local ? local.en : w, "lst")}<b class="lw">${esc(w)}</b> <span id="lph" class="muted"></span> ${speakBtn(w)} <button class="icon-btn" id="lau" hidden>🔈 Audio real</button></div><button class="icon-btn" id="lx">✕</button></div>${pronHTML(w, { tips: true })}${photoHTML(local ? local.en : w)}
     <div id="les" class="les">${local ? `<b>${esc(local.es)}</b> <span class="tag">${local.level === "MIS" ? "tus tarjetas" : local.level}</span>` : `<span class="muted">Traduciendo…</span>`}</div>
     <div id="ldef" class="small"></div>
     <div class="row"><button class="btn small" id="ladd">+ Tarjeta</button><button class="btn ghost small" id="lsent">Traducir la frase</button></div><div id="lsout" class="small"></div>`;
@@ -253,7 +253,7 @@ async function openLookup(word, sentence) {
   try {
     const d = await defineWord(w); if (!$("#ldef")) return;
     if (d.none) { $("#ldef").innerHTML = `<span class="muted">No está en el diccionario (puede ser un nombre propio o una forma conjugada; prueba con la forma base).</span>`; return; }
-    if (d.phonetic) $("#lph").textContent = d.phonetic;
+    if (d.phonetic && !phonFor(w)) $("#lph").textContent = d.phonetic;
     if (d.audio) { const b = $("#lau"); b.hidden = false; b.onclick = () => { try { new Audio(d.audio).play(); } catch (e) {} }; }
     $("#ldef").innerHTML = d.meanings.map((mm) => `<div><span class="tag">${esc(POS_ES[mm.pos] || mm.pos)}</span> ${mm.defs.map((x) => `${esc(x.d)}${x.ex ? ` <i class="muted">“${esc(x.ex)}”</i>` : ""}`).join("<br>")}</div>`).join("");
   } catch (e) { if ($("#ldef")) $("#ldef").innerHTML = `<span class="muted">Diccionario no disponible (¿sin internet?).</span>`; }
@@ -368,10 +368,10 @@ function irrCard(m, it, key, isNew) {
   const v = it.c, r = vq.typed;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nuevo" : "Repaso"} · Verbo irregular · ${v.level}</div>
-  <div class="flash rev"><div class="label">Escribe el pasado y el participio</div><div class="word">${esc(v.base)}</div>${speakBtn(v.base)}<div class="muted">${esc(v.es)}</div>
+  <div class="flash rev"><div class="label">Escribe el pasado y el participio</div>${picHTML(v.base, "big")}<div class="word">${esc(v.base)}</div>${speakBtn(v.base)}${pronHTML(v.base)}<div class="muted">${esc(v.es)}</div>
   ${r ? `<div class="irrres"><span class="${r.okP ? "ok" : "miss"}">${r.okP ? "✓" : "✗"} ${esc(v.past.replace("/", " / "))}</span><span class="${r.okPP ? "ok" : "miss"}">${r.okPP ? "✓" : "✗"} ${esc(v.pp.replace("/", " / "))}</span></div>` :
   `<form id="irf" class="irrform"><label>Pasado<input id="irp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="pasado"></label><label>Participio<input id="irpp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="participio"></label><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}</div>
-  ${r ? `<div class="feedback ${r.okP && r.okPP ? "good" : "bad"}"><b>${esc(irrForms(v))}</b> ${speakBtn(irrSay(v), "🔊 Escuchar las 3 formas")}${!(r.okP && r.okPP) && r.given ? `<div class="small">Escribiste: ${esc(r.given)}</div>` : ""}<div class="small muted">Patrón: ${esc(IRR_PATTERNS[irrPattern(v)])}</div></div>
+  ${r ? `<div class="feedback ${r.okP && r.okPP ? "good" : "bad"}"><b>${esc(irrForms(v))}</b> ${speakBtn(irrSay(v), "🔊 Escuchar las 3 formas")}${pronHTML([v.base, firstForm(v.past), firstForm(v.pp)].join(" "))}${!(r.okP && r.okPP) && r.given ? `<div class="small">Escribiste: ${esc(r.given)}</div>` : ""}<div class="small muted">Patrón: ${esc(IRR_PATTERNS[irrPattern(v)])}</div></div>
     ${r.okP && r.okPP ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}` : ""}`;
   $("#lst").onclick = () => { sub = "list"; vlFilter.lv = "IRR"; render(); };
   document.onkeydown = null;
@@ -397,7 +397,7 @@ function irrList(m) {
   <div class="card hero"><h2>Verbos irregulares</h2><p class="muted small">Cada día entran ${IRR_NEW_PER_DAY} verbos nuevos a tus tarjetas: ves el verbo y escribes el pasado y el participio. Aprenderlos por <b>patrones</b> (abajo) es mucho más fácil que de memoria uno por uno.</p>
     <div class="bar"><i style="width:${pct(learned, avail.length)}%"></i></div><div class="small muted">${learned} de ${avail.length} aprendidos hasta ${S.level}${avail.length < IRREG.length ? ` · ${IRREG.length - avail.length} más al subir de nivel` : ""}</div>
     <div class="row"><button class="btn" id="quick">⚡ Práctica rápida (12)</button></div></div>
-  ${groups.map(([p, list]) => `<h2>${esc(IRR_PATTERNS[p])}</h2><div class="card list">${list.map((v) => { const st = S.cards[v.id], ok = lvlIdx(v.level) <= lvlIdx(S.level); return `<div class="li ${ok ? "" : "dim"}"><div><b>${esc(irrForms(v))}</b><div class="muted small">${esc(v.es)}</div></div>${speakBtn(irrSay(v))}<span class="tag">${v.level}</span><span class="tag">${st ? (st.reps >= 2 ? "Aprendido" : "En curso") : "Nuevo"}</span></div>`; }).join("")}</div>`).join("")}`;
+  ${groups.map(([p, list]) => `<h2>${esc(IRR_PATTERNS[p])}</h2><div class="card list">${list.map((v) => { const st = S.cards[v.id], ok = lvlIdx(v.level) <= lvlIdx(S.level); return `<div class="li ${ok ? "" : "dim"}">${picHTML(v.base, "lst")}<div><b>${esc(irrForms(v))}</b>${pronHTML([v.base, firstForm(v.past), firstForm(v.pp)].join(" "))}<div class="muted small">${esc(v.es)}</div></div>${speakBtn(irrSay(v))}<span class="tag">${v.level}</span><span class="tag">${st ? (st.reps >= 2 ? "Aprendido" : "En curso") : "Nuevo"}</span></div>`; }).join("")}</div>`).join("")}`;
   $("#back").onclick = () => { sub = null; vlFilter.lv = null; render(); };
   $$("[data-l]", m).forEach((b) => b.onclick = () => { vlFilter = { q: vlFilter.q, lv: b.dataset.l, topic: "" }; render(); });
   $("#quick").onclick = () => {
@@ -635,7 +635,7 @@ RENDER.ti = (m) => {
     const learned = DEV_VOCAB.filter((v) => S.cards[v.id] && S.cards[v.id].reps >= 2).length;
     const topics = [...new Set(DEV_VOCAB.map((v) => v.topic))];
     box.innerHTML = `<div class="card hero"><label class="cando"><input type="checkbox" id="devcards" ${S.settings.devCards === false ? "" : "checked"}> <span><b>Incluir en mis tarjetas diarias</b> (${DEV_NEW_PER_DAY} palabras técnicas nuevas por día, con repaso espaciado)</span></label><div class="bar"><i style="width:${pct(learned, DEV_VOCAB.length)}%"></i></div><div class="small muted">${learned} de ${DEV_VOCAB.length} aprendidas</div><button class="btn" id="quiz">⚡ Práctica rápida (12)</button></div>
-    ${topics.map((t) => `<h2>${esc(t)}</h2><div class="card list">${DEV_VOCAB.filter((v) => v.topic === t).map((v) => { const st = S.cards[v.id]; return `<div class="li"><div><b>${esc(v.en)}</b> — ${esc(v.es)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}${v.ex ? speakBtn(v.ex, "💬") : ""}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("")}</div>`).join("")}`;
+    ${topics.map((t) => `<h2>${esc(t)}</h2><div class="card list">${DEV_VOCAB.filter((v) => v.topic === t).map((v) => { const st = S.cards[v.id]; return `<div class="li">${picHTML(v.en, "lst")}<div><b>${esc(v.en)}</b> — ${esc(v.es)}${pronHTML(v.en)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}${v.ex ? speakBtn(v.ex, "💬") : ""}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("")}</div>`).join("")}`;
     $("#devcards").onchange = (e) => { S.settings.devCards = e.target.checked; vq = null; save(); };
     $("#quiz").onclick = () => { const pool = shuffle(DEV_VOCAB).slice(0, 12); const items = pool.map((w, k) => { const others = shuffle(DEV_VOCAB.filter((x) => x.id !== w.id && x.es !== w.es)).slice(0, 3), opts = shuffle([w, ...others]); return k % 2 ? ["mc", `¿Cómo se dice “${w.es}” en inglés?`, opts.map((x) => x.en), opts.indexOf(w), w.ex] : ["mc", `¿Qué significa “${w.en}”?`, opts.map((x) => x.es), opts.indexOf(w), w.ex]; });
       exerciseRunner(m, items, { title: "Vocabulario técnico", onExit: () => render(), onFinish: (c, n) => { skill("vocab", c, n); addXP(c * 2); m.innerHTML = `<div class="card center"><h2>${c} de ${n}</h2><button class="btn" id="ok">Volver</button></div>`; $("#ok").onclick = () => render(); } }); };

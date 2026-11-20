@@ -43,7 +43,7 @@ function chunkPage(m, g) {
   m.innerHTML = `<div class="row between"><div><h1>${g.icon} ${esc(g.title)}</h1><div class="muted small">Nivel ${g.level}</div></div><button class="btn ghost small" id="exit">Volver</button></div>
   <div class="card note">${esc(g.intro)}</div>
   <div class="row"><button class="btn" id="practice">⚡ Practicar (${g.drills.length + 3})</button><button class="btn ghost" id="playall">🔊 Escuchar todos</button></div>
-  <div class="list">${g.items.map(([en, es, ex]) => `<div class="card chunkcard"><div class="row between"><div><b class="chunk">${esc(en)}</b> <span class="muted">— ${esc(es)}</span></div>${speakBtn(en)}</div><p class="exs">“${esc(ex)}” ${speakBtn(ex)} <button class="icon-btn" data-speak="${esc(ex)}" data-rate="0.7">🐢</button></p>${csBox(ex, false)}</div>`).join("")}</div>
+  <div class="list">${g.items.map(([en, es, ex]) => `<div class="card chunkcard"><div class="row between"><div><b class="chunk">${esc(en)}</b> <span class="muted">— ${esc(es)}</span>${pronHTML(en)}</div>${speakBtn(en)}</div><p class="exs">“${esc(ex)}” ${speakBtn(ex)} <button class="icon-btn" data-speak="${esc(ex)}" data-rate="0.7">🐢</button></p>${csBox(ex, false)}</div>`).join("")}</div>
   <div class="card"><h2>Reto</h2><p>Elige 3 chunks de esta lista y di en voz alta una frase <b>sobre tu vida</b> con cada uno. Grábate y escúchate.</p><div class="center">${recorderHTML("chunk-" + g.id, 60)}</div></div>`;
   $("#exit").onclick = () => { stopSpeech(); sub = null; render(); };
   $("#practice").onclick = () => { sub = { chunkRun: g, items: chunkDrills(g) }; render(); };

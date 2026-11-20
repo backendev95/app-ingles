@@ -416,7 +416,7 @@ function exerciseRunner(box, items, o) {
     if (!ex) return o.onFinish(correct, items.length, wrongs);
     answered = false;
     const t = ex[0]; let body = "";
-    if (t === "mc") body = `<p class="q">${esc(ex[1])}</p><div class="opts">${ex[2].map((x, k) => `<button class="opt" data-k="${k}"><span class="key">${k + 1}</span>${esc(x)}</button>`).join("")}</div>`;
+    if (t === "mc") body = `${ex.pic ? `<div class="qpic">${ex.pic}</div>` : ""}<p class="q">${esc(ex[1])}</p><div class="opts">${ex[2].map((x, k) => `<button class="opt" data-k="${k}"><span class="key">${k + 1}</span>${esc(x)}</button>`).join("")}</div>`;
     if (t === "fill") body = `<p class="q">${esc(ex[1])}</p><form class="ans row"><input id="ai" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe la palabra que falta"><button class="btn">Comprobar</button></form>`;
     if (t === "tr") body = `<p class="label">Traduce al inglés</p><p class="q">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false" placeholder="Write it in English…"></textarea><button class="btn wide">Comprobar</button></form>`;
     if (t === "fix") body = `<p class="label">Esta frase tiene un error. Corrígela.</p><p class="q wrongq">${esc(ex[1])}</p><form class="ans"><textarea id="ai" rows="2" autocapitalize="off" spellcheck="false">${esc(ex[1])}</textarea><button class="btn wide">Comprobar</button></form>`;
@@ -479,7 +479,7 @@ function comprehension(box, item, o) {
     box.innerHTML = `<div class="row between"><div><h1>${esc(item.title)}</h1><div class="muted small">${o.subtitle || "Nivel " + item.level}</div></div>${o.onExit ? `<button class="btn ghost small" id="exit">Salir</button>` : ""}</div>
     ${isL ? `<div class="card player"><div class="row center"><button class="btn big-btn" id="play">▶️ Escuchar el audio</button><button class="btn ghost" id="slow">🐢 Más lento</button><button class="btn ghost" id="stop">⏹️</button></div><p class="muted small center">Escucha todas las veces que necesites. ${o.exam ? "" : "La transcripción se muestra al terminar."}</p></div>` : ""}
     ${!isL ? `<div class="card reading">${speakBtn(item.text, "🔊 Escuchar el texto")}${item.text.split(/\n\n+/).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("")}</div>
-      ${item.gloss && !o.exam ? `<details class="card"><summary><b>Glosario</b> (${item.gloss.length})</summary><div class="list">${item.gloss.map(([en, es]) => `<div class="li"><div><b>${esc(en)}</b> — ${esc(es)}</div>${speakBtn(en)}<button class="btn ghost small" data-add="${esc(en)}|${esc(es)}">+ Tarjeta</button></div>`).join("")}</div></details>` : ""}` : ""}
+      ${item.gloss && !o.exam ? `<details class="card"><summary><b>Glosario</b> (${item.gloss.length})</summary><div class="list">${item.gloss.map(([en, es]) => `<div class="li">${picHTML(en, "lst")}<div><b>${esc(en)}</b> — ${esc(es)}${pronHTML(en)}</div>${speakBtn(en)}<button class="btn ghost small" data-add="${esc(en)}|${esc(es)}">+ Tarjeta</button></div>`).join("")}</div></details>` : ""}` : ""}
     <h2>Preguntas</h2>${item.q.map((q, k) => `<div class="card excard"><p class="q">${k + 1}. ${esc(q[0])}</p><div class="opts">${q[1].map((x, j) => `<button class="opt ${ans[k] !== undefined ? (j === q[2] ? "right" : j === ans[k] ? "wrong" : "") : ""}" data-q="${k}" data-j="${j}">${esc(x)}</button>`).join("")}</div></div>`).join("")}
     ${isL && (shownT || all) && !o.exam ? `<details class="card" ${all ? "open" : ""}><summary><b>Transcripción</b></summary>${item.lines.map(([sp, t], i) => `<div class="line" data-line="${i}"><p><b>${esc(sp)}:</b> ${esc(t)} ${speakBtn(t)}</p>${csBox(t, false)}</div>`).join("")}</details>` : ""}
     ${all ? `<div class="card center"><h2>${c} de ${item.q.length} correctas</h2><div class="row center">${!o.exam ? `<button class="btn ghost" id="retell">🗣️ Cuéntalo con tus palabras</button>` : ""}<button class="btn" id="done">${o.exam ? "Continuar" : "Terminar"}</button></div></div>` : ""}`;
@@ -587,7 +587,8 @@ RENDER.tarjetas = (m) => {
   if (!it) {
     if (vq.done) markDaily("cards");
     const { totalNew } = dueCards();
-    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}. Cada día entran también ${IRR_NEW_PER_DAY} verbos irregulares nuevos.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button></div></div>`;
+    m.innerHTML = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="card center"><div class="big">🎉</div><h2>¡Al día!</h2><p>Repasaste ${vq.done} tarjetas. La repetición espaciada funciona mejor poco y todos los días.</p><p class="muted">${totalNew} palabras nuevas disponibles hasta ${S.level}. Cada día entran también ${IRR_NEW_PER_DAY} verbos irregulares nuevos.</p><div class="row center"><button class="btn" id="more">Aprender 5 más</button><button class="btn ghost" id="vquiz">🖼️ Quiz con imágenes</button></div></div>`;
+    $("#vquiz").onclick = () => visualQuiz(m, () => render());
     $("#more").onclick = () => { S.newToday.n = Math.max(0, S.newToday.n - 5); vq = null; render(); };
     $("#lst").onclick = () => { sub = "list"; render(); };
     return;
@@ -597,7 +598,7 @@ RENDER.tarjetas = (m) => {
   const head = `<div class="row between"><h1>Tarjetas</h1><button class="btn ghost small" id="lst">📚 Ver todas</button></div><div class="muted small">${vq.i + 1}/${vq.list.length} · ${isNew ? "Nueva" : "Repaso"} · ${dir === "r" ? "Español → inglés (escribe)" : "Inglés → español"} · ${c.level === "MIS" ? "Tus palabras" : c.level === "DEV" ? "💻 Inglés TI · " + esc(c.topic || "") : c.level + " · " + esc(c.topic || "")}</div>`;
   const nextCard = (q) => { grade(key, q); vq.done++; if (q < 3) vq.list.push(it); vq.i++; vq.flipped = false; vq.typed = null; render(); };
   if (dir === "f") {
-    m.innerHTML = `${head}<div class="flash" id="flash"><div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${vq.flipped ? `<div class="back"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>${csBox(c.ex, false)}` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
+    m.innerHTML = `${head}<div class="flash" id="flash">${picHTML(c.en, "big")}<div class="word">${esc(c.en)}</div>${speakBtn(c.en)}${pronHTML(c.en, { tips: vq.flipped })}${vq.flipped ? `<div class="back">${photoHTML(c.en)}<div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex)}” ${speakBtn(c.ex)}</p>${csBox(c.ex, false)}` : ""}</div>` : `<div class="muted small">¿Qué significa? Piénsalo y toca para ver</div>`}</div>
     ${vq.flipped ? `<div class="grades"><button class="btn red" data-q="1">Otra vez<small>${intervalLabel(key, 1)}</small></button><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<button class="btn wide" id="show">Mostrar respuesta (espacio)</button>`}`;
     const flip = () => { if (!vq.flipped) { vq.flipped = true; render(); } };
     $("#flash").onclick = (e) => { if (!e.target.closest("[data-speak]")) flip(); };
@@ -607,15 +608,15 @@ RENDER.tarjetas = (m) => {
     m.onkeydown = null;
     document.onkeydown = (e) => { if (view !== "tarjetas" || sub) return; if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return; if (e.key === " " && !vq.flipped) { e.preventDefault(); flip(); } else if (vq.flipped && ["1", "2", "3", "4"].includes(e.key)) nextCard([1, 3, 4, 5][+e.key - 1]); };
   } else {
-    const hint = c.en.split(" ").map((w) => w[0] + "_".repeat(Math.max(1, w.length - 1))).join(" ");
+    const enA = c.en.replace(/\s*\(.*?\)/g, "").trim(), hint = enA.split(" ").map((w) => w[0] + "_".repeat(Math.max(1, w.length - 1))).join(" ");
     const r = vq.typed;
-    m.innerHTML = `${head}<div class="flash rev"><div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex.replace(new RegExp(c.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "_____"))}”</p>` : ""}<div class="muted small">Pista: ${esc(hint)}</div></div>
-    ${r ? `<div class="feedback ${r.ok ? "good" : "bad"}"><b>${r.ok ? "¡Correcto!" : "Era:"}</b> ${esc(c.en)} ${speakBtn(c.en)}${!r.ok ? `<div class="small">Escribiste: ${esc(r.v)}</div>` : ""}</div>
+    m.innerHTML = `${head}<div class="flash rev">${picHTML(c.en, "big")}<div class="word es">${esc(c.es)}</div>${c.ex ? `<p class="exs">“${esc(c.ex.replace(new RegExp(c.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "_____"))}”</p>` : ""}<div class="muted small">Pista: ${esc(hint)}</div></div>
+    ${r ? `<div class="feedback ${r.ok ? "good" : "bad"}"><b>${r.ok ? "¡Correcto!" : "Era:"}</b> ${esc(c.en)} ${speakBtn(c.en)}${pronHTML(c.en, { tips: true })}${photoHTML(c.en)}${!r.ok ? `<div class="small">Escribiste: ${esc(r.v)}</div>` : ""}</div>
       ${r.ok ? `<div class="grades three"><button class="btn orange" data-q="3">Difícil<small>${intervalLabel(key, 3)}</small></button><button class="btn" data-q="4">Bien<small>${intervalLabel(key, 4)}</small></button><button class="btn green" data-q="5">Fácil<small>${intervalLabel(key, 5)}</small></button></div>` : `<div class="row"><button class="btn" data-q="1">Continuar</button><button class="btn ghost small" data-q="3">Lo tenía bien (error de tipeo)</button></div>`}`
     : `<form id="rf" class="row"><input id="ri" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Escribe en inglés"><button class="btn">Comprobar</button></form><button class="btn ghost small" id="idk">No lo sé</button>`}`;
     if (!r) {
       $("#ri").focus();
-      $("#rf").onsubmit = (e) => { e.preventDefault(); const v = $("#ri").value.trim(); if (!v) return; const ok = norm(v) === norm(c.en) || similarity(v, c.en) >= 0.9; vq.typed = { ok, v }; render(); if (ok) speak(c.en); };
+      $("#rf").onsubmit = (e) => { e.preventDefault(); const v = $("#ri").value.trim(); if (!v) return; const ok = norm(v) === norm(c.en) || norm(v) === norm(enA) || similarity(v, enA) >= 0.9; vq.typed = { ok, v }; render(); if (ok) speak(c.en); };
       $("#idk").onclick = () => { vq.typed = { ok: false, v: "—" }; render(); speak(c.en); };
     }
     $$("[data-q]", m).forEach((b) => b.onclick = () => nextCard(+b.dataset.q));
@@ -633,9 +634,11 @@ function vocabList(m) {
   <div class="tabs">${LEVELS.map((l) => `<button class="tab ${l === lv ? "on" : ""}" data-l="${l}">${l}${S.unlocked.includes(l) ? "" : " 🔒"}</button>`).join("")}<button class="tab ${lv === "MIS" ? "on" : ""}" data-l="MIS">Mías (${S.custom.length})</button><button class="tab ${lv === "IRR" ? "on" : ""}" data-l="IRR">Irregulares (${IRREG.length})</button></div>
   <div class="row"><input id="q" placeholder="Buscar en inglés o español…" value="${esc(vlFilter.q)}">${lv !== "MIS" ? `<select id="tp"><option value="">Todos los temas</option>${topics.map((t) => `<option ${t === vlFilter.topic ? "selected" : ""}>${esc(t)}</option>`).join("")}</select>` : ""}</div>
   ${!S.unlocked.includes(lv) && lv !== "MIS" ? `<p class="note card">Puedes ver este vocabulario, pero entrará a tus tarjetas cuando llegues a ${lv}.</p>` : ""}
-  <div class="card list">${list.map((v) => { const st = S.cards[v.id]; return `<div class="li"><div><b>${esc(v.en)}</b> — ${esc(v.es)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("") || "<p class='muted'>Nada por aquí.</p>"}</div>
+  ${pronGuide()}<div class="row"><button class="btn ghost small" id="vquiz">🖼️ Quiz con imágenes</button></div>
+  <div class="card list">${list.map((v) => { const st = S.cards[v.id]; return `<div class="li">${picHTML(v.en, "lst")}<div><b>${esc(v.en)}</b> — ${esc(v.es)}${pronHTML(v.en)}<div class="muted small">${esc(v.ex)}</div></div>${speakBtn(v.en)}<span class="tag">${st ? (st.reps >= 2 ? "Aprendida" : "En curso") : "Nueva"}</span></div>`; }).join("") || "<p class='muted'>Nada por aquí.</p>"}</div>
   <h2>Agregar mi propia palabra</h2><form id="af" class="card"><div class="row"><input id="aen" placeholder="Inglés" required><input id="aes" placeholder="Español" required></div><input id="aex" placeholder="Frase de ejemplo (opcional)"><button class="btn">Agregar a mis tarjetas</button></form>`;
   $("#back").onclick = () => { sub = null; render(); };
+  $("#vquiz").onclick = () => visualQuiz(m, () => vocabList(m));
   $$("[data-l]", m).forEach((b) => b.onclick = () => { vlFilter = { q: vlFilter.q, lv: b.dataset.l, topic: "" }; render(); });
   $("#q").oninput = (e) => { vlFilter.q = e.target.value; clearTimeout(vocabList.t); vocabList.t = setTimeout(() => { const pos = e.target.selectionStart; vocabList(m); const q = $("#q"); q.focus(); q.setSelectionRange(pos, pos); }, 250); };
   if ($("#tp")) $("#tp").onchange = (e) => { vlFilter.topic = e.target.value; vocabList(m); };
@@ -936,6 +939,10 @@ RENDER.ajustes = (m) => {
     <label class="label">Tarjetas nuevas por día</label><select id="npd">${[5, 10, 15, 20, 30].map((n) => `<option ${S.settings.newPerDay === n ? "selected" : ""}>${n}</option>`).join("")}</select>
     <label class="label">Nivel de trabajo</label><select id="lvl">${S.unlocked.map((l) => `<option ${l === S.level ? "selected" : ""}>${l}</option>`).join("")}</select>
     <p class="muted small">Puedes bajar a un nivel ya desbloqueado si quieres reforzarlo.</p>
+    <label class="cando"><input type="checkbox" id="pronshow" ${S.settings.pronShow === false ? "" : "checked"}> <span>Mostrar <b>cómo se pronuncia</b> cada palabra (a la española, con la sílaba fuerte en MAYÚSCULAS)</span></label>
+    <label class="cando"><input type="checkbox" id="ipashow" ${S.settings.ipaShow === false ? "" : "checked"}> <span>Incluir la fonética internacional (IPA)</span></label>
+    <label class="cando"><input type="checkbox" id="picsshow" ${S.settings.picsShow === false ? "" : "checked"}> <span>Mostrar <b>imágenes</b> junto a las palabras</span></label>
+    <label class="cando"><input type="checkbox" id="photos" ${S.settings.photos === false ? "" : "checked"}> <span>Mostrar <b>fotos reales</b> de objetos y lugares (Wikipedia, necesita internet)</span></label>
     <label class="cando"><input type="checkbox" id="csshow" ${S.settings.csShow === false ? "" : "checked"}> <span>Mostrar <b>🔗 Así suena</b> (connected speech) debajo de las frases</span></label>
     <label class="cando"><input type="checkbox" id="csopen" ${S.settings.csOpen === false ? "" : "checked"}> <span>Abrirlo automáticamente en dictados, shadowing y respuestas modelo</span></label>
     <label class="label">Retención objetivo de las tarjetas</label><select id="ret">${[[0.85, "85% · menos repasos"], [0.9, "90% · recomendado"], [0.95, "95% · más repasos, recuerdas más"]].map(([v, l]) => `<option value="${v}" ${S.settings.retention === v ? "selected" : ""}>${l}</option>`).join("")}</select>
@@ -966,6 +973,7 @@ RENDER.ajustes = (m) => {
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
   $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
   $("#csshow").onchange = (e) => { S.settings.csShow = e.target.checked; save(); };
+  [["pronshow", "pronShow"], ["ipashow", "ipaShow"], ["picsshow", "picsShow"], ["photos", "photos"]].forEach(([id, k]) => { $("#" + id).onchange = (e) => { S.settings[k] = e.target.checked; save(); }; });
   $("#csopen").onchange = (e) => { S.settings.csOpen = e.target.checked; save(); };
   $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };
   $("#copy").onclick = () => { navigator.clipboard.writeText($("#bk").value).then(() => toast("Copiado"), () => { $("#bk").select(); toast("Selecciona y copia el texto"); }); };
