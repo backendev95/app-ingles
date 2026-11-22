@@ -95,3 +95,67 @@ function tenseDrill(m, items, title, id) {
     $("#tenses").onclick = () => { sub = { tenses: true }; render(); window.scrollTo(0, 0); };
   };
 })();
+
+// ===== BORRADO PROTEGIDO Y COPIAS DE SEGURIDAD =====
+const BK_KEY = "ingles-backup-last";
+function backupData() { return { app: "english-path", version: 1, date: new Date().toISOString(), state: S }; }
+function downloadBackup(tag) {
+  const d = backupData(), name = `english-path-${tag || "respaldo"}-${d.date.slice(0, 10)}.json`;
+  try { localStorage.setItem(BK_KEY, JSON.stringify(d)); } catch (e) {}
+  try {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: "application/json" })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    return true;
+  } catch (e) { return false; }
+}
+function lastBackup() { try { const d = JSON.parse(localStorage.getItem(BK_KEY) || "null"); return d && d.state && d.state.cards ? d : null; } catch (e) { return null; } }
+function restoreState(d, msgEl) {
+  const st = d && (d.state || d);
+  if (!st || !st.level || !st.cards) throw new Error("El archivo no es un respaldo válido de la app.");
+  try { localStorage.setItem(BK_KEY + "-prev", JSON.stringify(backupData())); } catch (e) {}
+  S = migrate(st); vq = dq = hq = null; save(); renderTop();
+  if (msgEl) msgEl.textContent = "✅ Progreso restaurado";
+}
+function resetFlow(box) {
+  const sess = Supa.ready() ? Supa.session() : null;
+  box.innerHTML = `<div class="card note"><p><b>Esto borra tarjetas, lecciones, exámenes, estadísticas e historial.</b>${sess ? " También se borra tu progreso en la nube." : ""} Antes de borrar se descargará automáticamente una copia de seguridad, por si te arrepientes.</p>
+    <label class="label">Escribe <b>BORRAR</b> para confirmar</label><input id="rtxt" autocomplete="off" autocapitalize="characters" placeholder="BORRAR">
+    ${sess ? `<label class="label">Tu contraseña (${esc(sess.email || "")})</label><input id="rpw" type="password" autocomplete="current-password" placeholder="Contraseña">` : ""}
+    <p class="small" id="rmsg"></p>
+    <div class="row"><button class="btn red small" id="rgo" disabled>Borrar todo</button><button class="btn ghost small" id="rno">Cancelar</button></div></div>`;
+  const chk = () => { $("#rgo").disabled = $("#rtxt").value.trim().toUpperCase() !== "BORRAR" || (sess && !$("#rpw").value); };
+  $("#rtxt").oninput = chk; if (sess) $("#rpw").oninput = chk;
+  $("#rno").onclick = () => { box.innerHTML = ""; };
+  $("#rgo").onclick = async () => {
+    const msg = $("#rmsg"), btn = $("#rgo"); btn.disabled = true;
+    if (sess) {
+      msg.textContent = "Verificando contraseña…";
+      try { await Supa.login(sess.email, $("#rpw").value); }
+      catch (e) { msg.textContent = "❌ " + (/invalid/i.test(e.message) ? "Contraseña incorrecta." : "No se pudo verificar la contraseña (" + e.message + ")."); btn.disabled = false; return; }
+    }
+    downloadBackup("antes-de-borrar");
+    const set = S.settings; S = defaultState(); S.settings = set; vq = dq = hq = null; save();
+    toast("Progreso borrado. Tienes una copia en Ajustes → Respaldo."); go("inicio");
+  };
+}
+(() => {
+  const base = RENDER.ajustes;
+  RENDER.ajustes = (m) => {
+    base(m);
+    const rs = $("#reset"); if (rs) rs.onclick = () => resetFlow($("#rb"));
+    const card = $("#bk") && $("#bk").closest(".card");
+    if (!card) return;
+    const lb = lastBackup();
+    card.insertAdjacentHTML("afterbegin", `<h2>💾 Copias de seguridad</h2><p class="muted small">Guarda un archivo con todo tu progreso o restáuralo desde un archivo. Al borrar el progreso se crea una copia automáticamente.</p>
+      <div class="row"><button class="btn small" id="bkdl">⬇️ Descargar copia</button><label class="btn ghost small filebtn">⬆️ Restaurar desde archivo<input type="file" id="bkfile" accept=".json,application/json" hidden></label></div>
+      ${lb ? `<div class="row"><button class="btn ghost small" id="bkundo">↩️ Recuperar la última copia (${new Date(lb.date).toLocaleString()})</button></div>` : ""}
+      <p class="small" id="bkmsg"></p><div id="bkc"></div><hr><h3>Código de respaldo</h3>`);
+    const old = card.querySelector("h2:not(:first-child)"); if (old) old.remove();
+    $("#bkdl").onclick = () => { $("#bkmsg").textContent = downloadBackup("respaldo") ? "✅ Copia descargada." : "❌ No se pudo descargar."; };
+    $("#bkfile").onchange = (e) => { const f = e.target.files[0]; if (!f) return; const rd = new FileReader();
+      rd.onload = () => { let d; try { d = JSON.parse(rd.result); } catch (er) { $("#bkmsg").textContent = "❌ El archivo no es un respaldo válido."; return; }
+        confirmBox($("#bkc"), `Esto reemplaza tu progreso actual por el del archivo${d.date ? ` (${new Date(d.date).toLocaleString()})` : ""}. ¿Continuar?`, () => { try { restoreState(d, $("#bkmsg")); $("#bkc").innerHTML = ""; } catch (er) { $("#bkmsg").textContent = "❌ " + er.message; } }); };
+      rd.readAsText(f); e.target.value = ""; };
+    if ($("#bkundo")) $("#bkundo").onclick = () => confirmBox($("#bkc"), "Esto reemplaza tu progreso actual por la última copia guardada. ¿Continuar?", () => { try { restoreState(lastBackup(), $("#bkmsg")); $("#bkc").innerHTML = ""; } catch (er) { $("#bkmsg").textContent = "❌ " + er.message; } });
+  };
+})();
