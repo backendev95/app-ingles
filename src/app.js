@@ -321,7 +321,7 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
@@ -789,7 +789,7 @@ const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lectura
 function bindReadTabs(m) { $$("[data-rt]", m).forEach((b) => b.onclick = () => { rTab = b.dataset.rt; render(); }); }
 
 // ---------- HABLAR ----------
-let hTab = "conversa", hq = null;
+let hTab = "mapa", hq = null;
 function micButton(id) { return dictApi ? `<button class="btn big-btn" id="${id}">🎙️ Toca y habla</button>` : `<p class="muted small">🎙️ El micrófono funciona en Chrome o Edge. Aquí puedes decirlo en voz alta y escribirlo.</p>`; }
 function bindMic(btnId, onText, live) {
   if (!dictApi || !$("#" + btnId)) return;
@@ -804,17 +804,18 @@ RENDER.hablar = (m) => {
   if (sub && sub.pron) return pronPage(m, sub.pron);
   if (sub && sub.cs) return csPage(m, sub.cs);
   if (sub && sub.retell) return retellPage(m, sub.retell, () => { sub = null; render(); });
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "mapa" ? "on" : ""}" data-t="mapa">🗺️ Mapa</button><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
   if (hTab === "sonidos") return pronList(box);
   if (hTab === "cs") return csList(box);
+  if (hTab === "mapa") return situationsMap(box);
   if (hTab === "min") return speakMinute(box);
   if (hTab === "retell") return retellList(box);
   if (hTab === "conversa") {
-    const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
+    const list = SCENES.concat(ALL_ROLEPLAY).filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;
-    $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { rp: ALL_ROLEPLAY.find((x) => x.id === b.dataset.i), t: 0, scores: [] }; render(); });
+    $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { rp: convoById(b.dataset.i) }; render(); });
     return;
   }
   if (!hq) hq = { list: shuffle(LEVELS.filter((l) => S.unlocked.includes(l)).flatMap((l) => SENTENCES[l].map((s) => ({ s, l })))).sort((a, b) => (b.l === S.level) - (a.l === S.level)), i: 0 };

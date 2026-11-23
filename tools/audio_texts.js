@@ -18,6 +18,8 @@ LEVELS.forEach((lv) => (ROLEPLAY[lv] || []).forEach((r) => r.turns.forEach(([p, 
 // Inglés para desarrolladores y connected speech
 DEV.vocab.split("\\n").forEach((line) => { if (!line.includes("|")) return; const [en, es, ex] = line.split("|").map((x) => (x || "").trim()); add("A", en, "dev"); add("A", ex, "dev"); });
 DEV.lessons.forEach((l) => { l.phrases.forEach(([en]) => add("A", en, "dev")); (l.explain.match(/<i>([^<]+)<\\/i>/g) || []).forEach((m) => add("A", m.replace(/<\\/?i>/g, ""), "dev")); l.ex.forEach((ex) => { const t = ex[0], answer = t === "mc" ? ex[2][ex[3]] : t === "ord" ? ex[2] : ex[2][0]; add("A", t === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\\s*\\([^)]*\\)/g, "").trim() : t === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer, "dev"); }); });
+TENSES.forEach((t) => { t.examples.forEach((x) => add("A", x, "example")); [t.form.aff[1], t.form.neg[1], t.form.q[1], t.mistake[1]].forEach((x) => x.split(" · ").forEach((y) => add("A", y, "example"))); });
+SCENES.forEach((sc) => Object.values(sc.nodes).forEach((n) => { add("B", n.npc, "roleplay"); (n.opts || []).forEach((o) => o.say.forEach((x) => add("A", x, "model"))); }));
 DEV.roleplays.forEach((r) => r.turns.forEach(([p, task, models]) => { add("B", p, "dev"); models.forEach((x) => add("A", x, "dev")); }));
 DEV.listening.forEach((d) => d.lines.forEach(([sp, t]) => add(sp === "A" ? "A" : sp === "B" ? "B" : "C", t, "dev")));
 DEV.interview.forEach((x) => { add("A", x.q, "dev"); add("A", x.model, "dev"); });

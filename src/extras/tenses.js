@@ -1,0 +1,158 @@
+// ===== LOS 12 TIEMPOS VERBALES =====
+// tl = línea de tiempo: posiciones de 0 a 100 (50 = ahora). ref = momento de referencia.
+// marcas: ["x", p] acción puntual · ["bar", a, b] acción en progreso · ["arr", a, b] conexión hasta la referencia
+const TENSES = [
+  { id: "ps", name: "Present simple", es: "Presente simple", level: "A2", group: "present", aspect: "simple",
+    form: { aff: ["I/you/we/they work · he/she/it works", "She works in a bank."], neg: ["don't / doesn't + verbo", "He doesn't eat meat."], q: ["Do / Does + sujeto + verbo?", "Do you live here?"] },
+    uses: ["Hábitos y rutinas", "Verdades generales y hechos", "Horarios fijos (trenes, clases)"], signals: "always, usually, often, every day, never, on Mondays",
+    examples: ["I usually get up at seven.", "Water boils at one hundred degrees.", "The train leaves at 8:15."],
+    mistake: ["She work in a bank.", "She works in a bank.", "Con he/she/it, el verbo lleva -s."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 12], ["x", 26], ["x", 40], ["x", 54], ["x", 68], ["x", 82]], note: "Se repite: antes, ahora y después" } },
+  { id: "pc", name: "Present continuous", es: "Presente continuo", level: "A2", group: "present", aspect: "continuous",
+    form: { aff: ["am / is / are + -ing", "I'm working from home today."], neg: ["am not / isn't / aren't + -ing", "She isn't listening."], q: ["Am / Is / Are + sujeto + -ing?", "Are you coming?"] },
+    uses: ["Lo que pasa en este momento", "Situaciones temporales", "Planes ya organizados"], signals: "now, right now, at the moment, today, this week, currently",
+    examples: ["I'm reading a great book at the moment.", "They're staying with friends this week.", "We're meeting the client tomorrow."],
+    mistake: ["I am knowing the answer.", "I know the answer.", "Los verbos de estado (know, like, want, need) no van en continuo."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["bar", 40, 60]], note: "En progreso alrededor de ahora" } },
+  { id: "pp", name: "Present perfect", es: "Presente perfecto", level: "A2", group: "present", aspect: "perfect",
+    form: { aff: ["have / has + participio", "I've finished the report."], neg: ["haven't / hasn't + participio", "She hasn't called yet."], q: ["Have / Has + sujeto + participio?", "Have you ever been to London?"] },
+    uses: ["Experiencias de vida, sin decir cuándo", "Acción pasada con resultado ahora", "Algo que empezó antes y sigue (con for / since)"], signals: "ever, never, already, yet, just, so far, for, since",
+    examples: ["I've never tried sushi.", "She's lost her keys, so she can't get in.", "We've lived here since 2020."],
+    mistake: ["I have seen him yesterday.", "I saw him yesterday.", "Con un momento terminado (yesterday, last week, in 2019) se usa el pasado simple."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 24], ["arr", 24, 50]], note: "Pasó antes, sin fecha, y importa ahora" } },
+  { id: "ppc", name: "Present perfect continuous", es: "Presente perfecto continuo", level: "B1", group: "present", aspect: "perfect continuous",
+    form: { aff: ["have / has been + -ing", "I've been waiting for an hour."], neg: ["haven't / hasn't been + -ing", "He hasn't been sleeping well."], q: ["Have / Has + sujeto + been + -ing?", "How long have you been learning English?"] },
+    uses: ["Duración de algo que empezó antes y sigue", "Actividad reciente con efecto visible"], signals: "for, since, how long, all day, lately, recently",
+    examples: ["I've been studying English for two years.", "It's been raining all morning.", "You look tired. Have you been running?"],
+    mistake: ["I am living here since 2019.", "I've been living here since 2019.", "«Llevo… desde» no es presente continuo: es have been + -ing."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["bar", 18, 50]], note: "Empezó antes y continúa hasta ahora" } },
+  { id: "pas", name: "Past simple", es: "Pasado simple", level: "A2", group: "past", aspect: "simple",
+    form: { aff: ["verbo + -ed / forma irregular", "We visited Rome in 2019."], neg: ["didn't + verbo base", "I didn't see the email."], q: ["Did + sujeto + verbo base?", "Did you enjoy the film?"] },
+    uses: ["Acciones terminadas en un momento concreto del pasado", "Secuencias de hechos en una historia"], signals: "yesterday, last week, ago, in 2010, when I was a child",
+    examples: ["I called her yesterday.", "He moved to Medellín three years ago.", "We got up, had breakfast and left."],
+    mistake: ["Did you went to the party?", "Did you go to the party?", "Después de did, el verbo va en forma base."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 24]], note: "Terminó en un momento del pasado" } },
+  { id: "pasc", name: "Past continuous", es: "Pasado continuo", level: "B1", group: "past", aspect: "continuous",
+    form: { aff: ["was / were + -ing", "I was cooking when you called."], neg: ["wasn't / weren't + -ing", "They weren't listening."], q: ["Was / Were + sujeto + -ing?", "What were you doing at 8 p.m.?"] },
+    uses: ["Acción en progreso en un momento del pasado", "Acción larga interrumpida por otra corta", "Ambiente o contexto de una historia"], signals: "while, when, at that moment, at 8 o'clock yesterday",
+    examples: ["I was watching TV when the lights went out.", "At midnight we were still talking.", "It was raining and people were running."],
+    mistake: ["When I was arriving, she left.", "When I arrived, she was leaving.", "La acción corta va en pasado simple y la larga en continuo."],
+    tl: { ref: 26, refLabel: "momento pasado", marks: [["bar", 14, 38], ["x", 26]], note: "En progreso cuando pasó otra cosa" } },
+  { id: "pap", name: "Past perfect", es: "Pasado perfecto (pluscuamperfecto)", level: "B1", group: "past", aspect: "perfect",
+    form: { aff: ["had + participio", "The film had started when we arrived."], neg: ["hadn't + participio", "I hadn't eaten all day."], q: ["Had + sujeto + participio?", "Had you met her before?"] },
+    uses: ["Acción anterior a otra acción pasada", "Explicar la causa de algo pasado", "En estilo indirecto y en el tercer condicional"], signals: "before, after, by the time, already, when, because",
+    examples: ["When I got to the station, the train had left.", "She was nervous because she had never flown before.", "By the time we arrived, they had finished dinner."],
+    mistake: ["When I arrived, the film started.", "When I arrived, the film had started.", "Si una acción pasó antes que la otra, la anterior va en had + participio."],
+    tl: { ref: 32, refLabel: "otra acción pasada", marks: [["x", 14], ["arr", 14, 32]], note: "Pasó antes de otro momento del pasado" } },
+  { id: "papc", name: "Past perfect continuous", es: "Pasado perfecto continuo", level: "C1", group: "past", aspect: "perfect continuous",
+    form: { aff: ["had been + -ing", "I had been waiting for an hour when she arrived."], neg: ["hadn't been + -ing", "He hadn't been sleeping well."], q: ["Had + sujeto + been + -ing?", "How long had you been working there?"] },
+    uses: ["Duración de una acción hasta un momento del pasado", "Causa visible de una situación pasada"], signals: "for, since, how long, by the time, before",
+    examples: ["She had been working there for ten years when she resigned.", "The ground was wet. It had been raining.", "They were tired because they had been driving all night."],
+    mistake: ["I was waiting for two hours when he arrived.", "I had been waiting for two hours when he arrived.", "Con duración hasta un momento pasado (for two hours), usa had been + -ing."],
+    tl: { ref: 32, refLabel: "momento pasado", marks: [["bar", 8, 32]], note: "Duró hasta otro momento del pasado" } },
+  { id: "fs", name: "Future simple (will / going to)", es: "Futuro simple", level: "A2", group: "future", aspect: "simple",
+    form: { aff: ["will + verbo · am/is/are going to + verbo", "I'll call you later. · I'm going to study medicine."], neg: ["won't + verbo · not going to", "It won't rain tomorrow."], q: ["Will + sujeto + verbo? · Are you going to…?", "Will you help me?"] },
+    uses: ["will: decisiones del momento, promesas, predicciones", "going to: planes ya decididos y predicciones con evidencia"], signals: "tomorrow, next week, soon, in two years, I think, probably",
+    examples: ["I'm tired. I think I'll go to bed.", "We're going to buy a house next year.", "Look at those clouds! It's going to rain."],
+    mistake: ["I will to call you.", "I will call you.", "Después de will no va to."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 76]], note: "Pasará en el futuro" } },
+  { id: "fc", name: "Future continuous", es: "Futuro continuo", level: "B2", group: "future", aspect: "continuous",
+    form: { aff: ["will be + -ing", "This time tomorrow I'll be flying to Toronto."], neg: ["won't be + -ing", "I won't be working on Friday."], q: ["Will + sujeto + be + -ing?", "Will you be using the car tonight?"] },
+    uses: ["Acción en progreso en un momento futuro", "Planes normales del futuro, de forma educada"], signals: "this time tomorrow, at 8 p.m. tonight, next week at this time",
+    examples: ["At ten tomorrow I'll be sitting my exam.", "Don't call at seven. We'll be having dinner.", "Will you be coming to the meeting?"],
+    mistake: ["Tomorrow at nine I will work.", "Tomorrow at nine I'll be working.", "Para algo en progreso en un momento futuro, usa will be + -ing."],
+    tl: { ref: 74, refLabel: "momento futuro", marks: [["bar", 62, 86], ["x", 74]], note: "En progreso en un momento del futuro" } },
+  { id: "fp", name: "Future perfect", es: "Futuro perfecto", level: "B2", group: "future", aspect: "perfect",
+    form: { aff: ["will have + participio", "By Friday, I'll have finished the project."], neg: ["won't have + participio", "They won't have arrived by noon."], q: ["Will + sujeto + have + participio?", "Will you have finished by six?"] },
+    uses: ["Acción terminada antes de un momento futuro"], signals: "by, by then, by the time, before, by the end of",
+    examples: ["By 2030, I will have paid off my loan.", "Call me at nine. I'll have finished dinner by then.", "By the time you arrive, we'll have left."],
+    mistake: ["By Friday I will finish the report.", "By Friday I will have finished the report.", "Con by + momento futuro, usa will have + participio."],
+    tl: { ref: 80, refLabel: "momento futuro", marks: [["x", 64], ["arr", 64, 80]], note: "Estará terminado antes de ese momento" } },
+  { id: "fpc", name: "Future perfect continuous", es: "Futuro perfecto continuo", level: "B2", group: "future", aspect: "perfect continuous",
+    form: { aff: ["will have been + -ing", "In June, I'll have been working here for two years."], neg: ["won't have been + -ing", "She won't have been waiting long."], q: ["Will + sujeto + have been + -ing?", "How long will you have been living here?"] },
+    uses: ["Duración de una acción hasta un momento futuro"], signals: "for, by, by the time, in + fecha + for",
+    examples: ["By December, I'll have been studying English for three years.", "When he retires, he'll have been teaching for forty years.", "At five, we'll have been driving for ten hours."],
+    mistake: ["Next year I will work here for five years.", "Next year I'll have been working here for five years.", "Para contar la duración hasta un momento futuro, usa will have been + -ing."],
+    tl: { ref: 80, refLabel: "momento futuro", marks: [["bar", 42, 80]], note: "Habrá durado hasta ese momento" } }
+];
+
+// Práctica mixta: elegir el tiempo correcto. Cada ejercicio indica a qué tiempo corresponde.
+const TENSE_DRILL = [
+  ["ps", ["mc", "She ___ to work by bus every day.", ["goes", "is going", "has gone"], 0, "Rutina (every day) → present simple."]],
+  ["ps", ["fill", "Water ___ (boil) at 100 degrees.", ["boils"], "Verdad general → present simple."]],
+  ["ps", ["mc", "The museum ___ at 9 a.m. on weekdays.", ["opens", "is opening", "will be opening"], 0, "Horario fijo → present simple."]],
+  ["pc", ["mc", "Be quiet! The baby ___.", ["sleeps", "is sleeping", "has slept"], 1, "Ahora mismo → present continuous."]],
+  ["pc", ["fill", "I ___ (stay) with my cousin this week.", ["am staying", "'m staying"], "Situación temporal → present continuous."]],
+  ["pc", ["mc", "We ___ the client tomorrow at ten. It's in my calendar.", ["meet", "are meeting", "will have met"], 1, "Plan organizado → present continuous."]],
+  ["pp", ["mc", "I ___ to Japan twice.", ["went", "have been", "was going"], 1, "Experiencia sin fecha → present perfect."]],
+  ["pp", ["mc", "She ___ her keys, so she can't open the door.", ["lost", "has lost", "had been losing"], 1, "Resultado ahora → present perfect."]],
+  ["pp", ["fill", "Have you ___ (finish) the report yet?", ["finished"], "Yet → present perfect."]],
+  ["pp", ["mc", "We ___ here since 2020.", ["live", "are living", "have lived"], 2, "Since + algo que sigue → present perfect."]],
+  ["ppc", ["mc", "I'm exhausted. I ___ all day.", ["worked", "have been working", "work"], 1, "Actividad con efecto ahora → perfect continuous."]],
+  ["ppc", ["fill", "How long have you ___ (learn) English?", ["been learning"], "How long + duración → have been + -ing."]],
+  ["ppc", ["mc", "It ___ for hours. The streets are flooded.", ["rains", "has been raining", "had rained"], 1, "Duración hasta ahora con resultado visible."]],
+  ["pas", ["mc", "I ___ her yesterday at the supermarket.", ["have seen", "saw", "was seeing"], 1, "Yesterday → past simple."]],
+  ["pas", ["fill", "They ___ (move) to Bogotá three years ago.", ["moved"], "Ago → past simple."]],
+  ["pas", ["mc", "___ you enjoy the concert last night?", ["Did", "Have", "Were"], 0, "Pregunta en pasado simple → Did."]],
+  ["pasc", ["mc", "I ___ dinner when you called.", ["cooked", "was cooking", "have cooked"], 1, "Acción larga interrumpida → past continuous."]],
+  ["pasc", ["fill", "At 8 p.m. yesterday we ___ (watch) a film.", ["were watching"], "En progreso en un momento pasado."]],
+  ["pasc", ["mc", "While she ___, someone stole her bag.", ["was shopping", "shopped", "had shopped"], 0, "While + acción larga → past continuous."]],
+  ["pap", ["mc", "When we got to the station, the train ___.", ["left", "has left", "had left"], 2, "Pasó antes de otra acción pasada → past perfect."]],
+  ["pap", ["fill", "She was nervous because she ___ (never / fly) before.", ["had never flown"], "Antes de ese momento pasado → had + participio."]],
+  ["pap", ["mc", "By the time I arrived, they ___ dinner.", ["finished", "had finished", "have finished"], 1, "By the time + pasado → past perfect."]],
+  ["pap", ["tr", "Cuando llegué, la película ya había empezado.", ["When I arrived, the film had already started.", "When I arrived, the movie had already started.", "When I got there, the film had already started."], "Había + participio = had + participio."]],
+  ["papc", ["mc", "She ___ there for ten years when she resigned.", ["worked", "had been working", "has been working"], 1, "Duración hasta un momento pasado → had been + -ing."]],
+  ["papc", ["fill", "The ground was wet. It ___ (rain).", ["had been raining"], "Causa visible en el pasado → had been + -ing."]],
+  ["papc", ["mc", "They were tired because they ___ all night.", ["had been driving", "drove", "were driving"], 0, "Duración que explica el cansancio."]],
+  ["fs", ["mc", "I'm tired. I think I ___ to bed.", ["go", "'ll go", "'m going to go"], 1, "Decisión del momento → will."]],
+  ["fs", ["mc", "Look at those clouds! It ___ rain.", ["will", "is going to", "rains"], 1, "Predicción con evidencia → going to."]],
+  ["fs", ["fill", "We ___ (buy) a house next year. We've already saved the money.", ["are going to buy", "'re going to buy"], "Plan decidido → going to."]],
+  ["fc", ["mc", "This time tomorrow I ___ to Toronto.", ["fly", "will be flying", "will have flown"], 1, "En progreso en un momento futuro."]],
+  ["fc", ["fill", "Don't call at seven. We ___ (have) dinner.", ["will be having", "'ll be having"], "En progreso a esa hora → will be + -ing."]],
+  ["fc", ["mc", "___ you be using the car tonight? I need it.", ["Will", "Are", "Do"], 0, "Pregunta educada sobre planes → Will you be + -ing?"]],
+  ["fp", ["mc", "By Friday, I ___ the project.", ["will finish", "will have finished", "finish"], 1, "By + momento futuro → will have + participio."]],
+  ["fp", ["fill", "By the time you arrive, we ___ (leave).", ["will have left", "'ll have left"], "Terminado antes de ese momento."]],
+  ["fp", ["mc", "By 2030, she ___ her degree.", ["will complete", "will have completed", "completes"], 1, "By 2030 → futuro perfecto."]],
+  ["fpc", ["mc", "In June, I ___ here for two years.", ["will work", "will have been working", "work"], 1, "Duración hasta un momento futuro."]],
+  ["fpc", ["fill", "By December, she ___ (study) English for three years.", ["will have been studying", "'ll have been studying"], "By + fecha + for → will have been + -ing."]],
+  ["fpc", ["tr", "En marzo llevaré cinco años trabajando aquí.", ["In March I'll have been working here for five years.", "In March I will have been working here for five years.", "By March I'll have been working here for five years."], "Llevaré + tiempo + gerundio = will have been + -ing + for."]],
+  ["mix", ["mc", "I ___ him since we were children.", ["know", "have known", "am knowing"], 1, "Since + verbo de estado → present perfect simple."]],
+  ["mix", ["mc", "When I opened the door, the cat ___.", ["ran out", "had been running out", "has run out"], 0, "Secuencia inmediata → past simple."]],
+  ["mix", ["mc", "Sorry I'm late. ___ long?", ["Did you wait", "Have you been waiting", "Are you waiting"], 1, "Duración hasta ahora → have been waiting."]],
+  ["mix", ["mc", "He ___ the news before I told him.", ["already heard", "had already heard", "has already heard"], 1, "Antes de otra acción pasada → past perfect."]],
+  ["mix", ["mc", "Next month they ___ married for twenty years.", ["will be", "will have been", "are"], 1, "Duración hasta un momento futuro con be → will have been."]],
+  ["mix", ["mc", "I ___ my homework, so I can go out now.", ["did", "have done", "had done"], 1, "Resultado ahora → present perfect."]]
+];
+const TENSE_CARDS = TENSES.map((t) => ({ id: "CH-tense-" + t.id, level: t.level === "C1" ? "B2" : t.level, topic: "Tiempos verbales", en: t.name, es: `${t.es} — ${t.form.aff[0]}`, ex: t.examples[0], chunk: true }));
+
+// Dos lecciones que faltaban, insertadas junto a sus lecciones relacionadas (los identificadores son nuevos)
+(() => {
+  const b1 = LESSONS.B1, b2 = LESSONS.B2;
+  const iPas = b1.findIndex((l) => l.title === "Pasado continuo");
+  b1.splice(iPas + 1, 0, { id: "b1-pap", title: "Pasado perfecto (had + participio)", explain: `<p><b>had + participio</b> sirve para una acción que pasó <b>antes de otra acción pasada</b>. Es el «había + participio» del español: <i>When I arrived, the film had already started.</i></p>
+  <p>Compara: <i>When I arrived, the film started</i> (empezó cuando llegué) vs. <i>When I arrived, the film had started</i> (ya había empezado antes).</p>
+  <p>Palabras que lo acompañan: <b>before, after, by the time, already, never… before</b>. También aparece en el estilo indirecto (<i>She said she had finished</i>) y en el tercer condicional (<i>If I had known…</i>).</p>
+  <p>Negativo: <i>I hadn't eaten all day.</i> Pregunta: <i>Had you met her before?</i></p>`, ex: [
+    ["mc", "When we got to the cinema, the film ___.", ["started", "had started", "has started"], 1, "Empezó antes de llegar → had started."],
+    ["fill", "I was hungry because I ___ (not / eat) all day.", ["hadn't eaten", "had not eaten"], "Causa anterior → hadn't + participio."],
+    ["mc", "By the time the police arrived, the thieves ___.", ["escaped", "had escaped", "have escaped"], 1, "By the time + pasado → past perfect."],
+    ["tr", "Nunca había visto la nieve antes de ese viaje.", ["I had never seen snow before that trip.", "I'd never seen snow before that trip."], "Nunca había + participio = had never + participio."],
+    ["fix", "She told me she has finished the work.", ["She told me she had finished the work.", "She told me she'd finished the work."], "En estilo indirecto, has finished pasa a had finished."],
+    ["mc", "After he ___ his homework, he went out.", ["had finished", "has finished", "was finishing"], 0, "After + acción anterior → past perfect."],
+    ["ord", "¿Ya habías conocido a Laura antes?", "Had you met Laura before"],
+    ["mc", "I didn't recognise him. He ___ a lot.", ["changed", "had changed", "has changed"], 1, "El cambio ocurrió antes de ese momento pasado."]
+  ] });
+  const iFut = b2.findIndex((l) => l.title === "Futuro continuo y perfecto");
+  b2.splice(iFut + 1, 0, { id: "b2-fpc", title: "Futuro perfecto continuo", explain: `<p><b>will have been + -ing</b> expresa la <b>duración</b> de una acción hasta un momento del futuro. Es el «llevaré + tiempo + gerundio» del español: <i>In June, I'll have been working here for two years.</i></p>
+  <p>Compara con el futuro perfecto: <i>By June, I'll have finished the course</i> (terminado) vs. <i>By June, I'll have been studying for a year</i> (duración).</p>
+  <p>Casi siempre va con <b>for</b> + tiempo y un momento futuro (<b>by, in, when, next…</b>). No se usa con verbos de estado: <i>By May, I'll have known her for ten years</i> (no <i>have been knowing</i>).</p>`, ex: [
+    ["mc", "By December, I ___ English for three years.", ["will study", "will have been studying", "am studying"], 1, "Duración hasta diciembre."],
+    ["fill", "When he retires, he ___ (teach) for forty years.", ["will have been teaching", "'ll have been teaching"], "Duración hasta su retiro."],
+    ["mc", "By 6 p.m., we ___ for ten hours.", ["will drive", "will have been driving", "drove"], 1, "For + duración hasta un momento futuro."],
+    ["tr", "En marzo llevaré cinco años viviendo aquí.", ["In March I'll have been living here for five years.", "In March I will have been living here for five years.", "By March I'll have been living here for five years."], "Llevaré + gerundio = will have been + -ing."],
+    ["mc", "By May, I ___ her for ten years.", ["will have been knowing", "will have known", "will know"], 1, "Know es de estado: futuro perfecto simple."],
+    ["fix", "Next year I will work here for five years.", ["Next year I'll have been working here for five years.", "Next year I will have been working here for five years."], "Duración hasta un momento futuro → will have been + -ing."],
+    ["ord", "¿Cuánto tiempo llevarás esperando?", "How long will you have been waiting"],
+    ["mc", "By the time the guests arrive, she ___ for hours.", ["will cook", "will have been cooking", "cooks"], 1, "Duración hasta que lleguen."]
+  ] });
+})();

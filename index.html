@@ -162,6 +162,20 @@ details.phase summary{line-height:1.8} details.curph{border:2px solid var(--pri)
 .fl3d{display:inline-flex;gap:2px;flex:none;margin-right:8px;align-items:center}.fl3d img{width:36px;height:36px}.fl3d i{font-style:normal;font-size:28px}
 .fl3d.big{display:flex;justify-content:center;margin:0 auto 6px}.fl3d.big img{width:96px;height:96px}.fl3d.big i{font-size:72px}.fl3d.lst img{width:40px;height:40px}.fl3d.quiz{display:flex;justify-content:center}.fl3d.quiz img{width:120px;height:120px}.fl3d.opt img{width:48px;height:48px}
 img.pxphoto{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none;margin-right:10px}img.pxphoto.big{display:block;width:100%;max-width:340px;height:220px;margin:0 auto 10px;border-radius:14px}img.pxphoto.quiz{display:block;width:100%;max-width:340px;height:220px;margin:0 auto;border-radius:14px}img.pxphoto.opt{width:150px;height:105px;margin-right:8px}
+.citymap{position:relative;width:100%;aspect-ratio:1/1.05;max-width:560px;margin:10px auto;border-radius:18px;background:linear-gradient(135deg,#dff3e4,#e8eefc);overflow:hidden;border:1px solid var(--line)}
+.citymap .roads{position:absolute;inset:0;width:100%;height:100%}.citymap .roads path{stroke:#fff;stroke-width:4.2;fill:none;stroke-linecap:round}
+.place{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:14px;padding:4px 6px;min-width:64px;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;font:inherit;color:var(--text)}
+.place.sel{outline:3px solid var(--pri)}.place.locked{opacity:.55}.place .fl3d{margin:0}.fl3d.map img{width:34px;height:34px}.fl3d.map i{font-size:28px}.place .pn{font-size:11px;font-weight:700;line-height:1.1;text-align:center}.place .ps{font-size:10px;color:#b7791f}
+.stars{font-size:46px;letter-spacing:4px;color:#d9d9d9}.stars .on{color:#f5b301}.meter{margin:10px 0}.hints .hint{margin:8px 0}.ltspoken .ltm{margin:6px 0}.li.col{flex-direction:column;align-items:flex-start;gap:4px}
+.tgrid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;margin:12px 0;align-items:stretch}.tgrid .th{font-weight:800;text-align:center;font-size:13px;align-self:end}.tgrid .th.side{writing-mode:vertical-rl;transform:rotate(180deg);align-self:center;font-size:12px;color:var(--muted)}
+.tcell{position:relative;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 4px;font:inherit;color:var(--text);cursor:pointer}.tcell b{font-size:12px;line-height:1.15}.tcell .small{font-size:10px}.tcell .tb{position:absolute;top:3px;right:5px;font-size:10px;color:#2f855a;font-weight:700}
+svg.tl{width:100%;max-width:140px;height:auto}svg.tl.big{max-width:480px}.tl-axis{stroke:#9aa5b1;stroke-width:2}.tl-head{fill:#9aa5b1}.tl-now{stroke:#3b6cf6;stroke-width:2.5}.tl-ref{stroke:#f08a24;stroke-width:2.5;stroke-dasharray:4 3}.tl-x{stroke:#e53e3e;stroke-width:3;stroke-linecap:round;fill:none}.tl-bar{stroke:#2f855a;stroke-width:3;fill:none;stroke-linejoin:round}.tl-arr{stroke:#805ad5;stroke-width:2;fill:none;stroke-dasharray:4 3}.tl-arrh{fill:#805ad5}.tl-lbl{font:11px sans-serif;fill:#718096;text-anchor:middle}.tl-lbl.now{fill:#3b6cf6;font-weight:700}.tl-lbl.ref{fill:#f08a24;font-weight:700}
+.tenses-banner{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer;background:linear-gradient(135deg,#eef3ff,#fff4e8)}.tenses-banner small{display:block;color:var(--muted)}.tbic{font-size:30px}
+.filebtn{display:inline-flex;align-items:center;cursor:pointer}
+.epgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:10px}.ep{display:flex;flex-direction:column;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 2px;font:inherit;color:var(--text);cursor:pointer}.ep.done{background:#e6f6ec;border-color:#9ad4ae}.ep span{font-size:12px;min-height:14px}
+.ytwrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;margin:8px 0}.ytwrap iframe,.ytwrap #ytp{position:absolute;inset:0;width:100%;height:100%}.ytfallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:16px}.ytfallback[hidden]{display:none}
+.phasechips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.phasechips .chipradio{display:inline-flex;flex-direction:row;width:auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:6px 12px;margin:0;cursor:pointer;font-size:14px}.phasechips input{width:auto;margin:0}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:10px 0}.vcard{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;overflow:hidden;padding:0 0 6px;font:inherit;color:var(--text);cursor:pointer}.vcard img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#ddd}.vcard .vt,.vcard .small{padding:0 8px}.vcard .vt{font-weight:700;font-size:13px;line-height:1.2}.vcard.done{border-color:#9ad4ae;background:#f0faf3}
 </style>
 </head>
 <body>
@@ -2357,6 +2371,210 @@ const RESOURCES = {
   ]
 };
 
+// ===== CONVERSACIONES CON RAMIFICACIONES Y MAPA DE SITUACIONES =====
+// Cada nodo: npc = lo que dice el personaje; task = qué debes hacer (opcional);
+// opts = caminos posibles. Lo que digas se compara con las frases de cada camino y la conversación sigue por el más parecido.
+// Un nodo con end: true cierra la conversación.
+const MAP_PLACES = [
+  { id: "cafe", name: "Cafetería", icon: "☕", x: 14, y: 18 },
+  { id: "restaurant", name: "Restaurante", icon: "🍽️", x: 40, y: 12 },
+  { id: "party", name: "Fiesta", icon: "🎉", x: 70, y: 16 },
+  { id: "shop", name: "Tienda de ropa", icon: "🛍️", x: 88, y: 34 },
+  { id: "pharmacy", name: "Farmacia", icon: "💊", x: 12, y: 46 },
+  { id: "station", name: "Estación de tren", icon: "🚉", x: 38, y: 40 },
+  { id: "taxi", name: "Taxi", icon: "🚕", x: 62, y: 44 },
+  { id: "doctor", name: "Consultorio", icon: "🩺", x: 16, y: 74 },
+  { id: "hotel", name: "Hotel", icon: "🏨", x: 42, y: 70 },
+  { id: "airport", name: "Aeropuerto", icon: "✈️", x: 84, y: 64 },
+  { id: "office", name: "Oficina", icon: "🏢", x: 64, y: 82 },
+  { id: "forum", name: "Auditorio", icon: "🎤", x: 88, y: 90 }
+];
+// Conversaciones que ya existían, ubicadas en el mapa
+const MAP_EXTRA = { restaurant: ["A2-p0"], party: ["A2-p1"], hotel: ["B1-p1"], office: ["B1-p0", "B2-p0", "C1-p0", "dev-p0", "dev-p1", "dev-p2", "dev-p3", "dev-p4", "dev-p5"], forum: ["B2-p1", "C1-p1", "C2-p0", "C2-p1"] };
+
+const SCENES = [
+  { id: "sc-cafe", place: "cafe", level: "A2", title: "Pedir un café", intro: "Entras a una cafetería en Nueva York. Hay fila y el barista es muy rápido.", start: "a", nodes: {
+    a: { npc: "Hi there! What can I get you today?", task: "Pide una bebida o pregunta qué te recomienda.", opts: [
+      { label: "Pedir un café directamente", say: ["Can I get a latte, please?", "I'd like a cappuccino, please.", "A medium black coffee, please.", "Can I have an iced coffee, please?"], next: "size" },
+      { label: "Preguntar qué te recomienda", say: ["What do you recommend?", "What's popular here?", "What's your favourite drink here?", "I'm not sure. What's good?"], next: "rec" } ] },
+    rec: { npc: "Our caramel latte is really popular. We also have a great cold brew if you want something less sweet.", task: "Elige una de las dos opciones.", opts: [
+      { label: "Elegir el latte de caramelo", say: ["I'll try the caramel latte, please.", "The caramel latte sounds good.", "I'll have the caramel latte."], next: "size" },
+      { label: "Elegir el cold brew", say: ["I'll go for the cold brew.", "The cold brew, please.", "Something less sweet. The cold brew, please."], next: "size" } ] },
+    size: { npc: "Sure! What size would you like? Small, medium or large?", task: "Di el tamaño y pide algo de comer, si quieres.", opts: [
+      { label: "Decir solo el tamaño", say: ["Medium, please.", "A small one, please.", "Large, please."], next: "name" },
+      { label: "Tamaño y algo de comer", say: ["Medium, please. And can I get a blueberry muffin too?", "Large, please, and a croissant.", "Small, please. Do you have any sandwiches?"], next: "food" } ] },
+    food: { npc: "Of course! Do you want it warmed up?", task: "Responde si quieres que lo calienten.", opts: [
+      { label: "Sí, caliéntenlo", say: ["Yes, please.", "Yes, warm it up, please.", "Sure, that would be great."], next: "name" },
+      { label: "No, así está bien", say: ["No, thanks. It's fine like that.", "No, that's okay.", "No, thank you."], next: "name" } ] },
+    name: { npc: "Great. Can I get a name for the order? And is that for here or to go?", task: "Di tu nombre y si es para tomar aquí o para llevar.", opts: [
+      { label: "Para tomar aquí", say: ["It's Daniel. For here, please.", "My name is Sofia, and it's for here.", "Carlos. I'll have it here."], next: "pay" },
+      { label: "Para llevar", say: ["It's Daniel. To go, please.", "Sofia, and it's to go.", "Carlos. Take away, please."], next: "pay" } ] },
+    pay: { npc: "Perfect. That'll be seven fifty. Cash or card?", task: "Paga y da las gracias.", opts: [
+      { label: "Pagar con tarjeta", say: ["Card, please.", "I'll pay by card.", "Can I pay with my phone?"], next: "end" },
+      { label: "Pagar en efectivo", say: ["Cash. Here you go.", "Here's ten. Keep the change.", "In cash, please."], next: "end" } ] },
+    end: { npc: "Thanks! Your order will be ready at the end of the counter. Have a great day!", end: true } } },
+
+  { id: "sc-taxi", place: "taxi", level: "A2", title: "Tomar un taxi", intro: "Acabas de llegar a Londres y tomas un taxi en la calle.", start: "a", nodes: {
+    a: { npc: "Hello! Where to?", task: "Di a dónde vas.", opts: [
+      { label: "Dar la dirección del hotel", say: ["To the Grand Hotel on Oxford Street, please.", "Can you take me to this address, please?", "The Grand Hotel, please."], next: "time" },
+      { label: "Ir al centro primero", say: ["To the city centre, please.", "Can you take me downtown?", "I'd like to go to the centre."], next: "centre" } ] },
+    centre: { npc: "The centre is big. Any particular place?", task: "Di un lugar concreto.", opts: [
+      { label: "Una plaza o monumento", say: ["Trafalgar Square, please.", "Near Big Ben, please.", "Somewhere near the London Eye."], next: "time" },
+      { label: "Cambiar al hotel", say: ["Actually, take me to my hotel, the Grand Hotel.", "Sorry, the Grand Hotel on Oxford Street.", "Let's go to my hotel first."], next: "time" } ] },
+    time: { npc: "No problem. The traffic is heavy today, so it'll take about thirty minutes.", task: "Pregunta el precio o si puede ir más rápido.", opts: [
+      { label: "Preguntar cuánto cuesta", say: ["How much will it cost?", "How much is it, more or less?", "What's the price, roughly?"], next: "price" },
+      { label: "Pedir que vaya rápido", say: ["I'm in a hurry. Is there a faster way?", "Can we go a bit faster?", "Is there a quicker route?"], next: "fast" } ] },
+    price: { npc: "Probably around twenty-five pounds, depending on traffic.", task: "Pregunta si aceptan tarjeta.", opts: [
+      { label: "Preguntar por tarjeta", say: ["Can I pay by card?", "Do you take credit cards?", "Is it okay to pay with card?"], next: "arrive" } ] },
+    fast: { npc: "I can take the river road. It's a bit longer but usually quicker.", task: "Acepta la propuesta.", opts: [
+      { label: "Aceptar", say: ["Okay, that sounds good.", "Yes, let's do that.", "Great, thank you."], next: "arrive" } ] },
+    arrive: { npc: "Here we are! That's twenty-three pounds.", task: "Paga, deja propina o pide un recibo.", opts: [
+      { label: "Pagar y pedir recibo", say: ["Here you are. Can I have a receipt, please?", "Could I get a receipt?", "Card, please, and a receipt."], next: "end" },
+      { label: "Pagar y dejar propina", say: ["Here's twenty-five. Keep the change.", "Keep the change. Thank you!", "Thanks a lot. Keep the change."], next: "end" } ] },
+    end: { npc: "Thank you! Enjoy your stay in London.", end: true } } },
+
+  { id: "sc-shop", place: "shop", level: "A2", title: "Comprar ropa", intro: "Estás en una tienda de ropa buscando una chaqueta.", start: "a", nodes: {
+    a: { npc: "Hi! Are you looking for anything in particular?", task: "Di qué buscas o que solo estás mirando.", opts: [
+      { label: "Buscar una chaqueta", say: ["Yes, I'm looking for a jacket.", "I need a winter jacket.", "Do you have any jackets?"], next: "jacket" },
+      { label: "Solo mirar", say: ["I'm just looking, thanks.", "Just browsing, thank you.", "I'm only looking for now."], next: "browse" } ] },
+    browse: { npc: "No problem. Let me know if you need help. By the way, jackets are twenty percent off today.", task: "Muestra interés por las chaquetas.", opts: [
+      { label: "Preguntar por las chaquetas", say: ["Really? Where are the jackets?", "Oh, can you show me the jackets?", "Great, I'd like to see the jackets."], next: "jacket" } ] },
+    jacket: { npc: "They're over here. What size are you?", task: "Di tu talla.", opts: [
+      { label: "Decir la talla", say: ["I'm a medium.", "Medium, I think.", "Small, please.", "I usually wear a large."], next: "try" },
+      { label: "No sé mi talla", say: ["I'm not sure. Maybe a medium?", "I don't know my size here.", "Can you help me with the size?"], next: "measure" } ] },
+    measure: { npc: "These run a bit small, so I'd try a large.", task: "Pide probártela.", opts: [
+      { label: "Pedir el probador", say: ["Can I try it on?", "Where are the fitting rooms?", "Okay, I'll try a large."], next: "fit" } ] },
+    try: { npc: "Here you are. Would you like to try it on?", task: "Responde.", opts: [
+      { label: "Sí, probarla", say: ["Yes, please. Where are the fitting rooms?", "Sure, I'll try it on.", "Yes, thank you."], next: "fit" } ] },
+    fit: { npc: "How does it fit?", task: "Di cómo te queda.", opts: [
+      { label: "Te queda bien, la compras", say: ["It fits perfectly. I'll take it.", "It's great. I'll buy it.", "I love it. I'll take it."], next: "pay" },
+      { label: "Te queda grande o pequeña", say: ["It's a bit too big. Do you have a smaller size?", "It's too small. Do you have it in a bigger size?", "It doesn't fit very well."], next: "other" } ] },
+    other: { npc: "Let me check... Yes, here's the other size. This one looks better!", task: "Decide comprarla.", opts: [
+      { label: "Comprarla", say: ["Yes, much better. I'll take it.", "Perfect, I'll buy this one.", "This one is great. I'll take it."], next: "pay" } ] },
+    pay: { npc: "Great choice! With the discount, it's forty-eight dollars. Would you like a bag?", task: "Responde y paga.", opts: [
+      { label: "Sí, una bolsa", say: ["Yes, please. Here's my card.", "Yes, a bag, please.", "Sure. Can I pay by card?"], next: "end" },
+      { label: "No necesitas bolsa", say: ["No, thanks. I'll wear it now.", "No bag, thank you.", "No, I have my own bag."], next: "end" } ] },
+    end: { npc: "Here's your receipt. You can return it within thirty days. Have a nice day!", end: true } } },
+
+  { id: "sc-pharmacy", place: "pharmacy", level: "A2", title: "En la farmacia", intro: "No te sientes bien y entras a una farmacia.", start: "a", nodes: {
+    a: { npc: "Good morning. How can I help you?", task: "Explica qué te pasa.", opts: [
+      { label: "Dolor de cabeza", say: ["I have a terrible headache.", "My head hurts a lot.", "I've had a headache since yesterday."], next: "head" },
+      { label: "Resfriado y dolor de garganta", say: ["I have a cold and a sore throat.", "I think I have a cold. My throat hurts.", "I've got a sore throat and a runny nose."], next: "cold" } ] },
+    head: { npc: "I'm sorry to hear that. Are you allergic to any medicine?", task: "Responde.", opts: [
+      { label: "No eres alérgico", say: ["No, I'm not allergic to anything.", "No, I don't have any allergies.", "Not that I know of."], next: "pills" },
+      { label: "Eres alérgico a algo", say: ["Yes, I'm allergic to aspirin.", "I'm allergic to penicillin.", "Yes, to ibuprofen."], next: "pills" } ] },
+    cold: { npc: "Do you have a fever?", task: "Responde.", opts: [
+      { label: "Sí, tienes fiebre", say: ["Yes, a little.", "I think so. I feel hot.", "Yes, I had a fever last night."], next: "doctor" },
+      { label: "No tienes fiebre", say: ["No, I don't.", "No fever, just a sore throat.", "No, I don't think so."], next: "pills" } ] },
+    doctor: { npc: "Then I'd recommend seeing a doctor if it doesn't get better in two days. For now, take these.", task: "Pregunta cómo tomarlas.", opts: [
+      { label: "Preguntar la dosis", say: ["How often should I take them?", "How many should I take?", "When do I take them?"], next: "dose" } ] },
+    pills: { npc: "These tablets should help. They're very effective.", task: "Pregunta cómo tomarlas.", opts: [
+      { label: "Preguntar la dosis", say: ["How often should I take them?", "How many should I take a day?", "Should I take them with food?"], next: "dose" } ] },
+    dose: { npc: "One tablet every eight hours, after meals. Don't take more than three a day.", task: "Confirma y paga.", opts: [
+      { label: "Confirmar y preguntar el precio", say: ["Okay, one every eight hours. How much is it?", "Got it. How much do I owe you?", "Thank you. How much are they?"], next: "end" } ] },
+    end: { npc: "That's six dollars. I hope you feel better soon!", end: true } } },
+
+  { id: "sc-station", place: "station", level: "A2", title: "Comprar un tiquete de tren", intro: "Estás en la estación y quieres ir a Oxford.", start: "a", nodes: {
+    a: { npc: "Next, please! Where are you travelling to?", task: "Di a dónde vas y qué tipo de tiquete quieres.", opts: [
+      { label: "Ida solamente", say: ["A single to Oxford, please.", "One-way ticket to Oxford, please.", "I need a ticket to Oxford, just one way."], next: "when" },
+      { label: "Ida y vuelta", say: ["A return ticket to Oxford, please.", "Round trip to Oxford, please.", "I'd like a return to Oxford."], next: "back" } ] },
+    back: { npc: "When are you coming back?", task: "Di cuándo regresas.", opts: [
+      { label: "El mismo día", say: ["Today, in the evening.", "I'm coming back today.", "Later today."], next: "when" },
+      { label: "Otro día", say: ["On Sunday.", "Next Friday.", "In three days."], next: "when" } ] },
+    when: { npc: "The next train leaves at 10:15, or there's a cheaper one at 11:40.", task: "Elige un tren.", opts: [
+      { label: "El de las 10:15", say: ["The 10:15, please.", "I'll take the first one.", "I'd prefer the earlier train."], next: "platform" },
+      { label: "El más barato", say: ["The cheaper one, please.", "I'll take the 11:40.", "I don't mind waiting. The cheaper one."], next: "platform" } ] },
+    platform: { npc: "Here's your ticket. That's thirty-two pounds.", task: "Paga y pregunta de qué andén sale.", opts: [
+      { label: "Preguntar el andén", say: ["Which platform does it leave from?", "What platform is it?", "Where does the train leave from?"], next: "end" } ] },
+    end: { npc: "Platform four. Check the screens in case it changes. Have a good trip!", end: true } } },
+
+  { id: "sc-airport", place: "airport", level: "B1", title: "Check-in en el aeropuerto", intro: "Llegas al mostrador de la aerolínea para tu vuelo a Toronto.", start: "a", nodes: {
+    a: { npc: "Good afternoon. Can I see your passport and booking reference, please?", task: "Entrega los documentos.", opts: [
+      { label: "Entregar documentos", say: ["Sure, here you are.", "Here's my passport and my booking reference.", "Of course. Here they are."], next: "bags" },
+      { label: "No encuentras la reserva", say: ["Here's my passport, but I can't find my booking reference.", "I don't have the reference number. Is my passport enough?", "Sorry, I think I lost the booking email."], next: "noref" } ] },
+    noref: { npc: "That's fine, I can find it with your passport. Here it is. Are you checking any bags?", task: "Responde sobre el equipaje.", opts: [
+      { label: "Una maleta", say: ["Yes, just this suitcase.", "One bag, please.", "Yes, I'm checking one suitcase."], next: "weight" },
+      { label: "Solo equipaje de mano", say: ["No, only hand luggage.", "Just this carry-on.", "No bags to check."], next: "seat" } ] },
+    bags: { npc: "Thank you. Are you checking any bags today?", task: "Responde sobre el equipaje.", opts: [
+      { label: "Una maleta", say: ["Yes, just this suitcase.", "One bag, please.", "Yes, I'm checking one suitcase."], next: "weight" },
+      { label: "Solo equipaje de mano", say: ["No, only hand luggage.", "Just this carry-on.", "No bags to check."], next: "seat" } ] },
+    weight: { npc: "I'm afraid your bag is two kilos over the limit. There's a fee of forty dollars.", task: "Paga o busca una solución.", opts: [
+      { label: "Sacar algunas cosas", say: ["Can I take some things out and put them in my hand luggage?", "Let me move some things to my backpack.", "Is it okay if I take a few things out?"], next: "fixed" },
+      { label: "Pagar el cargo", say: ["Okay, I'll pay the fee.", "That's fine. Can I pay by card?", "No problem, I'll pay."], next: "seat" } ] },
+    fixed: { npc: "Sure, go ahead... Perfect, it's under the limit now.", task: "Agradece.", opts: [
+      { label: "Agradecer", say: ["Great, thank you so much.", "Thanks for your help.", "Perfect, thanks."], next: "seat" } ] },
+    seat: { npc: "Would you prefer a window or an aisle seat?", task: "Elige tu asiento.", opts: [
+      { label: "Ventana", say: ["A window seat, please.", "I'd like a window seat.", "Window, if possible."], next: "gate" },
+      { label: "Pasillo", say: ["An aisle seat, please.", "I'd prefer the aisle.", "Aisle, please. I have long legs."], next: "gate" } ] },
+    gate: { npc: "Done. Here's your boarding pass. Boarding starts at 3:40 at gate B12.", task: "Pregunta algo útil antes de irte.", opts: [
+      { label: "Preguntar si el vuelo está a tiempo", say: ["Is the flight on time?", "Is there any delay?", "Is everything on schedule?"], next: "end" },
+      { label: "Preguntar cómo llegar a la puerta", say: ["How do I get to gate B12?", "Which way is gate B12?", "Is the gate far from here?"], next: "end" } ] },
+    end: { npc: "It's on time, and the gate is about ten minutes past security. Have a pleasant flight!", end: true } } },
+
+  { id: "sc-hotel", place: "hotel", level: "B1", title: "Registrarse en el hotel", intro: "Llegas a la recepción del hotel después de un vuelo largo.", start: "a", nodes: {
+    a: { npc: "Welcome to the Riverside Hotel! Do you have a reservation?", task: "Di que sí y da tu nombre, o que no tienes reserva.", opts: [
+      { label: "Tienes reserva", say: ["Yes, I have a reservation under the name García.", "Yes, it's under Sofia García.", "I booked a room for three nights. My name is García."], next: "id" },
+      { label: "No tienes reserva", say: ["No, I don't. Do you have any rooms available?", "I don't have a reservation. Is there a room for tonight?", "No. Do you have a free room?"], next: "walkin" } ] },
+    walkin: { npc: "Let me check... We have a double room with a city view for one hundred and twenty dollars a night.", task: "Acepta o pregunta por algo más barato.", opts: [
+      { label: "Aceptar", say: ["That's fine. I'll take it.", "Okay, I'll take the room.", "Perfect, one night, please."], next: "id" },
+      { label: "Pedir algo más barato", say: ["Do you have anything cheaper?", "Is there a cheaper room?", "That's a bit expensive. Anything less?"], next: "cheap" } ] },
+    cheap: { npc: "We have a smaller room without a view for ninety dollars.", task: "Decide.", opts: [
+      { label: "Tomar la más barata", say: ["That's fine, I'll take that one.", "The cheaper one is perfect.", "Okay, I don't need a view."], next: "id" } ] },
+    id: { npc: "Great. Could I see your ID and a credit card for incidentals, please?", task: "Entrégalos y pregunta por el desayuno.", opts: [
+      { label: "Preguntar por el desayuno", say: ["Here you are. Is breakfast included?", "Sure. What time is breakfast?", "Here they are. Does the price include breakfast?"], next: "breakfast" },
+      { label: "Preguntar por el wifi", say: ["Here you are. Is there free Wi-Fi?", "Sure. What's the Wi-Fi password?", "Here they are. Does the room have Wi-Fi?"], next: "wifi" } ] },
+    breakfast: { npc: "Yes, breakfast is included. It's served from seven to ten in the restaurant on the ground floor.", task: "Pregunta a qué hora debes dejar la habitación.", opts: [
+      { label: "Preguntar el check-out", say: ["What time is check-out?", "When do I have to leave the room?", "Is late check-out possible?"], next: "end" } ] },
+    wifi: { npc: "Yes, it's free. The password is on your key card holder.", task: "Pregunta a qué hora debes dejar la habitación.", opts: [
+      { label: "Preguntar el check-out", say: ["What time is check-out?", "When do I have to leave the room?", "Is late check-out possible?"], next: "end" } ] },
+    end: { npc: "Check-out is at eleven, but I can give you until one if you need it. Here's your key: room 512. Enjoy your stay!", end: true } } },
+
+  { id: "sc-doctor", place: "doctor", level: "B1", title: "Cita con el médico", intro: "Tienes una cita médica porque te duele la espalda.", start: "a", nodes: {
+    a: { npc: "Hello, please take a seat. What seems to be the problem?", task: "Explica tu problema.", opts: [
+      { label: "Dolor de espalda", say: ["I've had back pain for about a week.", "My lower back hurts, especially in the morning.", "I have a pain in my back."], next: "how" } ] },
+    how: { npc: "I see. Did you do anything that might have caused it?", task: "Explica la posible causa.", opts: [
+      { label: "Levantaste algo pesado", say: ["I think I lifted something too heavy.", "I helped a friend move and carried a lot of boxes.", "I lifted a heavy suitcase."], next: "exam" },
+      { label: "Pasas muchas horas sentado", say: ["I sit at my computer all day.", "I work long hours sitting at a desk.", "I don't know. I sit a lot because of my job."], next: "desk" } ] },
+    desk: { npc: "That's very common. How many hours a day do you sit, and do you take breaks?", task: "Responde con honestidad.", opts: [
+      { label: "Muchas horas sin pausas", say: ["About ten hours, and I hardly ever take breaks.", "Too many hours. I rarely stand up.", "Eight or nine hours, almost without breaks."], next: "exam" } ] },
+    exam: { npc: "Let me have a look... It seems to be a muscle problem, nothing serious.", task: "Pregunta qué debes hacer.", opts: [
+      { label: "Preguntar el tratamiento", say: ["What should I do?", "Do I need any medicine?", "How can I make it better?"], next: "advice" },
+      { label: "Preguntar si puedes hacer ejercicio", say: ["Can I still go to the gym?", "Is it okay to exercise?", "Should I stop running for a while?"], next: "advice" } ] },
+    advice: { npc: "Take an anti-inflammatory for five days, avoid heavy lifting, and try some gentle stretching every day.", task: "Confirma y pregunta si debes volver.", opts: [
+      { label: "Preguntar si debes volver", say: ["Should I come back for a check-up?", "Do I need another appointment?", "What if it doesn't get better?"], next: "end" } ] },
+    end: { npc: "If it isn't better in two weeks, book another appointment and we'll do an X-ray. Take care!", end: true } } },
+
+  { id: "sc-firstday", place: "office", level: "B1", title: "Primer día en el trabajo", intro: "Es tu primer día como desarrollador. Tu nueva jefa, Laura, te recibe.", start: "a", nodes: {
+    a: { npc: "Welcome to the team! How was your trip here this morning?", task: "Saluda y responde.", opts: [
+      { label: "Bien, sin problemas", say: ["Thank you! It was fine, no traffic at all.", "Thanks, it was easy. I took the subway.", "Pretty good, thanks. I'm excited to be here."], next: "tour" },
+      { label: "Hubo un problema", say: ["Thanks! There was a lot of traffic, but I made it.", "The bus was late, but I'm here now.", "A bit stressful, to be honest. I got lost."], next: "lost" } ] },
+    lost: { npc: "Oh no! Don't worry, it happens to everyone on the first day. Let me show you around.", task: "Agradece.", opts: [
+      { label: "Agradecer", say: ["Thanks, that would be great.", "Thank you, I appreciate it.", "Great, thanks."], next: "tour" } ] },
+    tour: { npc: "This is your desk, and that's the meeting room. Our daily stand-up is at 9:30. Any questions so far?", task: "Haz una pregunta sobre el trabajo.", opts: [
+      { label: "Preguntar por tu primera tarea", say: ["What will I be working on first?", "What's my first task?", "Which project will I join?"], next: "task" },
+      { label: "Preguntar por el horario", say: ["What are the working hours?", "Is the schedule flexible?", "Can I work from home some days?"], next: "hours" } ] },
+    hours: { npc: "We're flexible. Most people work from nine to five, and you can work from home on Fridays.", task: "Ahora pregunta por tu primera tarea.", opts: [
+      { label: "Preguntar por tu primera tarea", say: ["Great. What will I be working on first?", "Perfect. What's my first task?", "Nice. Which project will I join?"], next: "task" } ] },
+    task: { npc: "This week, just set up your environment and fix a couple of small bugs. Tom will be your buddy.", task: "Responde mostrando entusiasmo.", opts: [
+      { label: "Mostrar entusiasmo", say: ["Sounds good. I'm looking forward to it.", "Perfect. I'll talk to Tom right away.", "Great, I can't wait to start."], next: "end" },
+      { label: "Pedir documentación", say: ["Is there any documentation I should read first?", "Where can I find the project documentation?", "Do you have a guide for new developers?"], next: "end" } ] },
+    end: { npc: "There's a wiki with everything you need. Welcome aboard, and don't hesitate to ask questions!", end: true } } },
+
+  { id: "sc-meeting-delay", place: "office", level: "B2", title: "Avisar un retraso en una reunión", intro: "Estás en una reunión con un cliente. Tu equipo no va a llegar a la fecha de entrega.", start: "a", nodes: {
+    a: { npc: "So, are we still on track to launch the new feature next Monday?", task: "Da la mala noticia con tacto.", opts: [
+      { label: "Admitir el retraso con tacto", say: ["I'm afraid we're running a bit behind schedule.", "Unfortunately, we won't be able to launch on Monday.", "To be honest, we've run into some problems and need more time."], next: "why" },
+      { label: "Proponer lanzar una parte", say: ["We can launch part of it on Monday, but not everything.", "We could release a basic version on Monday.", "Most of it will be ready, but not all of it."], next: "partial" } ] },
+    why: { npc: "That's disappointing. What happened?", task: "Explica la causa sin culpar a nadie.", opts: [
+      { label: "Explicar el problema técnico", say: ["We found a security issue that we need to fix before going live.", "The payment integration turned out to be more complex than expected.", "We discovered a serious bug during testing."], next: "when" } ] },
+    partial: { npc: "Which part wouldn't be ready?", task: "Explica qué faltaría.", opts: [
+      { label: "Explicar qué faltaría", say: ["The reports section would come a week later.", "Everything except the payment integration.", "The admin panel would need one more week."], next: "when" } ] },
+    when: { npc: "I see. When do you realistically think it will be ready?", task: "Da una fecha realista y ofrece algo.", opts: [
+      { label: "Dar fecha y ofrecer reportes", say: ["By the end of next week. We'll send you daily updates in the meantime.", "We need about one more week, and I'll keep you posted every day.", "Realistically, next Friday. I'll share our progress daily."], next: "client" } ] },
+    client: { npc: "Okay. I'd rather have it working properly than rushed. But I need to inform my boss today.", task: "Ofrece ayuda para esa comunicación.", opts: [
+      { label: "Ofrecer un resumen escrito", say: ["I'll send you a short summary you can share with him.", "Would it help if I wrote a summary for your boss?", "I can join a call with your boss to explain."], next: "end" } ] },
+    end: { npc: "That would be great, thanks. I appreciate your honesty.", end: true } } }
+];
+
 // ===== HABLA 1 MINUTO: temas por nivel =====
 // [tema en inglés, ayuda en español, [chunks sugeridos], [preguntas guía]]
 const SPEAK_PROMPTS = {
@@ -2619,6 +2837,165 @@ Sofía raised hers and said nothing for a moment. Then, in an English that was n
     q: [["What was Sofía's role at the start-up?", ["Junior developer", "Chief technology officer", "Designer"], 1], ["Why did Valentina lose confidence?", ["Her technical test went badly", "The interview switched to English", "Sofía criticised her code"], 1], ["What point was Sofía making with her own story?", ["English can't be learned as an adult", "Daily, uncomfortable practice makes you improve", "Technical skills are less important than English"], 1], ["What did Daniel serve that evening?", ["Arepas", "The lulo and chocolate dessert", "A new dish from Canada"], 1]],
     gloss: [["cramped", "estrecho / apretado"], ["outstanding", "sobresaliente"], ["to evaporate", "evaporarse / desaparecer"], ["to stumble over your words", "trabarse al hablar"], ["to make a fool of yourself", "hacer el ridículo"], ["in spite of herself", "sin poder evitarlo"]] }
 ];
+
+// ===== LOS 12 TIEMPOS VERBALES =====
+// tl = línea de tiempo: posiciones de 0 a 100 (50 = ahora). ref = momento de referencia.
+// marcas: ["x", p] acción puntual · ["bar", a, b] acción en progreso · ["arr", a, b] conexión hasta la referencia
+const TENSES = [
+  { id: "ps", name: "Present simple", es: "Presente simple", level: "A2", group: "present", aspect: "simple",
+    form: { aff: ["I/you/we/they work · he/she/it works", "She works in a bank."], neg: ["don't / doesn't + verbo", "He doesn't eat meat."], q: ["Do / Does + sujeto + verbo?", "Do you live here?"] },
+    uses: ["Hábitos y rutinas", "Verdades generales y hechos", "Horarios fijos (trenes, clases)"], signals: "always, usually, often, every day, never, on Mondays",
+    examples: ["I usually get up at seven.", "Water boils at one hundred degrees.", "The train leaves at 8:15."],
+    mistake: ["She work in a bank.", "She works in a bank.", "Con he/she/it, el verbo lleva -s."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 12], ["x", 26], ["x", 40], ["x", 54], ["x", 68], ["x", 82]], note: "Se repite: antes, ahora y después" } },
+  { id: "pc", name: "Present continuous", es: "Presente continuo", level: "A2", group: "present", aspect: "continuous",
+    form: { aff: ["am / is / are + -ing", "I'm working from home today."], neg: ["am not / isn't / aren't + -ing", "She isn't listening."], q: ["Am / Is / Are + sujeto + -ing?", "Are you coming?"] },
+    uses: ["Lo que pasa en este momento", "Situaciones temporales", "Planes ya organizados"], signals: "now, right now, at the moment, today, this week, currently",
+    examples: ["I'm reading a great book at the moment.", "They're staying with friends this week.", "We're meeting the client tomorrow."],
+    mistake: ["I am knowing the answer.", "I know the answer.", "Los verbos de estado (know, like, want, need) no van en continuo."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["bar", 40, 60]], note: "En progreso alrededor de ahora" } },
+  { id: "pp", name: "Present perfect", es: "Presente perfecto", level: "A2", group: "present", aspect: "perfect",
+    form: { aff: ["have / has + participio", "I've finished the report."], neg: ["haven't / hasn't + participio", "She hasn't called yet."], q: ["Have / Has + sujeto + participio?", "Have you ever been to London?"] },
+    uses: ["Experiencias de vida, sin decir cuándo", "Acción pasada con resultado ahora", "Algo que empezó antes y sigue (con for / since)"], signals: "ever, never, already, yet, just, so far, for, since",
+    examples: ["I've never tried sushi.", "She's lost her keys, so she can't get in.", "We've lived here since 2020."],
+    mistake: ["I have seen him yesterday.", "I saw him yesterday.", "Con un momento terminado (yesterday, last week, in 2019) se usa el pasado simple."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 24], ["arr", 24, 50]], note: "Pasó antes, sin fecha, y importa ahora" } },
+  { id: "ppc", name: "Present perfect continuous", es: "Presente perfecto continuo", level: "B1", group: "present", aspect: "perfect continuous",
+    form: { aff: ["have / has been + -ing", "I've been waiting for an hour."], neg: ["haven't / hasn't been + -ing", "He hasn't been sleeping well."], q: ["Have / Has + sujeto + been + -ing?", "How long have you been learning English?"] },
+    uses: ["Duración de algo que empezó antes y sigue", "Actividad reciente con efecto visible"], signals: "for, since, how long, all day, lately, recently",
+    examples: ["I've been studying English for two years.", "It's been raining all morning.", "You look tired. Have you been running?"],
+    mistake: ["I am living here since 2019.", "I've been living here since 2019.", "«Llevo… desde» no es presente continuo: es have been + -ing."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["bar", 18, 50]], note: "Empezó antes y continúa hasta ahora" } },
+  { id: "pas", name: "Past simple", es: "Pasado simple", level: "A2", group: "past", aspect: "simple",
+    form: { aff: ["verbo + -ed / forma irregular", "We visited Rome in 2019."], neg: ["didn't + verbo base", "I didn't see the email."], q: ["Did + sujeto + verbo base?", "Did you enjoy the film?"] },
+    uses: ["Acciones terminadas en un momento concreto del pasado", "Secuencias de hechos en una historia"], signals: "yesterday, last week, ago, in 2010, when I was a child",
+    examples: ["I called her yesterday.", "He moved to Medellín three years ago.", "We got up, had breakfast and left."],
+    mistake: ["Did you went to the party?", "Did you go to the party?", "Después de did, el verbo va en forma base."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 24]], note: "Terminó en un momento del pasado" } },
+  { id: "pasc", name: "Past continuous", es: "Pasado continuo", level: "B1", group: "past", aspect: "continuous",
+    form: { aff: ["was / were + -ing", "I was cooking when you called."], neg: ["wasn't / weren't + -ing", "They weren't listening."], q: ["Was / Were + sujeto + -ing?", "What were you doing at 8 p.m.?"] },
+    uses: ["Acción en progreso en un momento del pasado", "Acción larga interrumpida por otra corta", "Ambiente o contexto de una historia"], signals: "while, when, at that moment, at 8 o'clock yesterday",
+    examples: ["I was watching TV when the lights went out.", "At midnight we were still talking.", "It was raining and people were running."],
+    mistake: ["When I was arriving, she left.", "When I arrived, she was leaving.", "La acción corta va en pasado simple y la larga en continuo."],
+    tl: { ref: 26, refLabel: "momento pasado", marks: [["bar", 14, 38], ["x", 26]], note: "En progreso cuando pasó otra cosa" } },
+  { id: "pap", name: "Past perfect", es: "Pasado perfecto (pluscuamperfecto)", level: "B1", group: "past", aspect: "perfect",
+    form: { aff: ["had + participio", "The film had started when we arrived."], neg: ["hadn't + participio", "I hadn't eaten all day."], q: ["Had + sujeto + participio?", "Had you met her before?"] },
+    uses: ["Acción anterior a otra acción pasada", "Explicar la causa de algo pasado", "En estilo indirecto y en el tercer condicional"], signals: "before, after, by the time, already, when, because",
+    examples: ["When I got to the station, the train had left.", "She was nervous because she had never flown before.", "By the time we arrived, they had finished dinner."],
+    mistake: ["When I arrived, the film started.", "When I arrived, the film had started.", "Si una acción pasó antes que la otra, la anterior va en had + participio."],
+    tl: { ref: 32, refLabel: "otra acción pasada", marks: [["x", 14], ["arr", 14, 32]], note: "Pasó antes de otro momento del pasado" } },
+  { id: "papc", name: "Past perfect continuous", es: "Pasado perfecto continuo", level: "C1", group: "past", aspect: "perfect continuous",
+    form: { aff: ["had been + -ing", "I had been waiting for an hour when she arrived."], neg: ["hadn't been + -ing", "He hadn't been sleeping well."], q: ["Had + sujeto + been + -ing?", "How long had you been working there?"] },
+    uses: ["Duración de una acción hasta un momento del pasado", "Causa visible de una situación pasada"], signals: "for, since, how long, by the time, before",
+    examples: ["She had been working there for ten years when she resigned.", "The ground was wet. It had been raining.", "They were tired because they had been driving all night."],
+    mistake: ["I was waiting for two hours when he arrived.", "I had been waiting for two hours when he arrived.", "Con duración hasta un momento pasado (for two hours), usa had been + -ing."],
+    tl: { ref: 32, refLabel: "momento pasado", marks: [["bar", 8, 32]], note: "Duró hasta otro momento del pasado" } },
+  { id: "fs", name: "Future simple (will / going to)", es: "Futuro simple", level: "A2", group: "future", aspect: "simple",
+    form: { aff: ["will + verbo · am/is/are going to + verbo", "I'll call you later. · I'm going to study medicine."], neg: ["won't + verbo · not going to", "It won't rain tomorrow."], q: ["Will + sujeto + verbo? · Are you going to…?", "Will you help me?"] },
+    uses: ["will: decisiones del momento, promesas, predicciones", "going to: planes ya decididos y predicciones con evidencia"], signals: "tomorrow, next week, soon, in two years, I think, probably",
+    examples: ["I'm tired. I think I'll go to bed.", "We're going to buy a house next year.", "Look at those clouds! It's going to rain."],
+    mistake: ["I will to call you.", "I will call you.", "Después de will no va to."],
+    tl: { ref: 50, refLabel: "ahora", marks: [["x", 76]], note: "Pasará en el futuro" } },
+  { id: "fc", name: "Future continuous", es: "Futuro continuo", level: "B2", group: "future", aspect: "continuous",
+    form: { aff: ["will be + -ing", "This time tomorrow I'll be flying to Toronto."], neg: ["won't be + -ing", "I won't be working on Friday."], q: ["Will + sujeto + be + -ing?", "Will you be using the car tonight?"] },
+    uses: ["Acción en progreso en un momento futuro", "Planes normales del futuro, de forma educada"], signals: "this time tomorrow, at 8 p.m. tonight, next week at this time",
+    examples: ["At ten tomorrow I'll be sitting my exam.", "Don't call at seven. We'll be having dinner.", "Will you be coming to the meeting?"],
+    mistake: ["Tomorrow at nine I will work.", "Tomorrow at nine I'll be working.", "Para algo en progreso en un momento futuro, usa will be + -ing."],
+    tl: { ref: 74, refLabel: "momento futuro", marks: [["bar", 62, 86], ["x", 74]], note: "En progreso en un momento del futuro" } },
+  { id: "fp", name: "Future perfect", es: "Futuro perfecto", level: "B2", group: "future", aspect: "perfect",
+    form: { aff: ["will have + participio", "By Friday, I'll have finished the project."], neg: ["won't have + participio", "They won't have arrived by noon."], q: ["Will + sujeto + have + participio?", "Will you have finished by six?"] },
+    uses: ["Acción terminada antes de un momento futuro"], signals: "by, by then, by the time, before, by the end of",
+    examples: ["By 2030, I will have paid off my loan.", "Call me at nine. I'll have finished dinner by then.", "By the time you arrive, we'll have left."],
+    mistake: ["By Friday I will finish the report.", "By Friday I will have finished the report.", "Con by + momento futuro, usa will have + participio."],
+    tl: { ref: 80, refLabel: "momento futuro", marks: [["x", 64], ["arr", 64, 80]], note: "Estará terminado antes de ese momento" } },
+  { id: "fpc", name: "Future perfect continuous", es: "Futuro perfecto continuo", level: "B2", group: "future", aspect: "perfect continuous",
+    form: { aff: ["will have been + -ing", "In June, I'll have been working here for two years."], neg: ["won't have been + -ing", "She won't have been waiting long."], q: ["Will + sujeto + have been + -ing?", "How long will you have been living here?"] },
+    uses: ["Duración de una acción hasta un momento futuro"], signals: "for, by, by the time, in + fecha + for",
+    examples: ["By December, I'll have been studying English for three years.", "When he retires, he'll have been teaching for forty years.", "At five, we'll have been driving for ten hours."],
+    mistake: ["Next year I will work here for five years.", "Next year I'll have been working here for five years.", "Para contar la duración hasta un momento futuro, usa will have been + -ing."],
+    tl: { ref: 80, refLabel: "momento futuro", marks: [["bar", 42, 80]], note: "Habrá durado hasta ese momento" } }
+];
+
+// Práctica mixta: elegir el tiempo correcto. Cada ejercicio indica a qué tiempo corresponde.
+const TENSE_DRILL = [
+  ["ps", ["mc", "She ___ to work by bus every day.", ["goes", "is going", "has gone"], 0, "Rutina (every day) → present simple."]],
+  ["ps", ["fill", "Water ___ (boil) at 100 degrees.", ["boils"], "Verdad general → present simple."]],
+  ["ps", ["mc", "The museum ___ at 9 a.m. on weekdays.", ["opens", "is opening", "will be opening"], 0, "Horario fijo → present simple."]],
+  ["pc", ["mc", "Be quiet! The baby ___.", ["sleeps", "is sleeping", "has slept"], 1, "Ahora mismo → present continuous."]],
+  ["pc", ["fill", "I ___ (stay) with my cousin this week.", ["am staying", "'m staying"], "Situación temporal → present continuous."]],
+  ["pc", ["mc", "We ___ the client tomorrow at ten. It's in my calendar.", ["meet", "are meeting", "will have met"], 1, "Plan organizado → present continuous."]],
+  ["pp", ["mc", "I ___ to Japan twice.", ["went", "have been", "was going"], 1, "Experiencia sin fecha → present perfect."]],
+  ["pp", ["mc", "She ___ her keys, so she can't open the door.", ["lost", "has lost", "had been losing"], 1, "Resultado ahora → present perfect."]],
+  ["pp", ["fill", "Have you ___ (finish) the report yet?", ["finished"], "Yet → present perfect."]],
+  ["pp", ["mc", "We ___ here since 2020.", ["live", "are living", "have lived"], 2, "Since + algo que sigue → present perfect."]],
+  ["ppc", ["mc", "I'm exhausted. I ___ all day.", ["worked", "have been working", "work"], 1, "Actividad con efecto ahora → perfect continuous."]],
+  ["ppc", ["fill", "How long have you ___ (learn) English?", ["been learning"], "How long + duración → have been + -ing."]],
+  ["ppc", ["mc", "It ___ for hours. The streets are flooded.", ["rains", "has been raining", "had rained"], 1, "Duración hasta ahora con resultado visible."]],
+  ["pas", ["mc", "I ___ her yesterday at the supermarket.", ["have seen", "saw", "was seeing"], 1, "Yesterday → past simple."]],
+  ["pas", ["fill", "They ___ (move) to Bogotá three years ago.", ["moved"], "Ago → past simple."]],
+  ["pas", ["mc", "___ you enjoy the concert last night?", ["Did", "Have", "Were"], 0, "Pregunta en pasado simple → Did."]],
+  ["pasc", ["mc", "I ___ dinner when you called.", ["cooked", "was cooking", "have cooked"], 1, "Acción larga interrumpida → past continuous."]],
+  ["pasc", ["fill", "At 8 p.m. yesterday we ___ (watch) a film.", ["were watching"], "En progreso en un momento pasado."]],
+  ["pasc", ["mc", "While she ___, someone stole her bag.", ["was shopping", "shopped", "had shopped"], 0, "While + acción larga → past continuous."]],
+  ["pap", ["mc", "When we got to the station, the train ___.", ["left", "has left", "had left"], 2, "Pasó antes de otra acción pasada → past perfect."]],
+  ["pap", ["fill", "She was nervous because she ___ (never / fly) before.", ["had never flown"], "Antes de ese momento pasado → had + participio."]],
+  ["pap", ["mc", "By the time I arrived, they ___ dinner.", ["finished", "had finished", "have finished"], 1, "By the time + pasado → past perfect."]],
+  ["pap", ["tr", "Cuando llegué, la película ya había empezado.", ["When I arrived, the film had already started.", "When I arrived, the movie had already started.", "When I got there, the film had already started."], "Había + participio = had + participio."]],
+  ["papc", ["mc", "She ___ there for ten years when she resigned.", ["worked", "had been working", "has been working"], 1, "Duración hasta un momento pasado → had been + -ing."]],
+  ["papc", ["fill", "The ground was wet. It ___ (rain).", ["had been raining"], "Causa visible en el pasado → had been + -ing."]],
+  ["papc", ["mc", "They were tired because they ___ all night.", ["had been driving", "drove", "were driving"], 0, "Duración que explica el cansancio."]],
+  ["fs", ["mc", "I'm tired. I think I ___ to bed.", ["go", "'ll go", "'m going to go"], 1, "Decisión del momento → will."]],
+  ["fs", ["mc", "Look at those clouds! It ___ rain.", ["will", "is going to", "rains"], 1, "Predicción con evidencia → going to."]],
+  ["fs", ["fill", "We ___ (buy) a house next year. We've already saved the money.", ["are going to buy", "'re going to buy"], "Plan decidido → going to."]],
+  ["fc", ["mc", "This time tomorrow I ___ to Toronto.", ["fly", "will be flying", "will have flown"], 1, "En progreso en un momento futuro."]],
+  ["fc", ["fill", "Don't call at seven. We ___ (have) dinner.", ["will be having", "'ll be having"], "En progreso a esa hora → will be + -ing."]],
+  ["fc", ["mc", "___ you be using the car tonight? I need it.", ["Will", "Are", "Do"], 0, "Pregunta educada sobre planes → Will you be + -ing?"]],
+  ["fp", ["mc", "By Friday, I ___ the project.", ["will finish", "will have finished", "finish"], 1, "By + momento futuro → will have + participio."]],
+  ["fp", ["fill", "By the time you arrive, we ___ (leave).", ["will have left", "'ll have left"], "Terminado antes de ese momento."]],
+  ["fp", ["mc", "By 2030, she ___ her degree.", ["will complete", "will have completed", "completes"], 1, "By 2030 → futuro perfecto."]],
+  ["fpc", ["mc", "In June, I ___ here for two years.", ["will work", "will have been working", "work"], 1, "Duración hasta un momento futuro."]],
+  ["fpc", ["fill", "By December, she ___ (study) English for three years.", ["will have been studying", "'ll have been studying"], "By + fecha + for → will have been + -ing."]],
+  ["fpc", ["tr", "En marzo llevaré cinco años trabajando aquí.", ["In March I'll have been working here for five years.", "In March I will have been working here for five years.", "By March I'll have been working here for five years."], "Llevaré + tiempo + gerundio = will have been + -ing + for."]],
+  ["mix", ["mc", "I ___ him since we were children.", ["know", "have known", "am knowing"], 1, "Since + verbo de estado → present perfect simple."]],
+  ["mix", ["mc", "When I opened the door, the cat ___.", ["ran out", "had been running out", "has run out"], 0, "Secuencia inmediata → past simple."]],
+  ["mix", ["mc", "Sorry I'm late. ___ long?", ["Did you wait", "Have you been waiting", "Are you waiting"], 1, "Duración hasta ahora → have been waiting."]],
+  ["mix", ["mc", "He ___ the news before I told him.", ["already heard", "had already heard", "has already heard"], 1, "Antes de otra acción pasada → past perfect."]],
+  ["mix", ["mc", "Next month they ___ married for twenty years.", ["will be", "will have been", "are"], 1, "Duración hasta un momento futuro con be → will have been."]],
+  ["mix", ["mc", "I ___ my homework, so I can go out now.", ["did", "have done", "had done"], 1, "Resultado ahora → present perfect."]]
+];
+const TENSE_CARDS = TENSES.map((t) => ({ id: "CH-tense-" + t.id, level: t.level === "C1" ? "B2" : t.level, topic: "Tiempos verbales", en: t.name, es: `${t.es} — ${t.form.aff[0]}`, ex: t.examples[0], chunk: true }));
+
+// Dos lecciones que faltaban, insertadas junto a sus lecciones relacionadas (los identificadores son nuevos)
+(() => {
+  const b1 = LESSONS.B1, b2 = LESSONS.B2;
+  const iPas = b1.findIndex((l) => l.title === "Pasado continuo");
+  b1.splice(iPas + 1, 0, { id: "b1-pap", title: "Pasado perfecto (had + participio)", explain: `<p><b>had + participio</b> sirve para una acción que pasó <b>antes de otra acción pasada</b>. Es el «había + participio» del español: <i>When I arrived, the film had already started.</i></p>
+  <p>Compara: <i>When I arrived, the film started</i> (empezó cuando llegué) vs. <i>When I arrived, the film had started</i> (ya había empezado antes).</p>
+  <p>Palabras que lo acompañan: <b>before, after, by the time, already, never… before</b>. También aparece en el estilo indirecto (<i>She said she had finished</i>) y en el tercer condicional (<i>If I had known…</i>).</p>
+  <p>Negativo: <i>I hadn't eaten all day.</i> Pregunta: <i>Had you met her before?</i></p>`, ex: [
+    ["mc", "When we got to the cinema, the film ___.", ["started", "had started", "has started"], 1, "Empezó antes de llegar → had started."],
+    ["fill", "I was hungry because I ___ (not / eat) all day.", ["hadn't eaten", "had not eaten"], "Causa anterior → hadn't + participio."],
+    ["mc", "By the time the police arrived, the thieves ___.", ["escaped", "had escaped", "have escaped"], 1, "By the time + pasado → past perfect."],
+    ["tr", "Nunca había visto la nieve antes de ese viaje.", ["I had never seen snow before that trip.", "I'd never seen snow before that trip."], "Nunca había + participio = had never + participio."],
+    ["fix", "She told me she has finished the work.", ["She told me she had finished the work.", "She told me she'd finished the work."], "En estilo indirecto, has finished pasa a had finished."],
+    ["mc", "After he ___ his homework, he went out.", ["had finished", "has finished", "was finishing"], 0, "After + acción anterior → past perfect."],
+    ["ord", "¿Ya habías conocido a Laura antes?", "Had you met Laura before"],
+    ["mc", "I didn't recognise him. He ___ a lot.", ["changed", "had changed", "has changed"], 1, "El cambio ocurrió antes de ese momento pasado."]
+  ] });
+  const iFut = b2.findIndex((l) => l.title === "Futuro continuo y perfecto");
+  b2.splice(iFut + 1, 0, { id: "b2-fpc", title: "Futuro perfecto continuo", explain: `<p><b>will have been + -ing</b> expresa la <b>duración</b> de una acción hasta un momento del futuro. Es el «llevaré + tiempo + gerundio» del español: <i>In June, I'll have been working here for two years.</i></p>
+  <p>Compara con el futuro perfecto: <i>By June, I'll have finished the course</i> (terminado) vs. <i>By June, I'll have been studying for a year</i> (duración).</p>
+  <p>Casi siempre va con <b>for</b> + tiempo y un momento futuro (<b>by, in, when, next…</b>). No se usa con verbos de estado: <i>By May, I'll have known her for ten years</i> (no <i>have been knowing</i>).</p>`, ex: [
+    ["mc", "By December, I ___ English for three years.", ["will study", "will have been studying", "am studying"], 1, "Duración hasta diciembre."],
+    ["fill", "When he retires, he ___ (teach) for forty years.", ["will have been teaching", "'ll have been teaching"], "Duración hasta su retiro."],
+    ["mc", "By 6 p.m., we ___ for ten hours.", ["will drive", "will have been driving", "drove"], 1, "For + duración hasta un momento futuro."],
+    ["tr", "En marzo llevaré cinco años viviendo aquí.", ["In March I'll have been living here for five years.", "In March I will have been living here for five years.", "By March I'll have been living here for five years."], "Llevaré + gerundio = will have been + -ing."],
+    ["mc", "By May, I ___ her for ten years.", ["will have been knowing", "will have known", "will know"], 1, "Know es de estado: futuro perfecto simple."],
+    ["fix", "Next year I will work here for five years.", ["Next year I'll have been working here for five years.", "Next year I will have been working here for five years."], "Duración hasta un momento futuro → will have been + -ing."],
+    ["ord", "¿Cuánto tiempo llevarás esperando?", "How long will you have been waiting"],
+    ["mc", "By the time the guests arrive, she ___ for hours.", ["will cook", "will have been cooking", "cooks"], 1, "Duración hasta que lleguen."]
+  ] });
+})();
 
 // ===== VOCABULARIO ADICIONAL POR NIVEL =====
 VOCAB.A2 += `
@@ -3464,7 +3841,7 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
@@ -3932,7 +4309,7 @@ const readTabs = () => `<div class="tabs"><button class="tab ${rTab === "lectura
 function bindReadTabs(m) { $$("[data-rt]", m).forEach((b) => b.onclick = () => { rTab = b.dataset.rt; render(); }); }
 
 // ---------- HABLAR ----------
-let hTab = "conversa", hq = null;
+let hTab = "mapa", hq = null;
 function micButton(id) { return dictApi ? `<button class="btn big-btn" id="${id}">🎙️ Toca y habla</button>` : `<p class="muted small">🎙️ El micrófono funciona en Chrome o Edge. Aquí puedes decirlo en voz alta y escribirlo.</p>`; }
 function bindMic(btnId, onText, live) {
   if (!dictApi || !$("#" + btnId)) return;
@@ -3947,17 +4324,18 @@ RENDER.hablar = (m) => {
   if (sub && sub.pron) return pronPage(m, sub.pron);
   if (sub && sub.cs) return csPage(m, sub.cs);
   if (sub && sub.retell) return retellPage(m, sub.retell, () => { sub = null; render(); });
-  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones guiadas</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
+  m.innerHTML = `<h1>Hablar</h1><div class="tabs"><button class="tab ${hTab === "mapa" ? "on" : ""}" data-t="mapa">🗺️ Mapa</button><button class="tab ${hTab === "conversa" ? "on" : ""}" data-t="conversa">Conversaciones</button><button class="tab ${hTab === "sonidos" ? "on" : ""}" data-t="sonidos">Sonidos</button><button class="tab ${hTab === "cs" ? "on" : ""}" data-t="cs">🔗 Connected speech</button><button class="tab ${hTab === "pron" ? "on" : ""}" data-t="pron">Shadowing</button><button class="tab ${hTab === "min" ? "on" : ""}" data-t="min">⏱️ Habla 1 minuto</button><button class="tab ${hTab === "retell" ? "on" : ""}" data-t="retell">🗣️ Retelling</button></div><div id="hbody"></div>`;
   $$("[data-t]", m).forEach((b) => b.onclick = () => { hTab = b.dataset.t; render(); });
   const box = $("#hbody");
   if (hTab === "sonidos") return pronList(box);
   if (hTab === "cs") return csList(box);
+  if (hTab === "mapa") return situationsMap(box);
   if (hTab === "min") return speakMinute(box);
   if (hTab === "retell") return retellList(box);
   if (hTab === "conversa") {
-    const list = ALL_ROLEPLAY.filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
+    const list = SCENES.concat(ALL_ROLEPLAY).filter((x) => S.unlocked.includes(x.level)).sort((a, b) => (b.level === S.level) - (a.level === S.level) || lvlIdx(b.level) - lvlIdx(a.level));
     box.innerHTML = `<p class="muted">Situaciones reales: la otra persona te habla, tú respondes en voz alta (o escribiendo) siguiendo la instrucción. Luego comparas con respuestas modelo.</p><div class="lessons">${list.map((x) => `<button class="lesson" data-i="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${esc(x.intro)}</small></span><span class="st">${S.done.roleplay[x.id] ? "✅" : ""}</span></button>`).join("")}</div>`;
-    $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { rp: ALL_ROLEPLAY.find((x) => x.id === b.dataset.i), t: 0, scores: [] }; render(); });
+    $$("[data-i]", box).forEach((b) => b.onclick = () => { sub = { rp: convoById(b.dataset.i) }; render(); });
     return;
   }
   if (!hq) hq = { list: shuffle(LEVELS.filter((l) => S.unlocked.includes(l)).flatMap((l) => SENTENCES[l].map((s) => ({ s, l })))).sort((a, b) => (b.l === S.level) - (a.l === S.level)), i: 0 };
@@ -5086,6 +5464,533 @@ function visualQuiz(m, onExit) {
     $("#again").onclick = () => visualQuiz(m, onExit); $("#back").onclick = onExit;
   } });
 }
+
+// ===== CONVERSACIONES: RAMIFICACIONES, CORRECCIÓN, MAPA Y RESULTADOS =====
+
+// Convierte una conversación lineal (turns) al formato de nodos
+function convoNodes(item) {
+  if (item.nodes) return { start: item.start, nodes: item.nodes };
+  const nodes = {};
+  item.turns.forEach((t, i) => { nodes["t" + i] = { npc: t[0], task: t[1], opts: [{ label: "", say: t[2], next: i + 1 < item.turns.length ? "t" + (i + 1) : null }] }; });
+  return { start: "t0", nodes };
+}
+const allConvos = () => SCENES.concat(ALL_ROLEPLAY, typeof DEV_RP !== "undefined" ? DEV_RP : []);
+const convoById = (id) => allConvos().find((c) => c.id === id);
+const convoOK = (c) => c.level === "TI" || S.unlocked.includes(c.level);
+
+// ---------- Corrección gramatical de lo que dices (LanguageTool) ----------
+const LT_IGNORE_CAT = new Set(["CASING", "TYPOGRAPHY", "PUNCTUATION", "STYLE", "REDUNDANCY"]);
+const LT_IGNORE_RULE = new Set(["UPPERCASE_SENTENCE_START", "PUNCTUATION_PARAGRAPH_END", "COMMA_PARENTHESIS_WHITESPACE", "WHITESPACE_RULE", "EN_QUOTES", "SENTENCE_WHITESPACE", "I_LOWERCASE"]);
+async function checkSpoken(said) {
+  let t = said.trim(); if (!t) return [];
+  t = t[0].toUpperCase() + t.slice(1); if (!/[.!?]$/.test(t)) t += ".";
+  const ms = await languageTool(t);
+  return ms.filter((m) => !LT_IGNORE_CAT.has((m.rule.category || {}).id) && !LT_IGNORE_RULE.has(m.rule.id)).map((m) => ({ bad: t.substr(m.offset, m.length), msg: m.message, fix: (m.replacements[0] || {}).value || "" }));
+}
+function ltHTML(res) {
+  if (res.lt === undefined) return `<p class="small muted">⏳ Revisando gramática…</p>`;
+  if (res.lt === null) return `<p class="small muted">El corrector de gramática no está disponible ahora (necesita internet).</p>`;
+  if (!res.lt.length) return `<p class="small">✅ <b>Gramática:</b> no se encontraron errores.</p>`;
+  return `<div class="ltspoken"><b>Gramática: ${res.lt.length} posible(s) error(es)</b>${res.lt.map((e) => `<div class="ltm"><mark>${esc(e.bad)}</mark>${e.fix ? ` → <b>${esc(e.fix)}</b>` : ""}<div class="small muted">${esc(e.msg)}</div></div>`).join("")}</div>`;
+}
+
+// ---------- Motor de conversación ----------
+function runConvo(m, item, back) {
+  if (!sub.cv) { const g = convoNodes(item); sub.cv = { g, node: g.start, log: [], res: null, shown: Date.now(), hints: {} }; }
+  const cv = sub.cv, node = cv.g.nodes[cv.node];
+  if (!node || node.end) return convoEnd(m, item, back, node);
+  const r = cv.res;
+  const branching = !!item.nodes;
+  m.innerHTML = `<div class="row between"><div><h1>${esc(item.title)}</h1><div class="muted small">${esc(item.intro)}${branching ? " · 🔀 La conversación cambia según lo que digas" : ""}</div></div><button class="btn ghost small" id="exit">Salir</button></div>
+  <div class="chat">${cv.log.map((l) => `<div class="msg bot">${esc(l.npc)}</div><div class="msg me">${esc(l.said)}</div>`).join("")}
+    <div class="msg bot">${esc(node.npc)} ${speakBtn(node.npc)}${csBox(node.npc, false)}</div></div>
+  ${node.task ? `<div class="card task-box"><b>Tu turno:</b> ${esc(node.task)}</div>` : ""}
+  ${r ? `<div class="feedback ${r.s >= 0.6 ? "good" : "bad"}"><b>Dijiste:</b> “${esc(r.said)}”
+      ${r.s < 0.3 ? `<p>🤔 No quedó muy claro. Prueba con una de las ideas de abajo o dilo de otra forma.</p>` : ""}
+      <p><b>Frase modelo más cercana</b> (${Math.round(r.s * 100)}%): ${esc(r.model)} ${speakBtn(r.model)}</p>${csBox(r.model, false)}
+      ${branching && r.opt.label ? `<p class="small muted">Camino elegido: ${esc(r.opt.label)}</p>` : ""}
+      <div id="ltres">${ltHTML(r)}</div></div>
+    <div class="row"><button class="btn" id="next">Continuar</button><button class="btn ghost" id="retry">Intentar de nuevo</button></div>`
+  : `<div class="center">${micButton("rec")}</div><p class="muted center" id="live"></p><form id="tf" class="row"><input id="ti" placeholder="O escribe tu respuesta en inglés" autocapitalize="off"><button class="btn">Enviar</button></form>
+    <details class="card hints"><summary>💡 ${node.opts.length > 1 ? "Ideas de qué decir" : "Ver una respuesta posible"}</summary>${node.opts.map((o, k) => `<div class="hint">${o.label ? `<b>${esc(o.label)}</b>` : ""} <button class="btn ghost small" data-h="${k}">Ver frase</button><div id="h${k}"></div></div>`).join("")}<p class="small muted">Escucha la frase y luego dila tú sin mirar.</p></details>`}`;
+  $("#exit").onclick = () => { stopSpeech(); back(); };
+  if (!r) setTimeout(() => speakLines([[1, node.npc]]), 200);
+  const answer = (said) => {
+    let best = { s: -1 };
+    node.opts.forEach((o) => o.say.forEach((x) => { const s = similarity(x, said); if (s > best.s) best = { s, model: x, opt: o }; }));
+    cv.res = { said, s: Math.max(0, best.s), model: best.model, opt: best.opt, secs: Math.round((Date.now() - cv.shown) / 1000), lt: undefined };
+    const res = cv.res; render();
+    checkSpoken(said).then((lt) => { res.lt = lt; }).catch(() => { res.lt = null; }).then(() => { const b = $("#ltres"); if (b && cv.res === res) b.innerHTML = ltHTML(res); });
+  };
+  bindMic("rec", answer, (t) => { const l = $("#live"); if (l) l.textContent = t; });
+  if ($("#tf")) $("#tf").onsubmit = (e) => { e.preventDefault(); const v = $("#ti").value.trim(); if (v) answer(v); };
+  $$("[data-h]", m).forEach((b) => b.onclick = () => { const o = node.opts[+b.dataset.h], x = o.say[0]; $("#h" + b.dataset.h).innerHTML = `<p>${esc(x)} ${speakBtn(x)}</p>`; b.remove(); cv.hints[cv.node] = true; });
+  if ($("#next")) $("#next").onclick = () => { cv.log.push({ npc: node.npc, said: r.said, model: r.model, s: r.s, secs: r.secs, lt: r.lt || [], task: node.task || "", hint: !!cv.hints[cv.node] }); cv.node = r.opt.next; cv.res = null; cv.shown = Date.now(); render(); };
+  if ($("#retry")) $("#retry").onclick = () => { cv.res = null; cv.shown = Date.now(); render(); };
+}
+
+function convoEnd(m, item, back, endNode) {
+  const cv = sub.cv;
+  if (endNode && endNode.end && !cv.closed) {
+    m.innerHTML = `<div class="row between"><h1>${esc(item.title)}</h1></div><div class="chat">${cv.log.map((l) => `<div class="msg bot">${esc(l.npc)}</div><div class="msg me">${esc(l.said)}</div>`).join("")}<div class="msg bot">${esc(endNode.npc)} ${speakBtn(endNode.npc)}</div></div><button class="btn wide" id="res">Ver mi resultado</button>`;
+    setTimeout(() => speakLines([[1, endNode.npc]]), 200);
+    $("#res").onclick = () => { cv.closed = true; render(); };
+    return;
+  }
+  convoResults(m, item, back);
+}
+
+// ---------- Resultado completo ----------
+const STOP = new Set("i you he she it we they a an the and or but to of in on at for with is are was were be been am do does did have has had my your our their this that these those me him her us them so if then not no yes can could would will just very".split(" "));
+function convoResults(m, item, back) {
+  const cv = sub.cv, L = cv.log, n = L.length || 1;
+  if (!cv.stats) {
+    const acc = L.reduce((a, l) => a + l.s, 0) / n;
+    const errs = L.reduce((a, l) => a + l.lt.length, 0);
+    const words = L.map((l) => (l.said.match(/[A-Za-z']+/g) || []).length);
+    const avgW = words.reduce((a, b) => a + b, 0) / n;
+    const avgT = L.reduce((a, l) => a + l.secs, 0) / n;
+    const hints = L.filter((l) => l.hint).length;
+    const toks = [...new Set(L.flatMap((l) => (l.said.toLowerCase().match(/[a-z']+/g) || [])))];
+    const known = new Set(allCards().map((c) => c.en.toLowerCase()).filter((w) => !w.includes(" ")));
+    const courseWords = toks.filter((w) => known.has(w) && !STOP.has(w));
+    const flu = Math.min(1, avgW / 7) * (avgT <= 20 ? 1 : avgT <= 35 ? 0.8 : 0.6);
+    const gram = Math.max(0, 1 - errs / n / 1.5);
+    const score = acc * 0.55 + gram * 0.25 + flu * 0.2 - Math.min(0.15, hints * 0.03);
+    const stars = score >= 0.78 ? 3 : score >= 0.58 ? 2 : score >= 0.35 ? 1 : 0;
+    cv.stats = { acc, errs, avgW, avgT, hints, toks, courseWords, flu, gram, stars, score };
+    const prev = (S.rpStars || {})[item.id] || 0;
+    S.rpStars = S.rpStars || {}; S.rpStars[item.id] = Math.max(prev, stars);
+    S.done.roleplay[item.id] = true;
+    skill("speaking", Math.round(acc * n), n); if (extraTask().go === "hablar") markDaily("extra"); addXP(10 + stars * 5); save();
+  }
+  const st = cv.stats, pct = (x) => Math.round(x * 100);
+  const review = L.filter((l) => l.s < 0.7 || l.lt.length);
+  const meter = (label, v, note) => `<div class="meter"><div class="row between"><b>${label}</b><span>${pct(v)}%</span></div><div class="bar"><i style="width:${pct(v)}%"></i></div><div class="small muted">${note}</div></div>`;
+  m.innerHTML = `<div class="card center"><div class="stars">${[1, 2, 3].map((i) => `<span class="${i <= st.stars ? "on" : ""}">★</span>`).join("")}</div>
+    <h2>${["Sigue practicando", "¡Bien!", "¡Muy bien!", "¡Excelente!"][st.stars]}</h2><p class="muted">${esc(item.title)} · ${L.length} respuestas</p></div>
+  <div class="card">${meter("Precisión", st.acc, "Qué tanto se pareció lo que dijiste a una frase natural para esa situación.")}
+    ${meter("Gramática", st.gram, st.errs ? `${st.errs} posible(s) error(es) encontrados por el corrector.` : "El corrector no encontró errores.")}
+    ${meter("Fluidez", st.flu, `${st.avgW.toFixed(1)} palabras por respuesta · ${Math.round(st.avgT)} s en responder, en promedio${st.hints ? ` · usaste ${st.hints} pista(s)` : ""}.`)}
+    <div class="meter"><b>Vocabulario</b><div class="small muted">${st.toks.length} palabras distintas${st.courseWords.length ? `, ${st.courseWords.length} del curso:` : "."}</div>${st.courseWords.length ? `<div class="chips">${st.courseWords.slice(0, 20).map((w) => `<span class="chip">${esc(w)}</span>`).join("")}</div>` : ""}</div></div>
+  ${review.length ? `<div class="card"><h3>Frases para repasar</h3>${review.map((l, k) => `<div class="li col"><div class="small muted">${esc(l.npc)}</div><div>Dijiste: “${esc(l.said)}”</div><div><b>Mejor así:</b> ${esc(l.lt.length && l.s >= 0.7 ? fixWith(l.said, l.lt) : l.model)} ${speakBtn(l.model)}</div><button class="btn ghost small" data-add="${k}">➕ Añadir a mis tarjetas</button></div>`).join("")}</div>` : `<div class="feedback good">Ninguna frase para repasar. ¡Muy bien!</div>`}
+  <div class="row center"><button class="btn" id="again">Repetir${item.nodes ? " (prueba otro camino)" : ""}</button><button class="btn ghost" id="lst">Volver</button></div>`;
+  $$("[data-add]", m).forEach((b) => b.onclick = () => { const l = review[+b.dataset.add]; addCustomCard(l.model, l.task || item.title, l.npc); b.textContent = "✓ Añadida"; b.disabled = true; });
+  $("#again").onclick = () => { sub = { rp: item }; render(); };
+  $("#lst").onclick = back;
+}
+function fixWith(said, lt) { let t = said; lt.forEach((e) => { if (e.fix && e.bad) t = t.replace(e.bad, e.fix); }); return t; }
+
+// La conversación vieja se reemplaza por el motor nuevo (también en Inglés TI)
+roleplay = function (m, rp) { runConvo(m, rp, () => { stopSpeech(); sub = null; render(); }); };
+
+// ---------- Mapa de situaciones ----------
+let mapPlace = null;
+function placeConvos(pid) { return SCENES.filter((s) => s.place === pid).concat((MAP_EXTRA[pid] || []).map(convoById).filter(Boolean)); }
+const starsOf = (id) => (S.rpStars || {})[id] || 0;
+function situationsMap(box) {
+  const total = allConvos().length, got = allConvos().reduce((a, c) => a + starsOf(c.id), 0);
+  box.innerHTML = `<p class="muted">Recorre la ciudad: entra a un lugar, elige una situación y habla con las personas. Las conversaciones con 🔀 cambian según lo que respondas. Gana hasta 3 estrellas en cada una.</p>
+  <div class="small muted">⭐ ${got} de ${total * 3} estrellas</div>
+  <div class="citymap"><svg viewBox="0 0 100 100" preserveAspectRatio="none" class="roads"><path d="M0 30 H100 M0 58 H100 M0 86 H100 M27 0 V100 M52 0 V100 M76 0 V100" /></svg>
+    ${MAP_PLACES.map((p) => { const cs = placeConvos(p.id), ok = cs.some(convoOK), st = cs.reduce((a, c) => a + starsOf(c.id), 0); return `<button class="place ${ok ? "" : "locked"} ${mapPlace === p.id ? "sel" : ""}" style="left:${p.x}%;top:${p.y}%" data-place="${p.id}">${fl3dHTML(p.icon, "map")}<span class="pn">${esc(p.name)}</span><span class="ps">${ok ? `★${st}/${cs.length * 3}` : "🔒"}</span></button>`; }).join("")}
+  </div><div id="placebox"></div>`;
+  $$("[data-place]", box).forEach((b) => b.onclick = () => { mapPlace = b.dataset.place; situationsMap(box); $("#placebox").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  if (mapPlace) {
+    const p = MAP_PLACES.find((x) => x.id === mapPlace), cs = placeConvos(mapPlace);
+    $("#placebox").innerHTML = `<h2>${p.icon} ${esc(p.name)}</h2><div class="lessons">${cs.map((c) => { const ok = convoOK(c), s = starsOf(c.id); return `<button class="lesson ${ok ? "" : "dim"}" data-cv="${c.id}" ${ok ? "" : "disabled"}><span class="num">${c.level}</span><span><b>${c.nodes ? "🔀 " : ""}${esc(c.title)}</b><small>${esc(c.intro)}${ok ? "" : " · 🔒 Se desbloquea en " + c.level}</small></span><span class="st">${"★".repeat(s)}${"☆".repeat(3 - s)}</span></button>`; }).join("")}</div>`;
+    $$("[data-cv]", box).forEach((b) => b.onclick = () => { sub = { rp: convoById(b.dataset.cv) }; render(); });
+  }
+}
+
+// ===== LOS 12 TIEMPOS VERBALES: VISTA, LÍNEAS DE TIEMPO Y PRÁCTICA =====
+const TENSE_LESSONS = { ps: ["Presente simple vs. continuo"], pc: ["Presente simple vs. continuo"], pp: ["Presente perfecto (introducción)", "Presente perfecto vs. pasado simple"], ppc: ["Presente perfecto continuo"], pas: ["Pasado simple", "Presente perfecto vs. pasado simple"], pasc: ["Pasado continuo"], pap: ["Pasado perfecto (had + participio)"], papc: ["Tiempos narrativos avanzados"], fs: ["Futuro: going to vs. will"], fc: ["Futuro continuo y perfecto"], fp: ["Futuro continuo y perfecto"], fpc: ["Futuro perfecto continuo"] };
+const lessonByTitle = (t) => ALL_LESSONS.find((l) => l.title === t);
+
+// Línea de tiempo en SVG
+function tlSVG(tl, big) {
+  const W = 320, H = big ? 120 : 64, Y = big ? 70 : 38, X = (p) => 12 + (p / 100) * (W - 24);
+  const parts = [];
+  parts.push(`<line x1="8" y1="${Y}" x2="${W - 8}" y2="${Y}" class="tl-axis"/><polygon points="${W - 8},${Y - 5} ${W},${Y} ${W - 8},${Y + 5}" class="tl-head"/>`);
+  parts.push(`<line x1="${X(50)}" y1="${Y - (big ? 26 : 16)}" x2="${X(50)}" y2="${Y + (big ? 26 : 16)}" class="tl-now"/>`);
+  if (big) parts.push(`<text x="${X(50)}" y="${Y + 44}" class="tl-lbl now">ahora</text><text x="${X(8)}" y="${Y + 44}" class="tl-lbl">pasado</text><text x="${X(92)}" y="${Y + 44}" class="tl-lbl">futuro</text>`);
+  if (tl.ref !== 50) parts.push(`<line x1="${X(tl.ref)}" y1="${Y - (big ? 22 : 14)}" x2="${X(tl.ref)}" y2="${Y + (big ? 22 : 14)}" class="tl-ref"/>${big ? `<text x="${X(tl.ref)}" y="${Y - 28}" class="tl-lbl ref">${esc(tl.refLabel)}</text>` : ""}`);
+  tl.marks.forEach((mk) => {
+    if (mk[0] === "x") { const x = X(mk[1]), s = big ? 7 : 5; parts.push(`<path d="M${x - s} ${Y - s} L${x + s} ${Y + s} M${x + s} ${Y - s} L${x - s} ${Y + s}" class="tl-x"/>`); }
+    if (mk[0] === "bar") { const a = X(mk[1]), b = X(mk[2]), amp = big ? 5 : 3.5, step = big ? 10 : 7; let d = `M${a} ${Y}`; for (let x = a, k = 0; x < b; x += step / 2, k++) d += ` L${Math.min(b, x + step / 2)} ${Y + (k % 2 ? amp : -amp)}`; parts.push(`<path d="${d}" class="tl-bar"/>`); }
+    if (mk[0] === "arr") { const a = X(mk[1]), b = X(mk[2]), up = big ? 22 : 13; parts.push(`<path d="M${a} ${Y - 4} Q${(a + b) / 2} ${Y - up - 8} ${b - 2} ${Y - 6}" class="tl-arr"/><polygon points="${b - 2},${Y - 6} ${b - 9},${Y - 9} ${b - 6},${Y - 1}" class="tl-arrh"/>`); }
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="tl ${big ? "big" : ""}" role="img" aria-label="${esc(tl.note)}">${parts.join("")}</svg>`;
+}
+
+let tenseBest = {};
+function tensesPage(m) {
+  const grid = ["simple", "continuous", "perfect", "perfect continuous"];
+  const cols = [["past", "Pasado"], ["present", "Presente"], ["future", "Futuro"]];
+  const aspectEs = { simple: "Simple", continuous: "Continuo", perfect: "Perfecto", "perfect continuous": "Perfecto continuo" };
+  const best = S.tenseBest || {};
+  m.innerHTML = `<div class="row between"><h1>🕒 Los 12 tiempos verbales</h1><button class="btn ghost small" id="back">← Volver</button></div>
+  <div class="card explain"><p>En inglés hay <b>3 momentos</b> (pasado, presente y futuro) y <b>4 aspectos</b>: <b>simple</b> (el hecho), <b>continuo</b> (en progreso: be + -ing), <b>perfecto</b> (antes de un momento: have + participio) y <b>perfecto continuo</b> (duración hasta un momento: have been + -ing). 3 × 4 = 12.</p>
+  <p class="small muted">En cada línea: ✕ = acción puntual, 〰 = en progreso, ↷ = conexión con el momento de referencia, línea azul = ahora, línea naranja = otro momento de referencia.</p></div>
+  <div class="row"><button class="btn" id="mix">⚡ Práctica mixta: ¿qué tiempo va aquí? (15)</button></div>
+  <div class="tgrid"><div></div>${cols.map(([, n]) => `<div class="th">${n}</div>`).join("")}
+    ${grid.map((a) => `<div class="th side">${aspectEs[a]}</div>${cols.map(([g]) => { const t = TENSES.find((x) => x.group === g && x.aspect === a); const b = best[t.id]; return `<button class="tcell" data-tense="${t.id}"><b>${esc(t.name.replace(" (will / going to)", ""))}</b>${tlSVG(t.tl, false)}<span class="small muted">${esc(t.form.aff[0].split("·")[0])}</span>${b !== undefined ? `<span class="tb">${Math.round(b * 100)}%</span>` : ""}</button>`; }).join("")}`).join("")}
+  </div>
+  <div class="card"><h3>¿Cómo elegir el tiempo?</h3><ol class="steps">
+    <li><b>¿Cuándo pasa?</b> Pasado, presente o futuro.</li>
+    <li><b>¿Es un hecho completo o algo en progreso?</b> En progreso → continuo (be + -ing).</li>
+    <li><b>¿Pasa antes de otro momento y se conecta con él?</b> → perfecto (have/had/will have + participio).</li>
+    <li><b>¿Importa cuánto tiempo lleva o llevaba?</b> (for, since, how long) → perfecto continuo.</li>
+    <li><b>Verbos de estado</b> (know, like, want, need, believe, own) casi nunca van en continuo.</li></ol></div>`;
+  $("#back").onclick = () => { sub = null; render(); };
+  $("#mix").onclick = () => tenseDrill(m, shuffle(TENSE_DRILL.slice()).slice(0, 15), "Práctica mixta", null);
+  $$("[data-tense]", m).forEach((b) => b.onclick = () => { sub = { tense: b.dataset.tense }; render(); window.scrollTo(0, 0); });
+}
+function tenseDetail(m, id) {
+  const t = TENSES.find((x) => x.id === id), items = TENSE_DRILL.filter((d) => d[0] === id);
+  const i = TENSES.indexOf(t), prev = TENSES[i - 1], next = TENSES[i + 1];
+  const lessons = (TENSE_LESSONS[id] || []).map(lessonByTitle).filter(Boolean);
+  const say = (s) => `${esc(s)} ${speakBtn(s)}`;
+  m.innerHTML = `<div class="row between"><div><h1>${esc(t.name)}</h1><div class="muted small">${esc(t.es)} · se ve desde ${t.level}</div></div><button class="btn ghost small" id="back">← Los 12</button></div>
+  <div class="card center">${tlSVG(t.tl, true)}<p class="small muted">${esc(t.tl.note)}</p></div>
+  <div class="card"><h3>Cómo se forma</h3><div class="list">
+    <div class="li col"><b>✅ Afirmativa:</b> <span>${esc(t.form.aff[0])}</span><i>${say(t.form.aff[1])}</i>${pronHTML(t.form.aff[1])}</div>
+    <div class="li col"><b>❌ Negativa:</b> <span>${esc(t.form.neg[0])}</span><i>${say(t.form.neg[1])}</i></div>
+    <div class="li col"><b>❓ Pregunta:</b> <span>${esc(t.form.q[0])}</span><i>${say(t.form.q[1])}</i></div></div></div>
+  <div class="card"><h3>Cuándo se usa</h3><ul>${t.uses.map((u) => `<li>${esc(u)}</li>`).join("")}</ul><p><b>Palabras que lo delatan:</b> <i>${esc(t.signals)}</i></p></div>
+  <div class="card"><h3>Ejemplos</h3>${t.examples.map((e) => `<p class="exs">${say(e)}</p>${csBox(e, false)}`).join("")}</div>
+  <div class="card note"><h3>⚠️ Error típico</h3><p><s>${esc(t.mistake[0])}</s></p><p>✅ <b>${say(t.mistake[1])}</b></p><p class="small">${esc(t.mistake[2])}</p></div>
+  <div class="row"><button class="btn" id="drill">⚡ Practicar este tiempo (${items.length})</button>${lessons.map((l) => `<button class="btn ghost" data-les="${l.id}">📘 Lección: ${esc(l.title)}</button>`).join("")}</div>
+  <div class="row between">${prev ? `<button class="btn ghost small" data-tense="${prev.id}">← ${esc(prev.name)}</button>` : "<span></span>"}${next ? `<button class="btn ghost small" data-tense="${next.id}">${esc(next.name)} →</button>` : ""}</div>`;
+  $("#back").onclick = () => { sub = { tenses: true }; render(); };
+  $("#drill").onclick = () => tenseDrill(m, items.concat(shuffle(TENSE_DRILL.filter((d) => d[0] === "mix")).slice(0, 2)), t.name, id);
+  $$("[data-les]", m).forEach((b) => b.onclick = () => { sub = { lesson: ALL_LESSONS.find((l) => l.id === b.dataset.les) }; render(); });
+  $$("[data-tense]", m).forEach((b) => b.onclick = () => { sub = { tense: b.dataset.tense }; render(); window.scrollTo(0, 0); });
+}
+function tenseDrill(m, items, title, id) {
+  exerciseRunner(m, items.map((d) => d[1]), { title: "🕒 " + title, subtitle: "Elige o escribe el tiempo correcto", onExit: () => { sub = id ? { tense: id } : { tenses: true }; render(); },
+    onFinish: (c, n, wrongs) => {
+      S.tenseBest = S.tenseBest || {};
+      // guardar el resultado por tiempo
+      const per = {}; items.forEach((d) => { per[d[0]] = per[d[0]] || [0, 0]; per[d[0]][1]++; });
+      const wrongQ = new Set(wrongs.map((w) => w.q));
+      items.forEach((d) => { if (!wrongQ.has(d[1][1])) per[d[0]][0]++; });
+      Object.entries(per).forEach(([k, [ok, tot]]) => { if (k !== "mix") S.tenseBest[k] = Math.max(S.tenseBest[k] || 0, ok / tot); });
+      skill("grammar", c, n); addXP(c * 3); save();
+      const weak = Object.entries(per).filter(([k, [ok, tot]]) => k !== "mix" && ok / tot < 0.7).map(([k]) => TENSES.find((t) => t.id === k));
+      m.innerHTML = `<div class="card center"><div class="big">🕒</div><h2>${c} de ${n} correctas</h2>${weak.length ? `<p>Repasa: ${weak.map((t) => `<button class="btn ghost small" data-tense="${t.id}">${esc(t.name)}</button>`).join(" ")}</p>` : `<p class="muted">¡Muy bien! Dominas estos tiempos.</p>`}
+        ${wrongs.length ? `<div class="list left">${wrongs.map((w) => `<div class="li"><div><b>${esc(w.answer)}</b><div class="small muted">${esc(w.q)}</div></div>${speakBtn(w.answer)}</div>`).join("")}</div>` : ""}
+        <div class="row center"><button class="btn" id="again">Otra ronda</button><button class="btn ghost" id="back2">Volver</button></div></div>`;
+      $$("[data-tense]", m).forEach((b) => b.onclick = () => { sub = { tense: b.dataset.tense }; render(); window.scrollTo(0, 0); });
+      $("#again").onclick = () => tenseDrill(m, id ? items : shuffle(TENSE_DRILL.slice()).slice(0, 15), title, id);
+      $("#back2").onclick = () => { sub = id ? { tense: id } : { tenses: true }; render(); };
+    } });
+}
+
+// Integración con Gramática
+(() => {
+  const base = RENDER.gramatica;
+  RENDER.gramatica = (m) => {
+    if (sub && sub.tenses) return tensesPage(m);
+    if (sub && sub.tense) return tenseDetail(m, sub.tense);
+    base(m);
+    if (sub) return;
+    const h = $("h1", m); if (!h) return;
+    h.insertAdjacentHTML("afterend", `<button class="card tenses-banner" id="tenses"><span class="tbic">🕒</span><span><b>Los 12 tiempos verbales</b><small>Tabla comparativa, líneas de tiempo, errores típicos y práctica mixta</small></span><span>→</span></button>`);
+    $("#tenses").onclick = () => { sub = { tenses: true }; render(); window.scrollTo(0, 0); };
+  };
+})();
+
+// ===== BORRADO PROTEGIDO Y COPIAS DE SEGURIDAD =====
+const BK_KEY = "ingles-backup-last";
+function backupData() { return { app: "english-path", version: 1, date: new Date().toISOString(), state: S }; }
+function downloadBackup(tag) {
+  const d = backupData(), name = `english-path-${tag || "respaldo"}-${d.date.slice(0, 10)}.json`;
+  try { localStorage.setItem(BK_KEY, JSON.stringify(d)); } catch (e) {}
+  try {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(d)], { type: "application/json" })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    return true;
+  } catch (e) { return false; }
+}
+function lastBackup() { try { const d = JSON.parse(localStorage.getItem(BK_KEY) || "null"); return d && d.state && d.state.cards ? d : null; } catch (e) { return null; } }
+function restoreState(d, msgEl) {
+  const st = d && (d.state || d);
+  if (!st || !st.level || !st.cards) throw new Error("El archivo no es un respaldo válido de la app.");
+  try { localStorage.setItem(BK_KEY + "-prev", JSON.stringify(backupData())); } catch (e) {}
+  S = migrate(st); vq = dq = hq = null; save(); renderTop();
+  if (msgEl) msgEl.textContent = "✅ Progreso restaurado";
+}
+function resetFlow(box) {
+  const sess = Supa.ready() ? Supa.session() : null;
+  box.innerHTML = `<div class="card note"><p><b>Esto borra tarjetas, lecciones, exámenes, estadísticas e historial.</b>${sess ? " También se borra tu progreso en la nube." : ""} Antes de borrar se descargará automáticamente una copia de seguridad, por si te arrepientes.</p>
+    <label class="label">Escribe <b>BORRAR</b> para confirmar</label><input id="rtxt" autocomplete="off" autocapitalize="characters" placeholder="BORRAR">
+    ${sess ? `<label class="label">Tu contraseña (${esc(sess.email || "")})</label><input id="rpw" type="password" autocomplete="current-password" placeholder="Contraseña">` : ""}
+    <p class="small" id="rmsg"></p>
+    <div class="row"><button class="btn red small" id="rgo" disabled>Borrar todo</button><button class="btn ghost small" id="rno">Cancelar</button></div></div>`;
+  const chk = () => { $("#rgo").disabled = $("#rtxt").value.trim().toUpperCase() !== "BORRAR" || (sess && !$("#rpw").value); };
+  $("#rtxt").oninput = chk; if (sess) $("#rpw").oninput = chk;
+  $("#rno").onclick = () => { box.innerHTML = ""; };
+  $("#rgo").onclick = async () => {
+    const msg = $("#rmsg"), btn = $("#rgo"); btn.disabled = true;
+    if (sess) {
+      msg.textContent = "Verificando contraseña…";
+      try { await Supa.login(sess.email, $("#rpw").value); }
+      catch (e) { msg.textContent = "❌ " + (/invalid/i.test(e.message) ? "Contraseña incorrecta." : "No se pudo verificar la contraseña (" + e.message + ")."); btn.disabled = false; return; }
+    }
+    downloadBackup("antes-de-borrar");
+    const set = S.settings; S = defaultState(); S.settings = set; vq = dq = hq = null; save();
+    toast("Progreso borrado. Tienes una copia en Ajustes → Respaldo."); go("inicio");
+  };
+}
+(() => {
+  const base = RENDER.ajustes;
+  RENDER.ajustes = (m) => {
+    base(m);
+    const rs = $("#reset"); if (rs) rs.onclick = () => resetFlow($("#rb"));
+    const card = $("#bk") && $("#bk").closest(".card");
+    if (!card) return;
+    const lb = lastBackup();
+    card.insertAdjacentHTML("afterbegin", `<h2>💾 Copias de seguridad</h2><p class="muted small">Guarda un archivo con todo tu progreso o restáuralo desde un archivo. Al borrar el progreso se crea una copia automáticamente.</p>
+      <div class="row"><button class="btn small" id="bkdl">⬇️ Descargar copia</button><label class="btn ghost small filebtn">⬆️ Restaurar desde archivo<input type="file" id="bkfile" accept=".json,application/json" hidden></label></div>
+      ${lb ? `<div class="row"><button class="btn ghost small" id="bkundo">↩️ Recuperar la última copia (${new Date(lb.date).toLocaleString()})</button></div>` : ""}
+      <p class="small" id="bkmsg"></p><div id="bkc"></div><hr><h3>Código de respaldo</h3>`);
+    const old = card.querySelector("h2:not(:first-child)"); if (old) old.remove();
+    $("#bkdl").onclick = () => { $("#bkmsg").textContent = downloadBackup("respaldo") ? "✅ Copia descargada." : "❌ No se pudo descargar."; };
+    $("#bkfile").onchange = (e) => { const f = e.target.files[0]; if (!f) return; const rd = new FileReader();
+      rd.onload = () => { let d; try { d = JSON.parse(rd.result); } catch (er) { $("#bkmsg").textContent = "❌ El archivo no es un respaldo válido."; return; }
+        confirmBox($("#bkc"), `Esto reemplaza tu progreso actual por el del archivo${d.date ? ` (${new Date(d.date).toLocaleString()})` : ""}. ¿Continuar?`, () => { try { restoreState(d, $("#bkmsg")); $("#bkc").innerHTML = ""; } catch (er) { $("#bkmsg").textContent = "❌ " + er.message; } }); };
+      rd.readAsText(f); e.target.value = ""; };
+    if ($("#bkundo")) $("#bkundo").onclick = () => confirmBox($("#bkc"), "Esto reemplaza tu progreso actual por la última copia guardada. ¿Continuar?", () => { try { restoreState(lastBackup(), $("#bkmsg")); $("#bkc").innerHTML = ""; } catch (er) { $("#bkmsg").textContent = "❌ " + er.message; } });
+  };
+})();
+
+// ===== SERIES Y VIDEOS DE YOUTUBE PARA INMERSIÓN =====
+const BUILTIN_SERIES = [
+  { id: "extra", name: "Extr@ English", list: "PLFuvSUJknMUUem0gBDtS6su4GRrFnRWgE", eps: 20, level: "A2", builtin: true,
+    desc: "Comedia británica hecha para estudiantes: Hector, un argentino que casi no habla inglés, llega a vivir con tres jóvenes en Londres. Inglés claro que va subiendo poco a poco." }
+];
+if (!IMM_MODES.some((x) => x[0] === "subs_es")) IMM_MODES.unshift(["subs_es", "Con subtítulos en español"]);
+const SERIES_PHASES = [["subs_es", "🇪🇸 Subtítulos en español"], ["subs_en", "🇬🇧 Subtítulos en inglés"], ["sin_subs", "🎧 Sin subtítulos"]];
+const SERIES_STEPS = ["Verlo completo", "Repetir un fragmento de 2–3 minutos con subtítulos en inglés", "Shadowing: pausar y repetir en voz alta 5 frases", "Contarlo en 1 minuto"];
+const MYV = "myvideos";
+const listIdOf = (url) => { const m = String(url || "").match(/[?&]list=([A-Za-z0-9_-]{10,})/); return m ? m[1] : /^(PL|UU|OL|FL|RD)[A-Za-z0-9_-]{10,}$/.test(String(url || "").trim()) ? String(url).trim() : ""; };
+const videoIdOf = (url) => { const m = String(url || "").match(/(?:[?&]v=|youtu\.be\/|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : /^[A-Za-z0-9_-]{11}$/.test(String(url || "").trim()) ? String(url).trim() : ""; };
+const myVideosSeries = () => { const vs = S.videos || []; return { id: MYV, name: "🎬 Mis videos", videos: vs, eps: vs.length }; };
+const allSeries = () => BUILTIN_SERIES.map((b) => ({ ...b, ...((S.seriesOverride || {})[b.id] || {}) })).concat(S.series || []);
+const seriesById = (id) => id === MYV ? myVideosSeries() : allSeries().find((s) => s.id === id);
+const sProg = (sid) => { S.seriesProg = S.seriesProg || {}; return (S.seriesProg[sid] = S.seriesProg[sid] || {}); };
+// En las listas, el progreso va por número de episodio; en Mis videos, por el identificador del video
+const epKey = (s, n) => s.videos ? (s.videos[n - 1] || {}).id : n;
+const epProg = (s, n) => { const p = sProg(s.id), k = epKey(s, n); return (p[k] = p[k] || { phase: "", steps: [false, false, false, false], words: [], sums: [] }); };
+const epPeek = (s, n) => (sProg(s.id))[epKey(s, n)] || {};
+const watchURL = (s, n) => s.videos ? `https://www.youtube.com/watch?v=${s.videos[n - 1].vid}` : `https://www.youtube.com/watch?list=${encodeURIComponent(s.list)}&index=${n}`;
+let seriesSel = null, epSel = null, ytPlayer = null, addPick = null;
+
+function immSeries(box) {
+  if (seriesSel && epSel) return episodePage(box, seriesById(seriesSel), epSel);
+  if (seriesSel === "__new") return seriesForm(box, null);
+  if (seriesSel === "__video") return videoForm(box);
+  if (seriesSel && seriesSel.startsWith("__edit:")) return seriesForm(box, seriesById(seriesSel.slice(7)));
+  const mv = myVideosSeries();
+  box.innerHTML = `<div class="card note"><p><b>📺 Series y videos para aprender.</b> Elige tus subtítulos, haz los 4 pasos y anota las palabras nuevas. Todo se guarda con tu progreso.</p></div>
+    ${allSeries().map((s) => { const done = Array.from({ length: s.eps }, (_, i) => epPeek(s, i + 1).watched).filter(Boolean).length; return `<div class="card series"><div class="row between"><div><h2>${esc(s.name)}</h2><div class="small muted">${s.level ? s.level + " · " : ""}${s.eps} episodios · ${done} vistos</div></div>${s.builtin ? "" : `<button class="btn ghost small" data-sedit="${s.id}">Editar</button>`}</div>
+      ${s.desc ? `<p class="small">${esc(s.desc)}</p>` : ""}<div class="bar"><i style="width:${pct(done, s.eps)}%"></i></div>
+      <div class="epgrid">${Array.from({ length: s.eps }, (_, i) => { const n = i + 1, e = epPeek(s, n); const ph = e.watched ? (e.phase === "sin_subs" ? "🎧" : e.phase === "subs_en" ? "🇬🇧" : "🇪🇸") : ""; return `<button class="ep ${e.watched ? "done" : ""}" data-s="${s.id}" data-ep="${n}" title="${esc(e.title || "Episodio " + n)}"><b>${n}</b><span>${ph}${e.watched && e.steps && e.steps.every(Boolean) ? "✓" : ""}</span></button>`; }).join("")}</div></div>`; }).join("")}
+    <div class="card series"><h2>🎬 Mis videos</h2><div class="small muted">Videos sueltos de YouTube: entrevistas, charlas, clips… ${mv.eps ? `· ${mv.videos.filter((v, i) => epPeek(mv, i + 1).watched).length} de ${mv.eps} vistos` : ""}</div>
+      ${mv.eps ? `<div class="vgrid">${mv.videos.map((v, i) => { const e = epPeek(mv, i + 1); return `<button class="vcard ${e.watched ? "done" : ""}" data-s="${MYV}" data-ep="${i + 1}"><img src="https://i.ytimg.com/vi/${v.vid}/mqdefault.jpg" alt="" loading="lazy"><span class="vt">${esc(v.title || e.title || "Video " + (i + 1))}</span><span class="small muted">${v.level || ""}${v.min ? " · " + v.min + " min" : ""}${e.watched ? " · ✓ visto" : ""}</span></button>`; }).join("")}</div>` : `<p class="small muted">Todavía no agregas videos.</p>`}
+      <button class="btn ghost small" id="vnew">➕ Agregar video</button></div>
+    <button class="btn" id="snew">➕ Agregar serie (lista de YouTube)</button>`;
+  $$("[data-ep]", box).forEach((b) => b.onclick = () => { seriesSel = b.dataset.s; epSel = +b.dataset.ep; render(); window.scrollTo(0, 0); });
+  $$("[data-sedit]", box).forEach((b) => b.onclick = () => { seriesSel = "__edit:" + b.dataset.sedit; render(); });
+  $("#snew").onclick = () => { seriesSel = "__new"; addPick = null; render(); };
+  $("#vnew").onclick = () => { seriesSel = "__video"; addPick = null; render(); };
+}
+
+function seriesForm(box, s, pre) {
+  pre = pre || {};
+  box.innerHTML = `<div class="card"><h2>${s ? "Editar serie" : "➕ Agregar serie"}</h2>
+    <label class="label">Enlace de la lista de YouTube</label><input id="surl" placeholder="https://www.youtube.com/playlist?list=..." value="${esc(s ? "https://www.youtube.com/playlist?list=" + s.list : pre.url || "")}">
+    <label class="label">Nombre de la serie</label><input id="sname" placeholder="Ej.: Friends con subtítulos" value="${s ? esc(s.name) : ""}">
+    <div class="row"><div><label class="label">Episodios</label><input id="seps" type="number" min="1" max="500" value="${s ? s.eps : 10}"></div>
+    <div><label class="label">Nivel aproximado</label><select id="slv">${["A2", "B1", "B2", "C1", "C2"].map((l) => `<option ${s && s.level === l ? "selected" : ""}>${l}</option>`).join("")}</select></div></div>
+    <label class="label">Descripción (opcional)</label><input id="sdesc" value="${s && s.desc ? esc(s.desc) : ""}">
+    <p class="small muted">Sirve cualquier enlace que tenga <b>list=</b>. El número de episodios lo puedes corregir después; al abrir un episodio, la app lee el total real de la lista. ¿Es un video suelto? Usa <b>➕ Agregar video</b>.</p>
+    <p class="small" id="smsg"></p>
+    <div class="row"><button class="btn" id="ssave">Guardar</button><button class="btn ghost" id="scancel">Cancelar</button>${s ? `<button class="btn red small" id="sdel">Borrar serie</button>` : ""}</div><div id="sdc"></div></div>`;
+  $("#scancel").onclick = () => { seriesSel = null; render(); };
+  $("#ssave").onclick = () => {
+    const url = $("#surl").value, list = listIdOf(url), name = $("#sname").value.trim(), eps = Math.max(1, Math.min(500, +$("#seps").value || 0));
+    if (!list) { $("#smsg").innerHTML = videoIdOf(url) ? `Ese enlace es de un video suelto, no de una lista. <button class="btn ghost small" id="tovid">Agregarlo como video</button>` : "❌ No encontré el código de la lista en ese enlace (debe tener list=…)."; if ($("#tovid")) $("#tovid").onclick = () => videoForm(box, { url }); return; }
+    if (!name) { $("#smsg").textContent = "❌ Escribe un nombre para la serie."; return; }
+    S.series = S.series || [];
+    const data = { name, list, eps, level: $("#slv").value, desc: $("#sdesc").value.trim() };
+    if (s) Object.assign(S.series.find((x) => x.id === s.id), data);
+    else S.series.push({ id: "s" + Date.now().toString(36), ...data });
+    save(); toast("✓ Serie guardada"); seriesSel = null; render();
+  };
+  if ($("#sdel")) $("#sdel").onclick = () => confirmBox($("#sdc"), "¿Borrar esta serie y tu registro de episodios? Las palabras que ya pasaste a tarjetas se conservan.", () => { S.series = S.series.filter((x) => x.id !== s.id); if (S.seriesProg) delete S.seriesProg[s.id]; save(); seriesSel = null; render(); });
+}
+
+function videoForm(box, pre) {
+  pre = pre || {};
+  box.innerHTML = `<div class="card"><h2>➕ Agregar video</h2>
+    <label class="label">Enlace del video de YouTube</label><input id="vurl" placeholder="https://www.youtube.com/watch?v=...  ·  https://youtu.be/...  ·  Shorts" value="${esc(pre.url || "")}">
+    <div id="vpick"></div>
+    <label class="label">Título (opcional: si lo dejas vacío, se toma de YouTube al abrirlo)</label><input id="vtitle">
+    <div class="row"><div><label class="label">Duración en minutos (opcional)</label><input id="vmin" type="number" min="1" max="600" placeholder="Se calcula sola"></div>
+    <div><label class="label">Nivel aproximado</label><select id="vlv">${["A2", "B1", "B2", "C1", "C2"].map((l) => `<option ${l === S.level ? "selected" : ""}>${l}</option>`).join("")}</select></div></div>
+    <p class="small" id="vmsg"></p>
+    <div class="row"><button class="btn" id="vsave">Guardar</button><button class="btn ghost" id="vcancel">Cancelar</button></div></div>`;
+  const checkPick = () => {
+    const url = $("#vurl").value, v = videoIdOf(url), l = listIdOf(url);
+    $("#vpick").innerHTML = v && l ? `<div class="phasechips"><label class="chipradio"><input type="radio" name="vp" value="video" ${addPick !== "list" ? "checked" : ""}> Solo este video</label><label class="chipradio"><input type="radio" name="vp" value="list" ${addPick === "list" ? "checked" : ""}> Toda la lista como serie</label></div>` : "";
+    $$("[name=vp]", box).forEach((r) => r.onchange = () => { addPick = r.value; });
+  };
+  $("#vurl").oninput = checkPick; checkPick();
+  $("#vcancel").onclick = () => { seriesSel = null; render(); };
+  $("#vsave").onclick = () => {
+    const url = $("#vurl").value, vid = videoIdOf(url), l = listIdOf(url);
+    if (l && (!vid || addPick === "list")) return seriesForm(box, null, { url });
+    if (!vid) { $("#vmsg").textContent = "❌ No reconozco ese enlace como un video de YouTube."; return; }
+    S.videos = S.videos || [];
+    if (S.videos.some((x) => x.vid === vid)) { $("#vmsg").textContent = "Ese video ya está en Mis videos."; return; }
+    S.videos.push({ id: "v" + Date.now().toString(36), vid, title: $("#vtitle").value.trim(), min: Math.max(0, Math.min(600, +$("#vmin").value || 0)) || 0, level: $("#vlv").value, added: Date.now() });
+    save(); toast("✓ Video agregado"); seriesSel = MYV; epSel = S.videos.length; render(); window.scrollTo(0, 0);
+  };
+}
+
+function loadYT() {
+  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if (window.__ytLoading) return window.__ytLoading;
+  window.__ytLoading = new Promise((res, rej) => {
+    window.onYouTubeIframeAPIReady = () => res(window.YT);
+    const sc = document.createElement("script"); sc.src = "https://www.youtube.com/iframe_api"; sc.onerror = () => { window.__ytLoading = null; rej(new Error("sin conexión")); };
+    document.head.appendChild(sc); setTimeout(() => rej(new Error("tiempo agotado")), 12000);
+  });
+  return window.__ytLoading;
+}
+
+// ---------- Control de subtítulos del reproductor ----------
+function captionStatus(t) { const el = $("#ccmsg"); if (el) el.textContent = t; }
+function applyCaptions(p, phase) {
+  if (!p || !phase) return;
+  try {
+    if (phase === "sin_subs") { p.setOption("captions", "track", {}); p.unloadModule("captions"); captionStatus("🎧 Subtítulos apagados. Si aún ves texto, está grabado en el video y no se puede quitar."); return; }
+    p.loadModule("captions");
+    const list = p.getOption("captions", "tracklist") || [];
+    if (!list.length) { captionStatus(p.__ccTried ? "Este video no tiene subtítulos disponibles." : "⏳ Activando subtítulos… (empiezan a funcionar cuando el video se reproduce)"); p.__ccTried = true; return; }
+    const has = (lc) => list.find((t) => (t.languageCode || "").toLowerCase().startsWith(lc));
+    if (phase === "subs_en") { const t = has("en"); if (t) { p.setOption("captions", "track", { languageCode: t.languageCode }); captionStatus("🇬🇧 Subtítulos en inglés activados."); } else captionStatus("Este video no tiene subtítulos en inglés."); return; }
+    const es = has("es");
+    if (es) { p.setOption("captions", "track", { languageCode: es.languageCode }); captionStatus("🇪🇸 Subtítulos en español activados."); return; }
+    const base = has("en") || list[0];
+    p.setOption("captions", "track", { languageCode: base.languageCode, translationLanguage: { languageCode: "es", languageName: "Spanish" } });
+    captionStatus("🇪🇸 Este video no trae subtítulos en español: intenté la traducción automática de YouTube. Si no aparece, usa CC → Configuración → Traducir automáticamente.");
+  } catch (er) { captionStatus("No pude cambiar los subtítulos desde la app; usa el botón CC del reproductor."); }
+}
+
+function episodePage(box, s, n) {
+  if (!s || n > s.eps || n < 1) { seriesSel = epSel = null; return immSeries(box); }
+  const e = epProg(s, n), v = s.videos ? s.videos[n - 1] : null;
+  const label = v ? (v.title || e.title || "Video") : `${s.name} · Episodio ${n}`;
+  box.innerHTML = `<div class="row between"><div><h2>${esc(label)}</h2><div class="small muted" id="eptitle">${v ? "Mis videos" : esc(e.title || "")}</div></div><button class="btn ghost small" id="eback">← ${v ? "Volver" : "Episodios"}</button></div>
+    <div class="ytwrap"><div id="ytp"></div><div class="ytfallback" id="ytfb" hidden><p>Este video no se puede reproducir dentro de la app.</p><a class="btn" href="${watchURL(s, n)}" target="_blank" rel="noopener">▶️ Ver en YouTube</a></div></div>
+    <p class="small center"><a href="${watchURL(s, n)}" target="_blank" rel="noopener">Abrir en YouTube</a></p>
+    <div class="card"><h3>1. Subtítulos</h3><div class="phasechips">${SERIES_PHASES.map(([k, l]) => `<label class="chipradio"><input type="radio" name="eph" value="${k}" ${e.phase === k ? "checked" : ""}> ${l}</label>`).join("")}</div>
+      <p class="small" id="ccmsg">${e.phase ? "" : "Elige con qué subtítulos lo vas a ver: la app los activa en el video y lo anota en tu registro."}</p>
+      <p class="small muted">Tu fase actual de inmersión: <b>${esc(curPhase().title)}</b></p></div>
+    <div class="card"><h3>2. Los 4 pasos</h3>${SERIES_STEPS.map((t, i) => `<label class="cando"><input type="checkbox" data-step="${i}" ${e.steps[i] ? "checked" : ""}> <span>${t}</span></label>`).join("")}
+      <div id="sumbox"></div>${e.sums.length ? `<details><summary class="small">Tus resúmenes (${e.sums.length})</summary>${e.sums.map((x) => `<p class="small"><b>${new Date(x.at).toLocaleDateString()}</b> · ${x.words} palabras · ${esc(x.text || "(solo grabación)")}</p>`).join("")}</details>` : ""}</div>
+    <div class="card"><h3>3. Palabras nuevas</h3><form id="wf" class="row"><input id="wen" placeholder="Palabra o frase en inglés" autocapitalize="off"><input id="wes" placeholder="Significado (opcional)"><button class="btn">Añadir</button></form>
+      <div id="wbox"></div></div>
+    <div class="row" id="wrow">${e.watched ? `<span class="feedback good">✓ Visto</span>` : `<button class="btn" id="ewatched">✓ Marcar como visto</button>`}${v ? `<button class="btn red small" id="vdel">Quitar video</button>` : ""}</div><div id="vdc"></div>
+    <div class="row between">${n > 1 ? `<button class="btn ghost small" id="eprev">← ${v ? "Anterior" : "Episodio " + (n - 1)}</button>` : "<span></span>"}${n < s.eps ? `<button class="btn ghost small" id="enext">${v ? "Siguiente" : "Episodio " + (n + 1)} →</button>` : ""}</div>`;
+  const kill = () => { try { ytPlayer && ytPlayer.destroy(); } catch (er) {} ytPlayer = null; };
+  const go2 = (k) => { kill(); epSel = k; render(); window.scrollTo(0, 0); };
+  $("#eback").onclick = () => { kill(); epSel = null; seriesSel = null; render(); };
+  if ($("#eprev")) $("#eprev").onclick = () => go2(n - 1);
+  if ($("#enext")) $("#enext").onclick = () => go2(n + 1);
+  $$("[name=eph]", box).forEach((r) => r.onchange = () => { e.phase = r.value; save(); if (ytPlayer) applyCaptions(ytPlayer, e.phase); else captionStatus("Se aplicará cuando cargue el video."); });
+  $$("[data-step]", box).forEach((c) => c.onchange = () => { e.steps[+c.dataset.step] = c.checked; save(); if (+c.dataset.step === 3 && c.checked) startSummary(); });
+  const startSummary = () => {
+    timedSpeak($("#sumbox"), { key: `ser-${s.id}-${epKey(s, n)}`, seconds: 60, onDone: (said, used) => {
+      const words = said ? said.split(/\s+/).length : 0;
+      $("#sumbox").innerHTML = `<div class="feedback good"><b>Resumen guardado</b>${said ? `<p>${esc(said)}</p><p class="small">${words} palabras en ${used} s.</p>` : `<p class="small">Escucha tu grabación para evaluarte.</p>`}${recorderHTML(`ser-${s.id}-${epKey(s, n)}`, 62)}</div>`;
+      bindRecorders($("#sumbox")); e.sums.unshift({ at: Date.now(), text: said, words, secs: used }); e.steps[3] = true; const c3 = $('[data-step="3"]'); if (c3) c3.checked = true; skill("speaking", 1, 1); addXP(8); save();
+    } });
+  };
+  $("#sumbox").innerHTML = `<button class="btn ghost small" id="sumgo">🗣️ Contarlo ahora (1 minuto)</button>`;
+  $("#sumgo").onclick = startSummary;
+  // La lista de palabras se actualiza sola, sin recargar el video
+  const toCard = (w) => { if (w.card) return; addCustomCard(w.en, w.es || "(completa el significado)", v ? (v.title || "Video") : `${s.name} · episodio ${n}`, true); w.card = true; };
+  const drawWords = () => {
+    const wb = $("#wbox"); if (!wb) return;
+    wb.innerHTML = `<div class="list">${e.words.map((w, i) => `<div class="li">${picHTML(w.en, "lst")}<div><b>${esc(w.en)}</b> — ${esc(w.es || "…")}${pronHTML(w.en)}</div>${speakBtn(w.en)}${w.card ? `<span class="small muted">✓ en tarjetas</span>` : `<button class="btn ghost small" data-wcard="${i}">➕ Tarjeta</button>`}<button class="icon-btn" data-wdel="${i}">✕</button></div>`).join("")}</div>
+      ${e.words.some((w) => !w.card) ? `<button class="btn ghost small" id="wall">➕ Pasar todas a mis tarjetas</button>` : ""}`;
+    $$("[data-wdel]", wb).forEach((b) => b.onclick = () => { e.words.splice(+b.dataset.wdel, 1); save(); drawWords(); });
+    $$("[data-wcard]", wb).forEach((b) => b.onclick = () => { toCard(e.words[+b.dataset.wcard]); save(); toast("✓ Añadida a tus tarjetas"); drawWords(); });
+    if ($("#wall", wb)) $("#wall", wb).onclick = () => { e.words.forEach(toCard); save(); toast("✓ Palabras añadidas a tus tarjetas"); drawWords(); };
+  };
+  drawWords();
+  $("#wf").onsubmit = async (ev) => {
+    ev.preventDefault(); const en = $("#wen").value.trim(); const es = $("#wes").value.trim(); if (!en) return;
+    const w = { en, es }; e.words.push(w); save(); $("#wen").value = ""; $("#wes").value = ""; drawWords();
+    if (!es) { try { w.es = await translateText(en); save(); drawWords(); } catch (er) {} }
+  };
+  if ($("#ewatched")) $("#ewatched").onclick = () => {
+    e.watched = Date.now(); if (!e.phase) e.phase = curPhase().n <= 2 ? "subs_es" : "subs_en"; e.steps[0] = true;
+    const min = (v && v.min) || e.min || 25;
+    S.immersion.unshift({ d: Date.now(), type: v ? "video" : "serie", mode: e.phase, min, title: v ? (v.title || e.title || "Video") : `${s.name} · ep. ${n}` });
+    addXP(10); if (extraTask().go === "inmersion") markDaily("extra"); save(); toast(`✓ Registrado (${min} min de inmersión)`); $("#ewatched").outerHTML = `<span class="feedback good">✓ Visto</span>`; const c0 = $('[data-step="0"]'); if (c0) c0.checked = true;
+  };
+  if ($("#vdel")) $("#vdel").onclick = () => confirmBox($("#vdc"), "¿Quitar este video de Mis videos? Las palabras que pasaste a tarjetas se conservan.", () => { kill(); const id = v.id; S.videos = S.videos.filter((x) => x.id !== id); delete sProg(MYV)[id]; save(); epSel = null; render(); });
+  // Reproductor
+  const fb = () => { const f = $("#ytfb"), p = $("#ytp"); if (f) f.hidden = false; if (p) p.remove(); };
+  const phase0 = e.phase;
+  // Título, duración y total de episodios que informa el reproductor
+  const meta = (p) => {
+    try {
+      if (!v) {
+        const pl = p.getPlaylist && p.getPlaylist();
+        if (pl && pl.length && pl.length !== s.eps) { if (s.builtin) { S.seriesOverride = S.seriesOverride || {}; S.seriesOverride[s.id] = { eps: pl.length }; } else { const x = (S.series || []).find((y) => y.id === s.id); if (x) x.eps = pl.length; } save(); }
+      }
+      const d = p.getVideoData && p.getVideoData();
+      if (d && d.title && e.title !== d.title) { e.title = d.title; if (v && !v.title) v.title = d.title; save(); const t = $(v ? "h2" : "#eptitle", box); if (t) t.textContent = v ? v.title : d.title; }
+      const dur = p.getDuration && p.getDuration();
+      if (dur > 0 && !e.min) { e.min = Math.max(1, Math.round(dur / 60)); if (v && !v.min) v.min = e.min; save(); }
+    } catch (er) {}
+  };
+  loadYT().then((YT) => {
+    if (!$("#ytp") || epSel !== n) return;
+    const pv = { rel: 0, hl: "es", cc_load_policy: phase0 && phase0 !== "sin_subs" ? 1 : 0, cc_lang_pref: phase0 === "subs_es" ? "es" : "en", playsinline: 1 };
+    const opts = { width: "100%", height: "100%", host: "https://www.youtube-nocookie.com", playerVars: v ? pv : { ...pv, listType: "playlist", list: s.list },
+      events: {
+        onReady: (ev) => { try { if (!v) ev.target.cuePlaylist({ listType: "playlist", list: s.list, index: n - 1 }); } catch (er) {} setTimeout(() => meta(ev.target), 800); },
+        onApiChange: (ev) => { if (e.phase) applyCaptions(ev.target, e.phase); },
+        onStateChange: (ev) => { if (ev.data === 1 && e.phase) applyCaptions(ev.target, e.phase); meta(ev.target); },
+        onError: fb } };
+    if (v) opts.videoId = v.vid;
+    ytPlayer = new YT.Player("ytp", opts);
+  }).catch(fb);
+}
+
+// Pestaña en Inmersión
+(() => {
+  const base = RENDER.inmersion;
+  RENDER.inmersion = (m) => {
+    if (iTab === "series") {
+      m.innerHTML = `<h1>Inmersión</h1><div class="tabs">${[["plan", "Mi plan"], ["registro", "Registro"], ["series", "📺 Series"], ["guia", "Guía completa"], ["recursos", "Recursos"]].map(([k, l]) => `<button class="tab ${iTab === k ? "on" : ""}" data-t="${k}">${l}</button>`).join("")}</div><div id="ibody"></div>`;
+      $$("[data-t]", m).forEach((b) => b.onclick = () => { try { ytPlayer && ytPlayer.destroy(); } catch (er) {} ytPlayer = null; iTab = b.dataset.t; seriesSel = epSel = null; render(); });
+      return immSeries($("#ibody"));
+    }
+    base(m);
+    const tabs = $(".tabs", m); if (tabs && !$('[data-t="series"]', tabs)) {
+      const reg = $('[data-t="registro"]', tabs); reg.insertAdjacentHTML("afterend", `<button class="tab" data-t="series">📺 Series</button>`);
+      $('[data-t="series"]', tabs).onclick = () => { iTab = "series"; seriesSel = epSel = null; render(); };
+    }
+  };
+})();
 
 // ---------- Arranque ----------
 loadLocal();
