@@ -170,6 +170,7 @@ img.pxphoto{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none
 .tgrid{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;margin:12px 0;align-items:stretch}.tgrid .th{font-weight:800;text-align:center;font-size:13px;align-self:end}.tgrid .th.side{writing-mode:vertical-rl;transform:rotate(180deg);align-self:center;font-size:12px;color:var(--muted)}
 .tcell{position:relative;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 4px;font:inherit;color:var(--text);cursor:pointer}.tcell b{font-size:12px;line-height:1.15}.tcell .small{font-size:10px}.tcell .tb{position:absolute;top:3px;right:5px;font-size:10px;color:#2f855a;font-weight:700}
 svg.tl{width:100%;max-width:140px;height:auto}svg.tl.big{max-width:480px}.tl-axis{stroke:#9aa5b1;stroke-width:2}.tl-head{fill:#9aa5b1}.tl-now{stroke:#3b6cf6;stroke-width:2.5}.tl-ref{stroke:#f08a24;stroke-width:2.5;stroke-dasharray:4 3}.tl-x{stroke:#e53e3e;stroke-width:3;stroke-linecap:round;fill:none}.tl-bar{stroke:#2f855a;stroke-width:3;fill:none;stroke-linejoin:round}.tl-arr{stroke:#805ad5;stroke-width:2;fill:none;stroke-dasharray:4 3}.tl-arrh{fill:#805ad5}.tl-lbl{font:11px sans-serif;fill:#718096;text-anchor:middle}.tl-lbl.now{fill:#3b6cf6;font-weight:700}.tl-lbl.ref{fill:#f08a24;font-weight:700}
+.auxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px}.auxtile{position:relative;display:flex;flex-direction:column;gap:4px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card,#fff);font:inherit;color:var(--text);cursor:pointer}.auxtile b{font-size:18px}.auxtile.primario{border-left:4px solid #4f7cff}.auxtile.modal{border-left:4px solid #f5a623}.auxtile .tb{position:absolute;top:8px;right:8px;font-size:12px;font-weight:700}.pattern{background:var(--pri2,#eef3ff);border-radius:8px;padding:8px}.auxex{margin-bottom:6px}
 .tenses-banner{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer;background:linear-gradient(135deg,#eef3ff,#fff4e8)}.tenses-banner small{display:block;color:var(--muted)}.tbic{font-size:30px}
 .filebtn{display:inline-flex;align-items:center;cursor:pointer}
 .epgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:10px}.ep{display:flex;flex-direction:column;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 2px;font:inherit;color:var(--text);cursor:pointer}.ep.done{background:#e6f6ec;border-color:#9ad4ae}.ep span{font-size:12px;min-height:14px}
@@ -1579,6 +1580,338 @@ CANDO.C2 = [
   "Puedo escribir textos complejos con estilo apropiado y estructura lógica impecable.",
   "Puedo resumir y reconstruir argumentos de varias fuentes de forma coherente."
 ];
+
+// ===== VERBOS AUXILIARES =====
+// Primarios (be, do, have) y modales (will, would, shall, should, can, could, may, might, must, ought to).
+// ex: [inglés, español]. Los ejemplos marcados con el video de referencia siguen el formato "I will go → Yo iré".
+const AUX_LIST = [
+  // ---------- Primarios ----------
+  { id: "be", word: "be (am / is / are / was / were)", group: "primario", level: "A2", es: "estar / ser (como auxiliar)",
+    what: "Forma los tiempos continuos (be + -ing) y la voz pasiva (be + participio).",
+    ex: [["I am working.", "Estoy trabajando."], ["She is dancing.", "Ella está bailando."], ["They were sleeping when I called.", "Estaban durmiendo cuando llamé."], ["The house was built in 1990.", "La casa fue construida en 1990."]],
+    neg: "She isn't working today.", q: "Are you coming with us?", short: ["Yes, I am.", "No, I'm not."],
+    note: "Con be no se usa do: «Are you tired?», nunca «Do you are tired?»." },
+  { id: "do", word: "do / does / did", group: "primario", level: "A2", es: "(no se traduce) — ayuda a negar y preguntar",
+    what: "Hace las negativas y preguntas del presente simple (do/does) y del pasado simple (did). También da énfasis.",
+    ex: [["Do you like coffee?", "¿Te gusta el café?"], ["She doesn't eat meat.", "Ella no come carne."], ["Did they call you?", "¿Te llamaron?"], ["I do like your idea!", "¡Sí me gusta tu idea!"]],
+    neg: "He doesn't work on Sundays.", q: "Does she live near here?", short: ["Yes, she does.", "No, she doesn't."],
+    note: "Después de do/does/did el verbo va en forma base: «Did you go?» (no «Did you went?»). «Does» ya lleva la -s: «Does she work?» (no «Does she works?»)." },
+  { id: "have", word: "have / has / had", group: "primario", level: "A2", es: "haber (como auxiliar)",
+    what: "Forma los tiempos perfectos: have/has + participio (he hecho) y had + participio (había hecho).",
+    ex: [["I have finished.", "He terminado."], ["She has visited Paris twice.", "Ella ha visitado París dos veces."], ["We had already left.", "Ya nos habíamos ido."], ["Have you ever been to Mexico?", "¿Alguna vez has estado en México?"]],
+    neg: "I haven't seen that film.", q: "Has he arrived yet?", short: ["Yes, he has.", "No, he hasn't."],
+    note: "Cuando have es verbo principal (tener, desayunar…), las preguntas usan do: «Do you have a car?», «Did you have breakfast?»." },
+  // ---------- Modales ----------
+  { id: "will", word: "will", group: "modal", level: "A2", es: "futuro: -é, -á (iré, bailará)",
+    what: "Futuro, decisiones en el momento, promesas y predicciones.",
+    ex: [["I will go.", "Yo iré."], ["She will dance.", "Ella bailará."], ["I'll call you tomorrow.", "Te llamo mañana."], ["It will rain later.", "Lloverá más tarde."]],
+    neg: "I won't tell anyone.", q: "Will you help me?", short: ["Yes, I will.", "No, I won't."],
+    note: "won't = will not. No se usa «will» después de «when/if» para el futuro: «When I arrive, I'll call you»." },
+  { id: "would", word: "would", group: "modal", level: "A2", es: "condicional: -ía (iría, bailaría)",
+    what: "Condicional, peticiones educadas, deseos (would like) y hábitos del pasado.",
+    ex: [["I would go.", "Yo iría."], ["She would dance.", "Ella bailaría."], ["Would you like some tea?", "¿Te gustaría un té?"], ["If I had time, I would travel more.", "Si tuviera tiempo, viajaría más."]],
+    neg: "I wouldn't do that.", q: "Would you open the window, please?", short: ["Yes, I would.", "No, I wouldn't."],
+    note: "'d puede ser would o had: «I'd go» = I would go; «I'd gone» = I had gone." },
+  { id: "shall", word: "shall", group: "modal", level: "B1", es: "ofrecer o proponer: ¿…? (¿Bailamos?)",
+    what: "Hoy se usa sobre todo para ofrecer o proponer con I/we en preguntas. En afirmativa («I shall go → ¡Iré!») suena formal o británico.",
+    ex: [["Shall we dance?", "¿Bailamos?"], ["I shall go.", "¡Iré! (formal)"], ["Shall I open the window?", "¿Abro la ventana?"], ["What shall we do tonight?", "¿Qué hacemos esta noche?"]],
+    neg: "We shan't be long. (británico)", q: "Shall we start?", short: ["Yes, let's.", "No, let's not."],
+    note: "Para hablar del futuro en el día a día usa will. Shall es útil en «Shall I…?» (¿quieres que…?) y «Shall we…?» (¿y si…?)." },
+  { id: "should", word: "should", group: "modal", level: "A2", es: "debería (consejo)",
+    what: "Consejos, recomendaciones y lo que es correcto o esperable.",
+    ex: [["I should go.", "Debería ir."], ["She should dance.", "Ella debería bailar."], ["You should see a doctor.", "Deberías ver a un médico."], ["The package should arrive today.", "El paquete debería llegar hoy."]],
+    neg: "You shouldn't eat so much sugar.", q: "Should I call her?", short: ["Yes, you should.", "No, you shouldn't."],
+    note: "Should + verbo base, sin to: «You should rest» (no «should to rest»)." },
+  { id: "can", word: "can", group: "modal", level: "A2", es: "poder / saber hacer",
+    what: "Habilidad, posibilidad y permiso informal.",
+    ex: [["I can go.", "Yo puedo ir."], ["She can dance.", "Ella puede (sabe) bailar."], ["Can I sit here?", "¿Me puedo sentar aquí?"], ["You can't park here.", "No puedes estacionar aquí."]],
+    neg: "I can't swim.", q: "Can you speak English?", short: ["Yes, I can.", "No, I can't."],
+    note: "Sin -s y sin do: «She can dance» (no «She cans»), «Can you…?» (no «Do you can…?»)." },
+  { id: "could", word: "could", group: "modal", level: "A2", es: "pude / podía / podría",
+    what: "Pasado de can (pude, podía), posibilidad (podría) y peticiones educadas.",
+    ex: [["I could go.", "Yo podría ir."], ["She could dance.", "Ella podía bailar."], ["I could swim when I was five.", "Sabía nadar a los cinco años."], ["Could you help me, please?", "¿Podrías ayudarme, por favor?"]],
+    neg: "I couldn't sleep last night.", q: "Could you repeat that?", short: ["Yes, I could.", "No, I couldn't."],
+    note: "«Could you…?» es más educado que «Can you…?». Para un logro puntual en el pasado se usa «was able to»: «I was able to fix it»." },
+  { id: "may", word: "may", group: "modal", level: "B1", es: "puede que / quizás (duda) · permiso formal",
+    what: "Posibilidad con duda («puede que») y pedir permiso de forma formal.",
+    ex: [["I may go.", "Puede que vaya."], ["She may dance.", "Quizás ella baile."], ["It may rain this afternoon.", "Puede que llueva esta tarde."], ["May I come in?", "¿Puedo pasar?"]],
+    neg: "He may not come.", q: "May I ask a question?", short: ["Yes, you may.", "No, you may not."],
+    note: "«may be» (puede que sea) va separado; «maybe» (quizás) es una sola palabra: «It may be true» / «Maybe it's true»." },
+  { id: "might", word: "might", group: "modal", level: "B1", es: "tal vez / a lo mejor (menos seguro)",
+    what: "Posibilidad más débil que may. Muy común al hablar.",
+    ex: [["I might go.", "Tal vez vaya."], ["She might dance later.", "A lo mejor baila más tarde."], ["Take an umbrella. It might rain.", "Lleva paraguas, de pronto llueve."], ["We might move to Bogotá next year.", "Puede que nos mudemos a Bogotá el próximo año."]],
+    neg: "I might not have time.", q: "Might I make a suggestion? (muy formal)", short: ["I might.", "I might not."],
+    note: "En preguntas casi no se usa; se pregunta con «Do you think…?»: «Do you think it'll rain?»." },
+  { id: "must", word: "must", group: "modal", level: "A2", es: "deber (obligación) · deber de (deducción)",
+    what: "Obligación fuerte (a menudo personal o de normas) y deducción segura.",
+    ex: [["I must go.", "Debo irme."], ["You must wear a seatbelt.", "Debes usar el cinturón."], ["She must be tired.", "Debe de estar cansada."], ["You mustn't smoke here.", "No debes (está prohibido) fumar aquí."]],
+    neg: "You mustn't touch that.", q: "Must we finish today?", short: ["Yes, you must.", "No, you don't have to."],
+    note: "Ojo: «mustn't» = está prohibido; «don't have to» = no es necesario. «You don't have to come» (no hace falta que vengas)." },
+  { id: "ought", word: "ought to", group: "modal", level: "B1", es: "debería (más formal)",
+    what: "Igual que should (consejo, lo correcto), un poco más formal. Es el único modal con to.",
+    ex: [["You ought to rest.", "Deberías descansar."], ["We ought to leave now.", "Deberíamos irnos ya."], ["She ought to apologise.", "Ella debería disculparse."], ["They ought to be here by now.", "Ya deberían estar aquí."]],
+    neg: "You ought not to drive so fast.", q: "Ought we to tell him? (muy formal)", short: ["Yes, you ought to.", "No, you oughtn't."],
+    note: "En la práctica se dice should en preguntas y negativas: «Should we tell him?»." }
+];
+
+// Reglas comunes a los modales (del video: «modales» vs «primarios»)
+const AUX_RULES = [
+  ["Sin -s con he/she/it", "She can dance. · He should go.", "She cans dance. · He shoulds go."],
+  ["Seguidos del verbo base, sin to (excepto ought to)", "I must go. · You should rest.", "I must to go. · You should to rest."],
+  ["No necesitan do para negar ni preguntar", "Can you swim? · I can't swim.", "Do you can swim? · I don't can swim."],
+  ["Solo un modal por frase", "I will be able to come.", "I will can come."],
+  ["Sin -ing ni -ed: para otros tiempos se usa un equivalente", "I had to work. · I was able to finish.", "I musted work. · I canned finish."]
+];
+
+// Cómo se aplican los auxiliares
+const AUX_USES = [
+  { id: "neg", title: "1. Negar", es: "Se pone not (n't) después del auxiliar.",
+    pattern: "auxiliar + not + verbo", ex: ["She doesn't work here.", "They haven't finished.", "I can't swim.", "We weren't listening.", "You shouldn't worry."],
+    tip: "Si la frase no tiene auxiliar (presente o pasado simple), aparece do/does/did: «She works» → «She doesn't work»." },
+  { id: "q", title: "2. Preguntar", es: "El auxiliar pasa antes del sujeto.",
+    pattern: "(palabra interrogativa) + auxiliar + sujeto + verbo", ex: ["Does she work here?", "Where did you go?", "Have they finished?", "Can you help me?", "What are you doing?"],
+    tip: "Si preguntas por el sujeto, no hay auxiliar: «Who called you?», «What happened?»." },
+  { id: "short", title: "3. Respuestas cortas", es: "Se responde con el sujeto + el auxiliar de la pregunta, sin repetir el verbo.",
+    pattern: "Yes, + sujeto + auxiliar / No, + sujeto + auxiliar + n't", ex: ["— Do you like it? — Yes, I do.", "— Is she coming? — No, she isn't.", "— Have you eaten? — Yes, I have.", "— Can he drive? — No, he can't.", "— Will they come? — Yes, they will."],
+    tip: "Responder solo «Yes» o «No» suena seco. Y nunca «Yes, I like» o «Yes, I can swim» a secas: la respuesta corta natural es «Yes, I do» / «Yes, I can»." },
+  { id: "tags", title: "4. Question tags (¿verdad?, ¿no?)", es: "Al final de la frase se repite el auxiliar en sentido contrario + pronombre.",
+    pattern: "afirmativa, + auxiliar negativo + pronombre? · negativa, + auxiliar positivo + pronombre?", ex: ["It's cold today, isn't it?", "You live here, don't you?", "She called you, didn't she?", "They haven't arrived, have they?", "You can swim, can't you?"],
+    tip: "Casos especiales: «I'm late, aren't I?», «Let's go, shall we?», «Open the door, will you?», «Nobody called, did they?»." },
+  { id: "so", title: "5. Estar de acuerdo: so / neither", es: "Para decir «yo también» o «yo tampoco» se usa so/neither + auxiliar + sujeto.",
+    pattern: "So + auxiliar + sujeto (también) · Neither / Nor + auxiliar + sujeto (tampoco)", ex: ["— I love coffee. — So do I.", "— I'm tired. — So am I.", "— I can't swim. — Neither can I.", "— I didn't go. — Neither did I.", "— I've been to Cali. — So has my sister."],
+    tip: "Para no estar de acuerdo: «— I love coffee. — I don't.» «— I can't swim. — I can.» En informal: «Me too» / «Me neither»." },
+  { id: "echo", title: "6. Reaccionar con sorpresa o interés", es: "Preguntas eco: auxiliar + pronombre, para mostrar que escuchas («¿Ah, sí?», «¿En serio?»).",
+    pattern: "auxiliar + pronombre?", ex: ["— I've quit my job. — Have you?", "— She's getting married. — Is she?", "— I don't eat meat. — Don't you?", "— We went to Japan. — Did you? How was it?", "— He can speak five languages. — Can he?"],
+    tip: "Es de lo que más hace sonar natural en una conversación. Ponle entonación de sorpresa o interés." },
+  { id: "emph", title: "7. Dar énfasis", es: "Se acentúa el auxiliar (o se agrega do/does/did) para insistir o contradecir.",
+    pattern: "sujeto + DO/DOES/DID + verbo base · auxiliar acentuado", ex: ["I do like it!", "She does work hard.", "I did call you, but you didn't answer.", "— You haven't finished. — I HAVE finished!", "Do come in!"],
+    tip: "En la voz, el auxiliar se dice fuerte: «I DO like it»." },
+  { id: "ell", title: "8. Evitar repetir el verbo", es: "El auxiliar sustituye toda la frase que ya se dijo.",
+    pattern: "… + auxiliar (sin el resto)", ex: ["I wanted to go, but I couldn't.", "He said he'd finish, and he did.", "She speaks French better than I do.", "— Are you coming? — I might.", "I haven't seen it, but my brother has."],
+    tip: "En comparaciones el auxiliar va al final: «She runs faster than I do» (no «than I run fast»)." }
+];
+
+// Práctica escrita: [categoría, ejercicio]
+const AUX_DRILL = [
+  // be
+  ["be", ["mc", "Listen! Someone ___ knocking at the door.", ["is", "does", "has"], 0, "Continuo → be + -ing."]],
+  ["be", ["mc", "This bridge ___ built in 1950.", ["was", "did", "had"], 0, "Pasiva → be + participio."]],
+  ["be", ["fill", "___ you coming to the party tonight?", ["are"], "Pregunta con continuo → Are you…?"]],
+  ["be", ["fix", "Do you are tired?", ["Are you tired?"], "Con be no se usa do."]],
+  ["be", ["tr", "Estaban viendo una película cuando llegué.", ["They were watching a film when I arrived.", "They were watching a movie when I arrived."], "Pasado continuo: were + -ing."]],
+  ["be", ["mc", "— Are you hungry? — Yes, I ___.", ["am", "do", "is"], 0, "Respuesta corta con be."]],
+  // do
+  ["do", ["mc", "___ your sister live in Medellín?", ["Does", "Do", "Is"], 0, "She → does."]],
+  ["do", ["mc", "I ___ understand the question.", ["don't", "doesn't", "not"], 0, "I → don't."]],
+  ["do", ["fix", "Did you went to work yesterday?", ["Did you go to work yesterday?"], "Después de did, verbo base."]],
+  ["do", ["fix", "She don't like vegetables.", ["She doesn't like vegetables."], "She → doesn't."]],
+  ["do", ["fix", "Does he works here?", ["Does he work here?"], "Does ya lleva la -s; el verbo va en base."]],
+  ["do", ["tr", "¿Dónde compraste esos zapatos?", ["Where did you buy those shoes?"], "Pasado → did + verbo base."]],
+  ["do", ["fill", "We ___ (no) have class on Fridays.", ["don't", "do not"], "Presente simple negativo con we → don't."]],
+  ["do", ["ord", "Pregunta: ¿A qué hora empieza la película?", "What time does the film start?"]],
+  ["do", ["tr", "¿Tienes carro?", ["Do you have a car?", "Have you got a car?"], "Have como verbo principal usa do."]],
+  // have
+  ["have", ["mc", "I ___ already seen that series.", ["have", "am", "do"], 0, "Presente perfecto → have + participio."]],
+  ["have", ["mc", "___ she ever been to Cartagena?", ["Has", "Have", "Does"], 0, "She → has."]],
+  ["have", ["fill", "When we arrived, the train ___ already left.", ["had"], "Pasado perfecto → had + participio."]],
+  ["have", ["fix", "I have saw that film.", ["I have seen that film."], "Have + participio (seen)."]],
+  ["have", ["tr", "Todavía no he terminado.", ["I haven't finished yet.", "I have not finished yet."], "Negativa: haven't + participio + yet."]],
+  ["have", ["mc", "— Have you eaten? — No, I ___.", ["haven't", "don't", "didn't"], 0, "Respuesta corta con el mismo auxiliar."]],
+  // will
+  ["will", ["tr", "Yo iré.", ["I will go.", "I'll go."], "Will + verbo base = futuro."]],
+  ["will", ["tr", "Ella bailará.", ["She will dance.", "She'll dance."], "Will no cambia con she."]],
+  ["will", ["mc", "Don't worry, I ___ tell anyone.", ["won't", "don't", "wouldn't"], 0, "Promesa negativa → won't."]],
+  ["will", ["mc", "The phone is ringing. — I ___ get it!", ["'ll", "am", "do"], 0, "Decisión en el momento → will."]],
+  ["will", ["fix", "When I will arrive, I'll call you.", ["When I arrive, I'll call you.", "When I arrive, I will call you."], "Después de when, presente."]],
+  ["will", ["ord", "Pregunta: ¿Me ayudarás mañana?", "Will you help me tomorrow?"]],
+  // would
+  ["would", ["tr", "Yo iría.", ["I would go.", "I'd go."], "Would = terminación -ía."]],
+  ["would", ["tr", "Ella bailaría.", ["She would dance.", "She'd dance."], "Would + verbo base."]],
+  ["would", ["mc", "If I won the lottery, I ___ buy a house.", ["would", "will", "can"], 0, "Condicional 2 → would."]],
+  ["would", ["mc", "___ you like something to drink?", ["Would", "Will", "Do"], 0, "Ofrecimiento educado → Would you like…?"]],
+  ["would", ["fill", "I ___ love to visit Japan one day.", ["would", "'d"], "Deseo → would love."]],
+  ["would", ["fix", "I would to go with you.", ["I would go with you.", "I'd go with you."], "Would sin to."]],
+  // shall
+  ["shall", ["tr", "¿Bailamos?", ["Shall we dance?"], "Proponer → Shall we…?"]],
+  ["shall", ["mc", "It's hot in here. ___ I open the window?", ["Shall", "Will", "Do"], 0, "Ofrecer → Shall I…?"]],
+  ["shall", ["mc", "What ___ we do this weekend?", ["shall", "do we", "are"], 0, "Propuesta → What shall we do?"]],
+  ["shall", ["tr", "¿Te ayudo con las bolsas?", ["Shall I help you with the bags?", "Shall I help you with your bags?"], "¿Quieres que…? → Shall I…?"]],
+  // should
+  ["should", ["tr", "Debería ir.", ["I should go."], "Consejo → should."]],
+  ["should", ["tr", "Ella debería bailar.", ["She should dance."], "Should + verbo base."]],
+  ["should", ["mc", "You look tired. You ___ go to bed early.", ["should", "would", "might"], 0, "Consejo → should."]],
+  ["should", ["fix", "You should to see a doctor.", ["You should see a doctor."], "Should sin to."]],
+  ["should", ["mc", "You ___ drink and drive.", ["shouldn't", "don't should", "not should"], 0, "Negativa: shouldn't."]],
+  ["should", ["ord", "Pregunta: ¿Debería llamarla?", "Should I call her?"]],
+  // can
+  ["can", ["tr", "Yo puedo ir.", ["I can go."], "Can + verbo base."]],
+  ["can", ["tr", "Ella puede bailar.", ["She can dance."], "Can sin -s."]],
+  ["can", ["fix", "She cans speak three languages.", ["She can speak three languages."], "Los modales no llevan -s."]],
+  ["can", ["fix", "Do you can help me?", ["Can you help me?"], "Los modales no usan do."]],
+  ["can", ["mc", "I ___ find my keys. Have you seen them?", ["can't", "don't can", "can not to"], 0, "Negativa: can't."]],
+  ["can", ["tr", "¿Sabes nadar?", ["Can you swim?"], "Habilidad → can."]],
+  // could
+  ["could", ["tr", "Yo podría ir.", ["I could go."], "Posibilidad → could."]],
+  ["could", ["tr", "Ella podía bailar.", ["She could dance."], "Pasado de can → could."]],
+  ["could", ["mc", "When I was a child, I ___ climb trees really fast.", ["could", "can", "might"], 0, "Habilidad en el pasado → could."]],
+  ["could", ["mc", "___ you speak more slowly, please?", ["Could", "Should", "Must"], 0, "Petición educada → Could you…?"]],
+  ["could", ["fill", "I ___ (no pude) sleep last night because of the noise.", ["couldn't", "could not"], "Negativa en pasado → couldn't."]],
+  ["could", ["fix", "I could to finish the report yesterday.", ["I could finish the report yesterday.", "I was able to finish the report yesterday."], "Could sin to (o mejor: was able to para un logro concreto)."]],
+  // may / might
+  ["may", ["tr", "Puede que vaya.", ["I may go.", "I might go."], "Duda → may."]],
+  ["may", ["tr", "Quizás ella baile.", ["She may dance.", "She might dance."], "May = puede que / quizás."]],
+  ["may", ["mc", "___ I come in?", ["May", "Must", "Shall"], 0, "Permiso formal → May I…?"]],
+  ["may", ["mc", "Take a jacket. It ___ get cold tonight.", ["might", "must", "should"], 0, "Posibilidad → might/may."]],
+  ["may", ["fix", "It maybe rain tomorrow.", ["It may rain tomorrow.", "It might rain tomorrow.", "Maybe it will rain tomorrow."], "May (verbo) va separado de be; maybe es «quizás»."]],
+  ["may", ["mc", "I'm not sure. I ___ not have enough time.", ["might", "can", "should"], 0, "Posibilidad negativa → might not."]],
+  ["may", ["tr", "A lo mejor nos mudamos el próximo año.", ["We might move next year.", "We may move next year."], "Posibilidad → might/may."]],
+  // must
+  ["must", ["tr", "Debo irme.", ["I must go.", "I have to go."], "Obligación → must."]],
+  ["must", ["mc", "You ___ wear a helmet on a motorbike. It's the law.", ["must", "might", "would"], 0, "Norma → must."]],
+  ["must", ["mc", "She's been working for 12 hours. She ___ be exhausted.", ["must", "can", "shall"], 0, "Deducción segura → must be."]],
+  ["must", ["mc", "Tomorrow is a holiday, so you ___ come to the office.", ["don't have to", "mustn't", "can't"], 0, "No es necesario → don't have to."]],
+  ["must", ["mc", "You ___ touch that cable. It's dangerous!", ["mustn't", "don't have to", "might not"], 0, "Prohibido → mustn't."]],
+  ["must", ["fix", "I must to finish this today.", ["I must finish this today."], "Must sin to."]],
+  ["must", ["fix", "Yesterday I must work late.", ["Yesterday I had to work late."], "Must no tiene pasado → had to."]],
+  // ought to
+  ["ought", ["tr", "Deberías descansar.", ["You ought to rest.", "You should rest."], "Ought to = should."]],
+  ["ought", ["fill", "We ought ___ leave now or we'll be late.", ["to"], "Ought es el único modal con to."]],
+  ["ought", ["mc", "You ought ___ apologise to her.", ["to", "—", "for"], 0, "Ought + to + verbo."]],
+  // reglas de modales
+  ["modal", ["fix", "I will can come tomorrow.", ["I will be able to come tomorrow.", "I'll be able to come tomorrow."], "No se juntan dos modales: will be able to."]],
+  ["modal", ["fix", "He musts go now.", ["He must go now."], "Los modales no llevan -s."]],
+  ["modal", ["mc", "Which sentence is correct?", ["She should study more.", "She shoulds study more.", "She should to study more."], 0, "Modal + verbo base, sin -s."]],
+  ["modal", ["mc", "«Yo iría, pero estoy cansado.»", ["I would go, but I'm tired.", "I will go, but I'm tired.", "I could go, but I'm tired."], 0, "-ía → would."]],
+  ["modal", ["mc", "«Puede que llueva.»", ["It may rain.", "It must rain.", "It should rain."], 0, "Duda → may."]],
+  ["modal", ["mc", "«No hace falta que vengas.»", ["You don't have to come.", "You mustn't come.", "You can't come."], 0, "Sin necesidad → don't have to."]],
+  // negar
+  ["neg", ["sub", "She speaks Portuguese.", ["She doesn't speak Portuguese.", "She does not speak Portuguese."], "Presente simple → doesn't + base.", "negativa"]],
+  ["neg", ["sub", "They went to the concert.", ["They didn't go to the concert.", "They did not go to the concert."], "Pasado simple → didn't + base.", "negativa"]],
+  ["neg", ["sub", "I have finished my homework.", ["I haven't finished my homework.", "I have not finished my homework."], "Not después de have.", "negativa"]],
+  ["neg", ["sub", "We are waiting for the bus.", ["We aren't waiting for the bus.", "We are not waiting for the bus.", "We're not waiting for the bus."], "Not después de be.", "negativa"]],
+  ["neg", ["sub", "He can drive.", ["He can't drive.", "He cannot drive.", "He can not drive."], "Not después del modal.", "negativa"]],
+  ["neg", ["sub", "You should call him.", ["You shouldn't call him.", "You should not call him."], "Shouldn't.", "negativa"]],
+  ["neg", ["fix", "I not like this song.", ["I don't like this song."], "Para negar el presente simple hace falta don't."]],
+  // preguntar
+  ["q", ["sub", "She works in a hospital.", ["Does she work in a hospital?"], "Does + sujeto + verbo base.", "pregunta"]],
+  ["q", ["sub", "They saw the accident.", ["Did they see the accident?"], "Did + sujeto + verbo base.", "pregunta"]],
+  ["q", ["sub", "You have been to London.", ["Have you been to London?", "Have you ever been to London?"], "El auxiliar pasa adelante.", "pregunta"]],
+  ["q", ["sub", "He is cooking dinner.", ["Is he cooking dinner?"], "Be pasa adelante.", "pregunta"]],
+  ["q", ["sub", "We can park here.", ["Can we park here?"], "El modal pasa adelante.", "pregunta"]],
+  ["q", ["ord", "Pregunta: ¿Dónde trabaja tu hermano?", "Where does your brother work?"]],
+  ["q", ["ord", "Pregunta: ¿Qué estabas haciendo?", "What were you doing?"]],
+  ["q", ["fix", "Where you live?", ["Where do you live?"], "Falta el auxiliar do."]],
+  ["q", ["fix", "Who did call you?", ["Who called you?"], "Pregunta por el sujeto: sin auxiliar."]],
+  ["q", ["mc", "___ happened at the meeting?", ["What", "What did", "What does"], 0, "Pregunta por el sujeto → sin auxiliar."]],
+  // respuestas cortas
+  ["short", ["mc", "— Do you like spicy food? — Yes, I ___.", ["do", "like", "am"], 0, "Do you…? → Yes, I do."]],
+  ["short", ["mc", "— Is your brother a doctor? — No, he ___.", ["isn't", "doesn't", "not"], 0, "Is he…? → No, he isn't."]],
+  ["short", ["mc", "— Did you finish the report? — Yes, I ___.", ["did", "finished", "do"], 0, "Did you…? → Yes, I did."]],
+  ["short", ["mc", "— Have they arrived? — No, they ___.", ["haven't", "didn't", "aren't"], 0, "Have they…? → No, they haven't."]],
+  ["short", ["mc", "— Can your sister drive? — Yes, she ___.", ["can", "does", "drives"], 0, "Can she…? → Yes, she can."]],
+  ["short", ["fill", "— Will you be at home tonight? — Yes, I ___.", ["will"], "Will you…? → Yes, I will."]],
+  ["short", ["fill", "— Were they at the party? — No, they ___.", ["weren't", "were not"], "Were they…? → No, they weren't."]],
+  ["short", ["fill", "— Does your dad work on Saturdays? — Yes, he ___.", ["does"], "Does he…? → Yes, he does."]],
+  ["short", ["fill", "— Should I bring something? — No, you ___.", ["shouldn't", "should not", "don't have to"], "Should I…? → No, you shouldn't."]],
+  ["short", ["tr", "— ¿Hablas francés? — No.", ["No, I don't.", "No, I do not."], "Respuesta corta: No, I don't."]],
+  ["short", ["fix", "— Do you have a pen? — Yes, I have.", ["Yes, I do."], "La pregunta usa do → Yes, I do."]],
+  // question tags
+  ["tags", ["mc", "It's a beautiful day, ___?", ["isn't it", "is it", "doesn't it"], 0, "Afirmativa con be → isn't it?"]],
+  ["tags", ["mc", "You work from home, ___?", ["don't you", "do you", "aren't you"], 0, "Presente simple afirmativo → don't you?"]],
+  ["tags", ["mc", "She didn't call, ___?", ["did she", "didn't she", "does she"], 0, "Negativa → tag positivo."]],
+  ["tags", ["mc", "They've already left, ___?", ["haven't they", "didn't they", "have they"], 0, "Have → haven't they?"]],
+  ["tags", ["mc", "You can swim, ___?", ["can't you", "don't you", "can you"], 0, "Can → can't you?"]],
+  ["tags", ["mc", "I'm late, ___?", ["aren't I", "am not I", "isn't I"], 0, "Caso especial: I'm → aren't I?"]],
+  ["tags", ["mc", "Let's order pizza, ___?", ["shall we", "will we", "don't we"], 0, "Let's → shall we?"]],
+  ["tags", ["fill", "Your brother lives in Cali, ___ he?", ["doesn't"], "Lives (presente) → doesn't he?"]],
+  ["tags", ["fill", "You won't forget, ___ you?", ["will"], "Won't → will you?"]],
+  ["tags", ["fill", "We should leave soon, ___ we?", ["shouldn't"], "Should → shouldn't we?"]],
+  ["tags", ["fill", "You were at the meeting, ___ you?", ["weren't"], "Were → weren't you?"]],
+  ["tags", ["fill", "He hasn't seen it, ___ he?", ["has"], "Hasn't → has he?"]],
+  ["tags", ["fill", "Nobody called, ___ they?", ["did"], "Nobody es negativo → tag positivo: did they?"]],
+  ["tags", ["tr", "Hace frío, ¿verdad?", ["It's cold, isn't it?", "It is cold, isn't it?"], "¿verdad? → question tag."]],
+  ["tags", ["tr", "Tú hablas inglés, ¿no?", ["You speak English, don't you?"], "Speak → don't you?"]],
+  // so / neither
+  ["so", ["mc", "— I love this song. — So ___ I.", ["do", "am", "love"], 0, "Love (presente simple) → So do I."]],
+  ["so", ["mc", "— I'm hungry. — So ___ I.", ["am", "do", "have"], 0, "Be → So am I."]],
+  ["so", ["mc", "— I can't dance. — Neither ___ I.", ["can", "can't", "do"], 0, "Neither + auxiliar positivo."]],
+  ["so", ["mc", "— I didn't sleep well. — Neither ___ I.", ["did", "didn't", "do"], 0, "Pasado → Neither did I."]],
+  ["so", ["mc", "— I've never been to Europe. — Neither ___ I.", ["have", "did", "am"], 0, "Never (negativo) + have → Neither have I."]],
+  ["so", ["fill", "— I went to the beach last weekend. — So ___ I!", ["did"], "Went → So did I."]],
+  ["so", ["fill", "— I'll be there at eight. — So ___ I.", ["will"], "Will → So will I."]],
+  ["so", ["fill", "— I don't like horror films. — Neither ___ I.", ["do"], "Don't → Neither do I."]],
+  ["so", ["fill", "— I was really tired. — So ___ I.", ["was"], "Was → So was I."]],
+  ["so", ["fix", "— I like coffee. — So I do.", ["So do I."], "Orden: So + auxiliar + sujeto."]],
+  ["so", ["fix", "— I don't smoke. — Neither don't I.", ["Neither do I."], "Neither ya es negativo: auxiliar positivo."]],
+  ["so", ["tr", "— Estoy cansado. — Yo también.", ["So am I.", "Me too."], "So + am + I."]],
+  ["so", ["tr", "— No sé nadar. — Yo tampoco.", ["Neither can I.", "Nor can I.", "Me neither."], "Neither + can + I."]],
+  ["so", ["mc", "— I love coffee. — I ___. (a mí no)", ["don't", "do", "am not"], 0, "Para no estar de acuerdo: I don't."]],
+  // eco
+  ["echo", ["mc", "— I've just bought a new car. — ___? What kind?", ["Have you", "Do you", "Did you"], 0, "I've bought → Have you?"]],
+  ["echo", ["mc", "— She's moving to Canada. — ___? When?", ["Is she", "Does she", "Has she"], 0, "She's moving → Is she?"]],
+  ["echo", ["mc", "— I don't drink coffee. — ___? Not even in the morning?", ["Don't you", "Do you", "Aren't you"], 0, "Don't → Don't you?"]],
+  ["echo", ["fill", "— We met in Cartagena. — ___ you? That's romantic!", ["did"], "Met (pasado) → Did you?"]],
+  ["echo", ["fill", "— He can play the piano. — ___ he? I didn't know.", ["can"], "Can → Can he?"]],
+  ["echo", ["fill", "— They'll be here soon. — ___ they? Great!", ["will"], "Will → Will they?"]],
+  // énfasis
+  ["emph", ["mc", "— You don't like my cooking. — I ___ like it! It's delicious.", ["do", "am", "does"], 0, "Énfasis → I do like it."]],
+  ["emph", ["fill", "She ___ work hard, even if her boss doesn't see it.", ["does"], "Énfasis con she → does work."]],
+  ["emph", ["fill", "I ___ call you! You didn't answer.", ["did"], "Énfasis en pasado → did call."]],
+  ["emph", ["fix", "I did called you yesterday.", ["I did call you yesterday."], "Después de did, verbo base."]],
+  // elipsis
+  ["ell", ["mc", "I wanted to help, but I ___.", ["couldn't", "couldn't help", "didn't could"], 0, "El auxiliar reemplaza el resto."]],
+  ["ell", ["mc", "She speaks English better than I ___.", ["do", "speak", "am"], 0, "Comparación → than I do."]],
+  ["ell", ["fill", "He said he would finish on time, and he ___.", ["did"], "Pasado → and he did."]],
+  ["ell", ["fill", "I haven't read the book, but my sister ___.", ["has"], "Have → my sister has."]],
+  ["ell", ["mc", "— Are you coming tonight? — I ___. I'm not sure yet.", ["might", "might come tonight", "do"], 0, "Respuesta corta con modal: I might."]]
+];
+
+// Práctica hablada: la app dice algo y tú reaccionas con el auxiliar correcto.
+// say: lo que dice la app · task: qué debes hacer · ans: respuestas aceptadas
+const AUX_SPEAK = [
+  { cat: "short", say: "Do you like coffee?", task: "Responde que sí, con respuesta corta.", ans: ["Yes, I do."] },
+  { cat: "short", say: "Are you tired?", task: "Responde que no, con respuesta corta.", ans: ["No, I'm not.", "No, I am not."] },
+  { cat: "short", say: "Have you ever been to New York?", task: "Responde que no, con respuesta corta.", ans: ["No, I haven't.", "No, I have not."] },
+  { cat: "short", say: "Can you drive?", task: "Responde que sí, con respuesta corta.", ans: ["Yes, I can."] },
+  { cat: "short", say: "Did you sleep well?", task: "Responde que sí, con respuesta corta.", ans: ["Yes, I did."] },
+  { cat: "short", say: "Will you be at the meeting?", task: "Responde que sí, con respuesta corta.", ans: ["Yes, I will."] },
+  { cat: "short", say: "Does your mother speak English?", task: "Responde que no, con respuesta corta.", ans: ["No, she doesn't.", "No, she does not."] },
+  { cat: "short", say: "Were you at home last night?", task: "Responde que sí, con respuesta corta.", ans: ["Yes, I was."] },
+  { cat: "so", say: "I love pizza.", task: "Di que a ti también.", ans: ["So do I.", "Me too."] },
+  { cat: "so", say: "I'm hungry.", task: "Di que tú también.", ans: ["So am I.", "Me too."] },
+  { cat: "so", say: "I can't sleep.", task: "Di que tú tampoco.", ans: ["Neither can I.", "Nor can I.", "Me neither."] },
+  { cat: "so", say: "I didn't like the film.", task: "Di que a ti tampoco.", ans: ["Neither did I.", "Nor did I.", "Me neither."] },
+  { cat: "so", say: "I've finished my homework.", task: "Di que tú también.", ans: ["So have I.", "Me too."] },
+  { cat: "so", say: "I'll be late tomorrow.", task: "Di que tú también.", ans: ["So will I.", "Me too."] },
+  { cat: "so", say: "I don't eat meat.", task: "Di que tú tampoco.", ans: ["Neither do I.", "Nor do I.", "Me neither."] },
+  { cat: "so", say: "I love coffee.", task: "Di que a ti NO te gusta (contradice).", ans: ["I don't.", "I do not."] },
+  { cat: "so", say: "I can't swim.", task: "Di que tú SÍ sabes (contradice).", ans: ["I can."] },
+  { cat: "echo", say: "I've quit my job.", task: "Reacciona con sorpresa (pregunta eco).", ans: ["Have you?"] },
+  { cat: "echo", say: "My sister is getting married.", task: "Reacciona con interés (pregunta eco).", ans: ["Is she?"] },
+  { cat: "echo", say: "We went to Japan last year.", task: "Reacciona con interés (pregunta eco).", ans: ["Did you?"] },
+  { cat: "echo", say: "I don't have a phone.", task: "Reacciona con sorpresa (pregunta eco).", ans: ["Don't you?"] },
+  { cat: "echo", say: "He can speak five languages.", task: "Reacciona con sorpresa (pregunta eco).", ans: ["Can he?"] },
+  { cat: "tags", say: "Di en inglés: «Hace calor hoy, ¿verdad?»", task: "Usa question tag.", ans: ["It's hot today, isn't it?", "It is hot today, isn't it?"] },
+  { cat: "tags", say: "Di en inglés: «Tú vives cerca, ¿no?»", task: "Usa question tag.", ans: ["You live nearby, don't you?", "You live near here, don't you?", "You live close, don't you?"] },
+  { cat: "tags", say: "Di en inglés: «Ella no vino, ¿cierto?»", task: "Usa question tag.", ans: ["She didn't come, did she?"] },
+  { cat: "tags", say: "Di en inglés: «Puedes ayudarme, ¿verdad?»", task: "Usa question tag.", ans: ["You can help me, can't you?"] },
+  { cat: "tags", say: "Di en inglés: «Vamos al cine, ¿sí?»", task: "Usa question tag con let's.", ans: ["Let's go to the cinema, shall we?", "Let's go to the movies, shall we?"] },
+  { cat: "emph", say: "You don't like my music.", task: "Contradice con énfasis: sí te gusta.", ans: ["I do like your music.", "I do like it.", "I do like your music!"] },
+  { cat: "emph", say: "You didn't call me.", task: "Contradice con énfasis: sí llamaste.", ans: ["I did call you.", "I did call you!"] },
+  { cat: "modal", say: "Di en inglés: «Yo iría, pero no tengo tiempo.»", task: "Usa would.", ans: ["I would go, but I don't have time.", "I'd go, but I don't have time."] },
+  { cat: "modal", say: "Di en inglés: «¿Bailamos?»", task: "Usa shall.", ans: ["Shall we dance?"] },
+  { cat: "modal", say: "Di en inglés: «Puede que vaya.»", task: "Usa may o might.", ans: ["I may go.", "I might go."] },
+  { cat: "modal", say: "Di en inglés: «Deberías descansar.»", task: "Usa should.", ans: ["You should rest.", "You ought to rest."] },
+  { cat: "modal", say: "Di en inglés: «¿Podrías repetir, por favor?»", task: "Usa could.", ans: ["Could you repeat that, please?", "Could you repeat, please?", "Could you repeat that please?"] },
+  { cat: "modal", say: "Di en inglés: «Debo irme.»", task: "Usa must.", ans: ["I must go.", "I have to go."] },
+  { cat: "ell", say: "Are you coming to the party?", task: "Responde «tal vez» con un modal.", ans: ["I might.", "I may.", "Maybe I will."] },
+  { cat: "ell", say: "Did you finish the project?", task: "Di «yo no, pero Ana sí».", ans: ["I didn't, but Ana did.", "No, I didn't, but Ana did."] }
+];
+
+const AUX_CATS = { be: "be", do: "do / does / did", have: "have / has / had", will: "will", would: "would", shall: "shall", should: "should", can: "can", could: "could", may: "may / might", must: "must", ought: "ought to", modal: "Reglas de los modales", neg: "Negar", q: "Preguntar", short: "Respuestas cortas", tags: "Question tags", so: "So / neither", echo: "Preguntas eco", emph: "Énfasis", ell: "Evitar repetir" };
+
+const AUX_CARDS = AUX_LIST.map((a) => ({ id: "CH-aux-" + a.id, level: a.level === "C1" ? "B2" : a.level, topic: "Verbos auxiliares", en: a.ex[0][0], es: `${a.ex[0][1]} — ${a.word}: ${a.es}`, ex: a.ex[1][0], chunk: true }))
+  .concat(AUX_USES.map((u) => ({ id: "CH-auxu-" + u.id, level: "B1", topic: "Verbos auxiliares", en: u.ex[0].replace(/^— /, ""), es: `${u.title.replace(/^\d+\. /, "")}: ${u.es}`, ex: u.ex[1], chunk: true })));
 
 // ===== CHUNKS: bloques de lenguaje por función =====
 // items: [chunk, español, ejemplo]
@@ -3816,7 +4149,7 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], typeof AUX_CARDS !== "undefined" ? AUX_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
@@ -5975,6 +6308,144 @@ function episodePage(box, s, n) {
       const reg = $('[data-t="registro"]', tabs); reg.insertAdjacentHTML("afterend", `<button class="tab" data-t="series">📺 Series</button>`);
       $('[data-t="series"]', tabs).onclick = () => { iTab = "series"; seriesSel = epSel = null; render(); };
     }
+  };
+})();
+
+// ===== VERBOS AUXILIARES: VISTA, FICHAS, CÓMO SE APLICAN Y PRÁCTICA =====
+const auxDrillFor = (cat) => AUX_DRILL.filter((d) => d[0] === cat || (cat === "might" && d[0] === "may"));
+const auxCatOf = (id) => (id === "might" ? "may" : id);
+
+function auxPage(m) {
+  const best = S.auxBest || {};
+  const tile = (a) => { const b = best[auxCatOf(a.id)]; return `<button class="auxtile ${a.group}" data-aux="${a.id}"><b>${esc(a.word.split(" (")[0])}</b><span class="small muted">${esc(a.es)}</span>${b !== undefined ? `<span class="tb">${Math.round(b * 100)}%</span>` : ""}</button>`; };
+  m.innerHTML = `<div class="row between"><h1>🧩 Verbos auxiliares</h1><button class="btn ghost small" id="back">← Volver</button></div>
+  <div class="card explain"><p>Los auxiliares son los verbos que <b>ayudan</b> al verbo principal a formar tiempos, negativas y preguntas. Hay dos familias:</p>
+  <ul><li><b>Primarios: be, do, have.</b> Forman los tiempos (<i>I am working, Did you go?, I have finished</i>) y también pueden ser verbos normales.</li>
+  <li><b>Modales: will, would, shall, should, can, could, may, might, must, ought to.</b> Le agregan una idea al verbo: futuro, condición, consejo, capacidad, duda, obligación…</li></ul>
+  <p class="small muted">Truco para recordarlos en español: <b>will</b> = -é (iré) · <b>would</b> = -ía (iría) · <b>should</b> = debería · <b>can</b> = puedo · <b>could</b> = podía/podría · <b>may</b> = puede que · <b>must</b> = debo.</p></div>
+  <div class="row"><button class="btn" id="mix">⚡ Práctica mixta (20)</button><button class="btn ghost" id="speak">🎙️ Práctica hablada: reacciona (10)</button></div>
+  <h2>Primarios</h2><div class="auxgrid">${AUX_LIST.filter((a) => a.group === "primario").map(tile).join("")}</div>
+  <h2>Modales</h2><div class="auxgrid">${AUX_LIST.filter((a) => a.group === "modal").map(tile).join("")}</div>
+  <div class="card"><h3>Reglas de oro de los modales</h3><div class="list">${AUX_RULES.map(([r, ok, bad]) => `<div class="li col"><b>${esc(r)}</b><span>✅ <i>${esc(ok)}</i></span><span class="small muted">❌ <s>${esc(bad)}</s></span></div>`).join("")}</div>
+  <button class="btn ghost small" data-cat="modal">⚡ Practicar las reglas (${auxDrillFor("modal").length})</button></div>
+  <h2>Cómo se aplican</h2><p class="small muted">La regla de oro: en cada frase hay un solo auxiliar que «trabaja» (el primero). Ese es el que se niega, se mueve en las preguntas y se repite en las respuestas cortas.</p>
+  <div class="lessons">${AUX_USES.map((u) => { const b = best[u.id]; return `<button class="lesson" data-use="${u.id}"><span class="num">${u.title.split(".")[0]}</span><span><b>${esc(u.title.replace(/^\d+\. /, ""))}</b><small>${esc(u.es)}${b !== undefined ? ` · Mejor: ${Math.round(b * 100)}%` : ""}</small></span></button>`; }).join("")}</div>`;
+  $("#back").onclick = () => { sub = null; render(); };
+  $("#mix").onclick = () => auxDrill(m, shuffle(AUX_DRILL).slice(0, 20), "Práctica mixta", null);
+  $("#speak").onclick = () => auxSpeak(m, shuffle(AUX_SPEAK).slice(0, 10), () => { sub = { aux: true }; render(); });
+  $$("[data-aux]", m).forEach((b) => b.onclick = () => { sub = { auxw: b.dataset.aux }; render(); window.scrollTo(0, 0); });
+  $$("[data-use]", m).forEach((b) => b.onclick = () => { sub = { auxu: b.dataset.use }; render(); window.scrollTo(0, 0); });
+  $$("[data-cat]", m).forEach((b) => b.onclick = () => auxDrill(m, shuffle(auxDrillFor(b.dataset.cat)), AUX_CATS[b.dataset.cat], null));
+}
+
+function auxDetail(m, id) {
+  const a = AUX_LIST.find((x) => x.id === id), cat = auxCatOf(id), items = auxDrillFor(cat);
+  const i = AUX_LIST.indexOf(a), prev = AUX_LIST[i - 1], next = AUX_LIST[i + 1];
+  const say = (s) => `${esc(s)} ${speakBtn(s)}`;
+  m.innerHTML = `<div class="row between"><div><h1>${esc(a.word)}</h1><div class="muted small">${a.group === "modal" ? "Modal" : "Auxiliar primario"} · ${esc(a.es)} · ${a.level}</div></div><button class="btn ghost small" id="back">← Auxiliares</button></div>
+  <div class="card"><p>${esc(a.what)}</p></div>
+  <div class="card"><h3>Ejemplos</h3>${a.ex.map(([en, es]) => `<div class="auxex"><p class="exs"><b>${say(en)}</b> <span class="muted">→ ${esc(es)}</span></p>${pronHTML(en)}${csBox(en, false)}</div>`).join("")}</div>
+  <div class="card"><h3>Negativa, pregunta y respuesta corta</h3><div class="list">
+    <div class="li col"><b>❌ Negativa</b><i>${say(a.neg)}</i></div>
+    <div class="li col"><b>❓ Pregunta</b><i>${say(a.q)}</i></div>
+    <div class="li col"><b>💬 Respuesta corta</b><i>${a.short.map(say).join(" · ")}</i></div></div></div>
+  <div class="card note"><h3>⚠️ Ojo</h3><p>${esc(a.note)}</p></div>
+  <div class="row">${items.length ? `<button class="btn" id="drill">⚡ Practicar ${esc(a.word.split(" (")[0])} (${items.length})</button>` : ""}<button class="btn ghost" id="speak">🎙️ Práctica hablada</button></div>
+  <div class="row between">${prev ? `<button class="btn ghost small" data-aux="${prev.id}">← ${esc(prev.word.split(" (")[0])}</button>` : "<span></span>"}${next ? `<button class="btn ghost small" data-aux="${next.id}">${esc(next.word.split(" (")[0])} →</button>` : ""}</div>`;
+  $("#back").onclick = () => { sub = { aux: true }; render(); };
+  if ($("#drill")) $("#drill").onclick = () => auxDrill(m, shuffle(items), a.word.split(" (")[0], { auxw: id });
+  $("#speak").onclick = () => auxSpeak(m, shuffle(AUX_SPEAK).slice(0, 10), () => { sub = { auxw: id }; render(); });
+  $$("[data-aux]", m).forEach((b) => b.onclick = () => { sub = { auxw: b.dataset.aux }; render(); window.scrollTo(0, 0); });
+}
+
+function auxUseDetail(m, id) {
+  const u = AUX_USES.find((x) => x.id === id), items = auxDrillFor(id), sp = AUX_SPEAK.filter((s) => s.cat === id);
+  const i = AUX_USES.indexOf(u), prev = AUX_USES[i - 1], next = AUX_USES[i + 1];
+  m.innerHTML = `<div class="row between"><div><h1>${esc(u.title)}</h1><div class="muted small">Verbos auxiliares · cómo se aplican</div></div><button class="btn ghost small" id="back">← Auxiliares</button></div>
+  <div class="card explain"><p>${esc(u.es)}</p><p class="pattern"><b>Fórmula:</b> ${esc(u.pattern)}</p></div>
+  <div class="card"><h3>Ejemplos</h3>${u.ex.map((e) => `<p class="exs">${esc(e)} ${speakBtn(e.replace(/— /g, ""))}</p>`).join("")}</div>
+  <div class="card note"><h3>💡 Consejo</h3><p>${esc(u.tip)}</p></div>
+  <div class="row">${items.length ? `<button class="btn" id="drill">⚡ Practicar (${items.length})</button>` : ""}${sp.length ? `<button class="btn ghost" id="speak">🎙️ Practicar hablando (${sp.length})</button>` : ""}</div>
+  <div class="row between">${prev ? `<button class="btn ghost small" data-use="${prev.id}">← ${esc(prev.title.replace(/^\d+\. /, ""))}</button>` : "<span></span>"}${next ? `<button class="btn ghost small" data-use="${next.id}">${esc(next.title.replace(/^\d+\. /, ""))} →</button>` : ""}</div>`;
+  $("#back").onclick = () => { sub = { aux: true }; render(); };
+  if ($("#drill")) $("#drill").onclick = () => auxDrill(m, shuffle(items), u.title.replace(/^\d+\. /, ""), { auxu: id });
+  if ($("#speak")) $("#speak").onclick = () => auxSpeak(m, shuffle(sp), () => { sub = { auxu: id }; render(); });
+  $$("[data-use]", m).forEach((b) => b.onclick = () => { sub = { auxu: b.dataset.use }; render(); window.scrollTo(0, 0); });
+}
+
+function auxDrill(m, items, title, ret) {
+  const back = () => { sub = ret || { aux: true }; render(); };
+  exerciseRunner(m, items.map((d) => d[1]), { title: "🧩 " + title, subtitle: "Verbos auxiliares", onExit: back,
+    onFinish: (c, n, wrongs) => {
+      S.auxBest = S.auxBest || {};
+      const per = {}, wrongQ = new Set(wrongs.map((w) => w.q));
+      items.forEach((d) => { per[d[0]] = per[d[0]] || [0, 0]; per[d[0]][1]++; if (!wrongQ.has(d[1][1])) per[d[0]][0]++; });
+      Object.entries(per).forEach(([k, [ok, tot]]) => { S.auxBest[k] = Math.max(S.auxBest[k] || 0, ok / tot); });
+      skill("grammar", c, n); addXP(c * 3); save();
+      const weak = Object.entries(per).filter(([, [ok, tot]]) => ok / tot < 0.7).map(([k]) => k);
+      const link = (k) => AUX_USES.some((u) => u.id === k) ? `data-use="${k}"` : AUX_LIST.some((a) => a.id === k) ? `data-aux="${k}"` : `data-auxhome="1"`;
+      m.innerHTML = `<div class="card center"><div class="big">🧩</div><h2>${c} de ${n} correctas</h2>${weak.length ? `<p>Repasa: ${weak.map((k) => `<button class="btn ghost small" ${link(k)}>${esc(AUX_CATS[k] || k)}</button>`).join(" ")}</p>` : `<p class="muted">¡Muy bien! Manejas estos auxiliares.</p>`}
+        ${wrongs.length ? `<div class="list left">${wrongs.map((w) => `<div class="li"><div><b>${esc(w.answer)}</b><div class="small muted">${esc(w.q)}</div></div>${speakBtn(w.answer)}</div>`).join("")}</div>` : ""}
+        <div class="row center"><button class="btn" id="again">Otra ronda</button><button class="btn ghost" id="back2">Volver</button></div></div>`;
+      $$("[data-aux]", m).forEach((b) => b.onclick = () => { sub = { auxw: b.dataset.aux }; render(); });
+      $$("[data-use]", m).forEach((b) => b.onclick = () => { sub = { auxu: b.dataset.use }; render(); });
+      $$("[data-auxhome]", m).forEach((b) => b.onclick = () => { sub = { aux: true }; render(); });
+      $("#again").onclick = () => auxDrill(m, shuffle(ret ? items : AUX_DRILL).slice(0, ret ? items.length : 20), title, ret);
+      $("#back2").onclick = back;
+    } });
+}
+
+// Práctica hablada: la app dice una frase y tú reaccionas usando el auxiliar correcto
+function auxSpeak(m, list, back) {
+  let k = 0, ok = 0, res = null; const misses = [];
+  const isEs = (s) => /^Di en inglés/.test(s.say);
+  const draw = () => {
+    const it = list[k];
+    if (!it) {
+      skill("speaking", ok, list.length); addXP(ok * 3); save();
+      m.innerHTML = `<div class="card center"><div class="big">🎙️</div><h2>${ok} de ${list.length} bien</h2>
+        ${misses.length ? `<p class="small muted">Repite estas en voz alta:</p><div class="list left">${misses.map((x) => `<div class="li"><div><b>${esc(x.ans[0])}</b><div class="small muted">${esc(x.say)}</div></div>${speakBtn(x.ans[0])}</div>`).join("")}</div>` : `<p class="muted">¡Excelente! Reaccionas con naturalidad.</p>`}
+        <div class="row center"><button class="btn" id="again">Otra ronda</button><button class="btn ghost" id="back2">Volver</button></div></div>`;
+      $("#again").onclick = () => auxSpeak(m, shuffle(AUX_SPEAK).slice(0, 10), back);
+      $("#back2").onclick = () => { stopSpeech(); back(); };
+      return;
+    }
+    m.innerHTML = `<div class="row between"><div><h1>🎙️ Reacciona</h1><div class="muted small">${k + 1} de ${list.length} · ${esc(AUX_CATS[it.cat] || "")}</div></div><button class="btn ghost small" id="exit">Salir</button></div>
+      <div class="chat"><div class="msg bot">${esc(it.say)} ${isEs(it) ? "" : speakBtn(it.say)}</div>${res ? `<div class="msg me">${esc(res.said)}</div>` : ""}</div>
+      <div class="card task-box"><b>Tu turno:</b> ${esc(it.task)}</div>
+      ${res ? `<div class="feedback ${res.ok ? "good" : "bad"}"><b>${res.ok ? "✅ ¡Bien!" : "Casi."}</b> ${res.ok && norm(res.best) === norm(res.said) ? "" : `Respuesta modelo: <b>${esc(res.best)}</b> ${speakBtn(res.best)}`}
+          ${it.ans.length > 1 ? `<p class="small muted">También vale: ${it.ans.filter((x) => x !== res.best).map(esc).join(" · ")}</p>` : ""}</div>
+        <div class="row"><button class="btn" id="next">Siguiente</button>${res.ok ? "" : `<button class="btn ghost" id="retry">Intentar de nuevo</button>`}</div>`
+      : `<div class="center">${micButton("rec")}</div><p class="muted center" id="live"></p>
+        <form id="tf" class="row"><input id="ti" placeholder="O escríbelo en inglés" autocapitalize="off"><button class="btn">Enviar</button></form>
+        <details class="card hints"><summary>💡 Ver la respuesta</summary><p>${esc(it.ans[0])} ${speakBtn(it.ans[0])}</p><p class="small muted">Escúchala y luego dila tú sin mirar.</p></details>`}`;
+    $("#exit").onclick = () => { stopSpeech(); back(); };
+    if (!res && !isEs(it)) setTimeout(() => speakLines([[1, it.say]]), 200);
+    const answer = (said) => {
+      const b = bestMatch(said, it.ans), good = it.ans.some((a) => norm(a) === norm(said)) || b.s >= 0.8;
+      if (!res) { if (good) ok++; else misses.push(it); }
+      res = { said, ok: good, best: b.m }; draw();
+    };
+    bindMic("rec", answer, (t) => { const l = $("#live"); if (l) l.textContent = t; });
+    if ($("#tf")) $("#tf").onsubmit = (e) => { e.preventDefault(); const v = $("#ti").value.trim(); if (v) answer(v); };
+    if ($("#next")) $("#next").onclick = () => { k++; res = null; draw(); window.scrollTo(0, 0); };
+    if ($("#retry")) $("#retry").onclick = () => { res = null; draw(); };
+  };
+  draw();
+}
+
+// Integración con Gramática (botón junto a «Los 12 tiempos verbales»)
+(() => {
+  const base = RENDER.gramatica;
+  RENDER.gramatica = (m) => {
+    if (sub && sub.aux) return auxPage(m);
+    if (sub && sub.auxw) return auxDetail(m, sub.auxw);
+    if (sub && sub.auxu) return auxUseDetail(m, sub.auxu);
+    base(m);
+    if (sub) return;
+    const anchor = $("#tenses", m) || $("h1", m); if (!anchor) return;
+    anchor.insertAdjacentHTML("afterend", `<button class="card tenses-banner" id="auxb"><span class="tbic">🧩</span><span><b>Verbos auxiliares</b><small>be, do, have y modales (will, would, can, could, should, may, must…): respuestas cortas, question tags, so/neither y práctica hablada</small></span><span>→</span></button>`);
+    $("#auxb").onclick = () => { sub = { aux: true }; render(); window.scrollTo(0, 0); };
   };
 })();
 

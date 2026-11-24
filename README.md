@@ -105,3 +105,7 @@ python tools/generate_audio.py --model RUTA/kokoro-v1.0.int8.onnx --voices RUTA/
 ```
 
 Es incremental: solo crea los audios que faltan y actualiza `audio/index.json`. Faltan unos 730 (≈1 hora en un computador normal). Puedes dividir el trabajo entre dos computadores con `--part 1/2` y `--part 2/2`.
+
+
+## Verbos auxiliares
+En Gramática → «Verbos auxiliares»: fichas de be, do, have y de los modales (will, would, shall, should, can, could, may, might, must, ought to) con ejemplos y su equivalente en español; reglas de los modales; 8 formas de aplicarlos (negar, preguntar, respuestas cortas, question tags, so/neither, preguntas eco, énfasis y evitar repetir); 150 ejercicios escritos y 37 de práctica hablada. Datos en `src/extras/auxiliary.js`, pantallas en `src/app8.js`.

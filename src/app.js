@@ -321,7 +321,7 @@ const bestMatch = (said, models) => models.reduce((b, m) => { const s = similari
 function diffWords(target, said) { const s = new Set(norm(said).split(" ")); return target.split(/\s+/).map((w) => { const n = norm(w); return `<span class="${!n || n.split(" ").every((p) => s.has(p)) ? "ok" : "miss"}">${esc(w)}</span>`; }).join(" "); }
 
 // ---------- Tarjetas (SM-2, ambas direcciones) ----------
-const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], S.custom);
+const allCards = () => ALL_VOCAB.concat(typeof DEV_VOCAB !== "undefined" ? DEV_VOCAB : [], typeof CHUNK_CARDS !== "undefined" ? CHUNK_CARDS : [], typeof TENSE_CARDS !== "undefined" ? TENSE_CARDS : [], typeof AUX_CARDS !== "undefined" ? AUX_CARDS : [], S.custom);
 const cardById = (id) => allCards().find((c) => c.id === id.replace(/:r$/, ""));
 const levelOK = (c) => c.level === "MIS" || (c.chunk ? S.settings.chunkCards !== false && lvlIdx(c.level) <= lvlIdx(S.level) : c.level === "DEV" ? S.settings.devCards !== false : lvlIdx(c.level) <= lvlIdx(S.level));
 function dueCards() {
