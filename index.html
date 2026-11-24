@@ -6250,17 +6250,17 @@ function episodePage(box, s, n) {
     if (!id) return toast("Dale play al video primero");
     try {
       pipWin = await documentPictureInPicture.requestWindow({ width: 560, height: 315 });
-      const ph = e.phase || "";
-      const q = new URLSearchParams({ start: t, autoplay: 1, rel: 0, hl: "es", playsinline: 1, enablejsapi: 1, cc_load_policy: ph && ph !== "sin_subs" ? 1 : 0, cc_lang_pref: ph === "subs_es" ? "es" : "en" });
-      pipWin.document.body.style.cssText = "margin:0;background:#000";
-      pipWin.document.body.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?${q}" style="border:0;width:100vw;height:100vh" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+      // La ventana flotante es una página en blanco sin dirección: YouTube la rechaza (error 153).
+      // Por eso carga pip.html (página de la app con dirección real), que es la que reproduce el video.
+      const src = new URL("pip.html", location.href); src.hash = new URLSearchParams({ v: id, t, cc: e.phase || "" }).toString();
+      pipWin.document.body.style.cssText = "margin:0;background:#000;overflow:hidden";
+      pipWin.document.body.innerHTML = `<iframe src="${src.href}" style="position:fixed;inset:0;border:0;width:100%;height:100%" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
       try { ytPlayer.pauseVideo(); } catch (er) {}
-      // Seguir el minuto en la ventana flotante para continuar en el mismo punto al cerrarla
-      let last = t; const fr = pipWin.document.querySelector("iframe");
-      fr.onload = () => { try { fr.contentWindow.postMessage(JSON.stringify({ event: "listening", id: 1 }), "*"); } catch (er) {} };
-      pipWin.addEventListener("message", (ev) => { try { const d = typeof ev.data === "string" ? JSON.parse(ev.data) : ev.data; if (d && d.info && typeof d.info.currentTime === "number") last = d.info.currentTime; } catch (er) {} });
+      // pip.html informa el minuto; al cerrar la ventana se continúa en el mismo punto
+      let last = t; const ch = "BroadcastChannel" in window ? new BroadcastChannel("ep-pip") : null;
+      if (ch) ch.onmessage = (ev) => { if (ev.data && ev.data.v === id && typeof ev.data.t === "number") last = ev.data.t; };
       $("#piphint").textContent = "▶️ El video se está viendo en la ventana flotante. Ciérrala para volver aquí.";
-      pipWin.addEventListener("pagehide", () => { pipWin = null; try { ytPlayer && ytPlayer.seekTo(last, true); } catch (er) {} const h = $("#piphint", box); if (h) h.textContent = "Volviste al reproductor de la página, en el mismo minuto."; });
+      pipWin.addEventListener("pagehide", () => { pipWin = null; try { ch && ch.close(); } catch (er) {} try { ytPlayer && ytPlayer.seekTo(last, true); } catch (er) {} const h = $("#piphint", box); if (h) h.textContent = "Volviste al reproductor de la página, en el mismo minuto."; });
     } catch (er) { toast("No se pudo abrir la ventana flotante"); }
   };
   const go2 = (k) => { kill(); epSel = k; render(); window.scrollTo(0, 0); };

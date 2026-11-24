@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>English Path · video</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  #p, iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; }
+  .msg { color: #fff; font: 15px system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 16px; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="p"><div class="msg">Cargando el video…</div></div>
+<script>
+  // Página que usa la ventana flotante de English Path.
+  // Tiene una dirección real (a diferencia de la ventana en blanco), así YouTube sí permite reproducir el video.
+  const q = new URLSearchParams(location.hash.slice(1));
+  const vid = (q.get("v") || "").replace(/[^\w-]/g, "");
+  const start = Math.max(0, parseInt(q.get("t") || "0", 10) || 0);
+  const ph = q.get("cc") || "";
+  const ch = "BroadcastChannel" in window ? new BroadcastChannel("ep-pip") : null;
+  if (!vid) document.getElementById("p").innerHTML = '<div class="msg">No se indicó el video.</div>';
+  else {
+    window.onYouTubeIframeAPIReady = () => {
+      const player = new YT.Player("p", {
+        width: "100%", height: "100%", videoId: vid, host: "https://www.youtube-nocookie.com",
+        playerVars: { start, autoplay: 1, rel: 0, hl: "es", playsinline: 1, origin: location.origin,
+          cc_load_policy: ph && ph !== "sin_subs" ? 1 : 0, cc_lang_pref: ph === "subs_es" ? "es" : "en" },
+        events: {
+          onReady: (e) => { try { e.target.playVideo(); } catch (er) {} },
+          onError: () => { document.body.innerHTML = '<div class="msg">Este video no se puede reproducir aquí. Ábrelo en YouTube.</div>'; }
+        }
+      });
+      // Informa el minuto a la app para continuar en el mismo punto al cerrar la ventana
+      setInterval(() => { try { ch && ch.postMessage({ v: vid, t: player.getCurrentTime() }); } catch (er) {} }, 1000);
+    };
+    const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+  }
+</script>
+</body>
+</html>
