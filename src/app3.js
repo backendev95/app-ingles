@@ -110,6 +110,32 @@ function retellList(box) {
   <h2>Elige un texto</h2><div class="lessons">${pool.slice(0, 40).map((x) => `<button class="lesson" data-r="${x.id}"><span class="num">${x.level}</span><span><b>${esc(x.title)}</b><small>${x.kind}${S.retell.some((r) => r.id === x.id) ? " · ✓ hecho" : ""}</small></span></button>`).join("")}</div>`;
   $$("[data-r]", box).forEach((b) => b.onclick = () => { sub = { retell: pool.find((x) => x.id === b.dataset.r) }; render(); });
 }
+// ---------- Corrección de lo que dijiste (retelling y habla 1 minuto) ----------
+function spokenFixHTML(said) {
+  return `<div class="card fixcard"><h3>✍️ Corrección de lo que dijiste</h3>
+    <p class="small muted">${said ? "Este es el texto que captó el dictado. Si entendió mal alguna palabra, corrígela antes de revisar." : "No se captó texto. Escucha tu grabación y escribe aquí lo que dijiste para corregirlo."}</p>
+    <textarea id="sfx" rows="4" placeholder="Escribe en inglés lo que dijiste…">${esc(said || "")}</textarea>
+    <div class="row"><button class="btn ghost" id="sfxgo">Revisar gramática</button></div><div id="sfxres"></div></div>`;
+}
+function bindSpokenFix(box) {
+  const ta = $("#sfx", box), out = $("#sfxres", box), go = $("#sfxgo", box);
+  const run = async () => {
+    let t = ta.value.trim(); if (!t) { out.innerHTML = `<p class="small muted">Escribe primero lo que dijiste.</p>`; return; }
+    t = t[0].toUpperCase() + t.slice(1); if (!/[.!?]$/.test(t)) t += ".";
+    out.innerHTML = `<p class="small muted">⏳ Revisando…</p>`; go.disabled = true;
+    try {
+      const ms = (await languageTool(t)).filter((m) => !LT_IGNORE_CAT.has((m.rule.category || {}).id) && !LT_IGNORE_RULE.has(m.rule.id));
+      let fixed = t; ms.slice().sort((a, b) => b.offset - a.offset).forEach((m) => { if (m.replacements[0]) fixed = fixed.slice(0, m.offset) + m.replacements[0].value + fixed.slice(m.offset + m.length); });
+      out.innerHTML = !ms.length ? `<div class="feedback good"><b>✅ No se encontraron errores de gramática.</b> <span class="small">Compara igual tus ideas con la lista de ideas principales.</span></div>`
+        : `<div class="ltspoken"><b>${ms.length} posible(s) error(es):</b>${ms.map((m) => `<div class="ltm"><mark>${esc(t.substr(m.offset, m.length))}</mark>${m.replacements[0] ? ` → <b>${esc(m.replacements[0].value || "(quitar)")}</b>` : ""}<div class="small muted">${esc(m.message)}</div></div>`).join("")}</div>
+          <div class="feedback good"><b>Versión corregida:</b><p class="reading">${esc(fixed)}</p>${speakBtn(fixed, "🔊 Escuchar la versión corregida")}</div>
+          <p class="small muted">Lee la versión corregida en voz alta 2 veces y luego repite el ejercicio: así fijas la forma correcta.</p>`;
+    } catch (e) { out.innerHTML = `<p class="small muted">El corrector no está disponible ahora (${esc(e.message)}). Necesita internet.</p>`; }
+    go.disabled = false;
+  };
+  go.onclick = run; if (ta.value.trim()) run();
+}
+
 function retellPage(m, item, back) {
   const secs = speakSeconds(item.level), pts = retellPoints(item), kw = (item.gloss || []).map((g) => g[0]);
   const isL = !item.text;
@@ -127,11 +153,12 @@ function retellPage(m, item, back) {
     $("#txt").hidden = true;
     $("#res").innerHTML = `<div class="card"><h2>Tu retelling</h2>
       ${said ? `<p class="reading">${esc(said)}</p><p class="small muted">${words} palabras en ${used} s (${Math.round(words / Math.max(1, used) * 60)} palabras/minuto)${kw.length ? ` · Palabras clave usadas: ${used_kw.length}/${kw.length}` : ""}</p>` : `<p class="muted small">${dictApi ? "No se captó texto. " : ""}Escucha tu grabación para evaluarte.</p>`}
-      <div class="center">${recorderHTML("retell-" + item.id, secs + 2)}</div>
-      ${pts.length ? `<h3>¿Qué ideas incluiste?</h3><div class="list">${pts.map((p, k) => `<label class="cando"><input type="checkbox" data-pt="${k}" ${said && p.split("→")[1] && norm(said).includes(norm(p.split("→")[1]).split(" ").slice(0, 2).join(" ")) ? "checked" : ""}> <span>${esc(p)}</span></label>`).join("")}</div>` : ""}
+      <div class="center">${recorderHTML("retell-" + item.id, secs + 2)}</div></div>
+      ${spokenFixHTML(said)}
+      <div class="card">${pts.length ? `<h3>¿Qué ideas incluiste?</h3><div class="list">${pts.map((p, k) => `<label class="cando"><input type="checkbox" data-pt="${k}" ${said && p.split("→")[1] && norm(said).includes(norm(p.split("→")[1]).split(" ").slice(0, 2).join(" ")) ? "checked" : ""}> <span>${esc(p)}</span></label>`).join("")}</div>` : ""}
       <h3>Rúbrica (marca lo que lograste)</h3>${rubricHTML(["Hablé casi todo el tiempo sin pausas largas", "Conté los hechos en orden y usé conectores", "Usé el pasado correctamente la mayoría de las veces", "Usé al menos 3 palabras clave o chunks nuevos", "Expliqué la idea principal o mi opinión al final"])}
       <div class="row"><button class="btn" id="save">Guardar</button><button class="btn ghost" id="again">Repetir</button></div></div>`;
-    bindRecorders($("#res"));
+    bindRecorders($("#res")); bindSpokenFix($("#res"));
     $("#again").onclick = () => retellPage(m, item, back);
     $("#save").onclick = () => {
       const points = $$("[data-pt]", m).filter((x) => x.checked).length, rubric = readRubric(m);
@@ -165,11 +192,12 @@ function speakMinute(box) {
     const found = [...new Set(allChunks.map(chunkCore).filter((c) => c.length > 3 && said && norm(said).includes(norm(c))))];
     $("#res").innerHTML = `<div class="card"><h2>Resultado</h2>
       ${said ? `<p class="reading">${esc(said)}</p><p class="small muted">${words} palabras en ${used} s (${Math.round(words / Math.max(1, used) * 60)} palabras/minuto). ${words / Math.max(1, used) * 60 >= 100 ? "¡Buen ritmo!" : "Meta: ir subiendo hacia 100–130 palabras por minuto."}</p>${found.length ? `<p><b>Chunks que usaste:</b> ${found.map((f) => `<span class="chip">${esc(f)}</span>`).join(" ")}</p>` : `<p class="small muted">No se detectaron chunks. La próxima vez intenta usar al menos dos de los sugeridos.</p>`}` : `<p class="muted small">Escucha tu grabación para evaluarte.</p>`}
-      <div class="center">${recorderHTML("min-" + lv + minIdx, 62)}</div>
-      <h3>Rúbrica</h3>${rubricHTML(["Hablé todo el minuto sin quedarme callado más de 3 segundos", "Respondí las preguntas guía", "Usé al menos 2 chunks", "Usé conectores (because, so, but, then…)", "Si me bloqueé, usé una muletilla y seguí"])}
+      <div class="center">${recorderHTML("min-" + lv + minIdx, 62)}</div></div>
+      ${spokenFixHTML(said)}
+      <div class="card"><h3>Rúbrica</h3>${rubricHTML(["Hablé todo el minuto sin quedarme callado más de 3 segundos", "Respondí las preguntas guía", "Usé al menos 2 chunks", "Usé conectores (because, so, but, then…)", "Si me bloqueé, usé una muletilla y seguí"])}
       <div class="row"><button class="btn" id="save">Guardar</button><button class="btn ghost" id="again">Repetir el mismo tema</button></div>
       <p class="small muted">Truco: repite el mismo tema mañana. La segunda vez notarás que hablas más y con menos pausas.</p></div>`;
-    bindRecorders($("#res"));
+    bindRecorders($("#res")); bindSpokenFix($("#res"));
     $("#again").onclick = () => render();
     $("#save").onclick = () => {
       const rubric = readRubric($("#res"));
