@@ -1,6 +1,6 @@
 """Importa las fotos de Pixabay elegidas (archivo JSON exportado desde el navegador).
 Uso: python tools/import_photos.py pixabay_fotos.json
-Crea img/px/<palabra>.webp y src/extras/px.js con los créditos."""
+Crea img/px/<palabra>.webp y actualiza src/extras/px.js (suma a las fotos existentes)."""
 import base64, json, re, sys
 from pathlib import Path
 root = Path(__file__).resolve().parent.parent
@@ -8,7 +8,11 @@ data = {}
 for p in sys.argv[1:]:
     data.update(json.loads(Path(p).read_text(encoding="utf-8")))
 out = root / "img" / "px"; out.mkdir(parents=True, exist_ok=True)
-meta = {}
+meta: dict = {}
+px = root / "src" / "extras" / "px.js"
+if px.exists():  # conserva las fotos ya importadas
+    m = re.search(r"const PX_PHOTOS = (\{.*\});", px.read_text(encoding="utf-8"), re.S)
+    if m: meta.update(json.loads(m.group(1)))
 slug = lambda w: re.sub(r"[^a-z0-9]+", "-", w.lower()).strip("-")
 for word, x in sorted(data.items()):
     f = slug(word)
