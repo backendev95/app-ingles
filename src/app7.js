@@ -128,8 +128,9 @@ function episodePage(box, s, n) {
   const e = epProg(s, n), v = s.videos ? s.videos[n - 1] : null;
   const label = v ? (v.title || e.title || "Video") : `${s.name} · Episodio ${n}`;
   box.innerHTML = `<div class="row between"><div><h2>${esc(label)}</h2><div class="small muted" id="eptitle">${v ? "Mis videos" : esc(e.title || "")}</div></div><button class="btn ghost small" id="eback">← ${v ? "Volver" : "Episodios"}</button></div>
-    <div class="ytwrap"><div id="ytp"></div><div class="ytfallback" id="ytfb" hidden><p>Este video no se puede reproducir dentro de la app.</p><a class="btn" href="${watchURL(s, n)}" target="_blank" rel="noopener">▶️ Ver en YouTube</a></div></div>
-    <p class="small center"><a href="${watchURL(s, n)}" target="_blank" rel="noopener">Abrir en YouTube</a></p>
+    <div class="ytslot"><div class="ytwrap" id="ytw"><div id="ytp"></div><div class="ytfallback" id="ytfb" hidden><p>Este video no se puede reproducir dentro de la app.</p><a class="btn" href="${watchURL(s, n)}" target="_blank" rel="noopener">▶️ Ver en YouTube</a></div><button class="ytdock" id="ytdock" title="Volver a poner el video en su sitio" hidden>✕</button></div></div>
+    <div class="row center pipbar"><button class="btn ghost small" id="ytpin">📌 Mini reproductor</button>${"documentPictureInPicture" in window ? `<button class="btn ghost small" id="ytpip">🪟 Ventana flotante</button>` : ""}<a class="btn ghost small" href="${watchURL(s, n)}" target="_blank" rel="noopener">Abrir en YouTube</a></div>
+    <p class="small muted center" id="piphint">${"documentPictureInPicture" in window ? "La ventana flotante queda encima de otras apps y ventanas mientras tomas notas o repasas." : /iPhone|iPad/.test(navigator.userAgent) ? "Para verlo fuera de la app: pon el video en pantalla completa y toca el botón de imagen sobre imagen." : /Android/.test(navigator.userAgent) ? "Para verlo fuera de la app: pon el video en pantalla completa y ve a la pantalla de inicio; en la mayoría de celulares Android sigue en una ventana pequeña." : "El mini reproductor sigue a la vista mientras bajas por la página."}</p>
     <div class="card"><h3>1. Subtítulos</h3><div class="phasechips">${SERIES_PHASES.map(([k, l]) => `<label class="chipradio"><input type="radio" name="eph" value="${k}" ${e.phase === k ? "checked" : ""}> ${l}</label>`).join("")}</div>
       <p class="small" id="ccmsg">${e.phase ? "" : "Elige con qué subtítulos lo vas a ver: la app los activa en el video y lo anota en tu registro."}</p>
       <p class="small muted">Tu fase actual de inmersión: <b>${esc(curPhase().title)}</b></p></div>
@@ -139,7 +140,42 @@ function episodePage(box, s, n) {
       <div id="wbox"></div></div>
     <div class="row" id="wrow">${e.watched ? `<span class="feedback good">✓ Visto</span>` : `<button class="btn" id="ewatched">✓ Marcar como visto</button>`}${v ? `<button class="btn red small" id="vdel">Quitar video</button>` : ""}</div><div id="vdc"></div>
     <div class="row between">${n > 1 ? `<button class="btn ghost small" id="eprev">← ${v ? "Anterior" : "Episodio " + (n - 1)}</button>` : "<span></span>"}${n < s.eps ? `<button class="btn ghost small" id="enext">${v ? "Siguiente" : "Episodio " + (n + 1)} →</button>` : ""}</div>`;
-  const kill = () => { try { ytPlayer && ytPlayer.destroy(); } catch (er) {} ytPlayer = null; };
+  const kill = () => { try { floatObs && floatObs.disconnect(); } catch (er) {} try { pipWin && pipWin.close(); } catch (er) {} try { ytPlayer && ytPlayer.destroy(); } catch (er) {} ytPlayer = null; };
+  // ---- Video flotante: mini reproductor dentro de la app (cualquier dispositivo) ----
+  let pinned = false, dismissed = false, outOfView = false, floatObs = null, pipWin = null;
+  const playing = () => { try { return ytPlayer && [1, 3].includes(ytPlayer.getPlayerState()); } catch (er) { return false; } };
+  const setFloat = () => {
+    const w = $("#ytw", box); if (!w) return;
+    const on = pinned || (outOfView && !dismissed && playing());
+    w.classList.toggle("floating", on); $("#ytdock", box).hidden = !on;
+    const b = $("#ytpin", box); if (b) b.textContent = pinned ? "📌 Fijar en su sitio" : "📌 Mini reproductor";
+  };
+  $("#ytpin").onclick = () => { pinned = !pinned; dismissed = !pinned; setFloat(); if (pinned) toast("El video te sigue mientras bajas por la página"); };
+  $("#ytdock").onclick = () => { pinned = false; dismissed = true; setFloat(); };
+  if ("IntersectionObserver" in window) {
+    floatObs = new IntersectionObserver(([en]) => { outOfView = !en.isIntersecting; if (!outOfView) dismissed = false; setFloat(); }, { threshold: 0.25 });
+    floatObs.observe($(".ytslot", box));
+  }
+  // ---- Ventana flotante real (Document Picture-in-Picture: Chrome y Edge en computador) ----
+  if ($("#ytpip")) $("#ytpip").onclick = async () => {
+    if (!ytPlayer || !ytPlayer.getVideoData) return toast("Espera a que cargue el video");
+    let t = 0, id = ""; try { t = Math.floor(ytPlayer.getCurrentTime() || 0); id = ytPlayer.getVideoData().video_id; } catch (er) {}
+    if (!id) return toast("Dale play al video primero");
+    try {
+      pipWin = await documentPictureInPicture.requestWindow({ width: 560, height: 315 });
+      const ph = e.phase || "";
+      const q = new URLSearchParams({ start: t, autoplay: 1, rel: 0, hl: "es", playsinline: 1, enablejsapi: 1, cc_load_policy: ph && ph !== "sin_subs" ? 1 : 0, cc_lang_pref: ph === "subs_es" ? "es" : "en" });
+      pipWin.document.body.style.cssText = "margin:0;background:#000";
+      pipWin.document.body.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?${q}" style="border:0;width:100vw;height:100vh" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+      try { ytPlayer.pauseVideo(); } catch (er) {}
+      // Seguir el minuto en la ventana flotante para continuar en el mismo punto al cerrarla
+      let last = t; const fr = pipWin.document.querySelector("iframe");
+      fr.onload = () => { try { fr.contentWindow.postMessage(JSON.stringify({ event: "listening", id: 1 }), "*"); } catch (er) {} };
+      pipWin.addEventListener("message", (ev) => { try { const d = typeof ev.data === "string" ? JSON.parse(ev.data) : ev.data; if (d && d.info && typeof d.info.currentTime === "number") last = d.info.currentTime; } catch (er) {} });
+      $("#piphint").textContent = "▶️ El video se está viendo en la ventana flotante. Ciérrala para volver aquí.";
+      pipWin.addEventListener("pagehide", () => { pipWin = null; try { ytPlayer && ytPlayer.seekTo(last, true); } catch (er) {} const h = $("#piphint", box); if (h) h.textContent = "Volviste al reproductor de la página, en el mismo minuto."; });
+    } catch (er) { toast("No se pudo abrir la ventana flotante"); }
+  };
   const go2 = (k) => { kill(); epSel = k; render(); window.scrollTo(0, 0); };
   $("#eback").onclick = () => { kill(); epSel = null; seriesSel = null; render(); };
   if ($("#eprev")) $("#eprev").onclick = () => go2(n - 1);
@@ -201,7 +237,7 @@ function episodePage(box, s, n) {
       events: {
         onReady: (ev) => { try { if (!v) ev.target.cuePlaylist({ listType: "playlist", list: s.list, index: n - 1 }); } catch (er) {} setTimeout(() => meta(ev.target), 800); },
         onApiChange: (ev) => { if (e.phase) applyCaptions(ev.target, e.phase); },
-        onStateChange: (ev) => { if (ev.data === 1 && e.phase) applyCaptions(ev.target, e.phase); meta(ev.target); },
+        onStateChange: (ev) => { if (ev.data === 1 && e.phase) applyCaptions(ev.target, e.phase); meta(ev.target); setFloat(); },
         onError: fb } };
     if (v) opts.videoId = v.vid;
     ytPlayer = new YT.Player("ytp", opts);
