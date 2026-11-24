@@ -427,7 +427,7 @@ function exerciseRunner(box, items, o) {
       <div class="bar"><i style="width:${(i / items.length) * 100}%"></i></div><div class="muted small">${i + 1} / ${items.length}</div>
       <div class="card excard">${body}<div id="fb"></div></div>`;
     if (o.onExit) $("#exit").onclick = o.onExit;
-    if (t === "mc") $$(".opt", box).forEach((b) => b.onclick = () => choose(+b.dataset.k));
+    if (t === "mc") $$("button.opt", box).forEach((b) => b.onclick = () => choose(+b.dataset.k));
     if (typed(t)) {
       const inp = $("#ai"); inp.focus(); if (t === "fix") inp.setSelectionRange(inp.value.length, inp.value.length);
       inp.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey && inp.tagName === "TEXTAREA") { e.preventDefault(); $(".ans", box).requestSubmit(); } };
@@ -447,7 +447,7 @@ function exerciseRunner(box, items, o) {
   }
   function choose(k) {
     const ex = items[i]; if (answered) return;
-    $$(".opt", box)[k].classList.add(k === ex[3] ? "right" : "wrong"); $$(".opt", box)[ex[3]].classList.add("right");
+    $$("button.opt", box)[k].classList.add(k === ex[3] ? "right" : "wrong"); $$("button.opt", box)[ex[3]].classList.add("right");
     finish(k === ex[3], ex[2][ex[3]], ex[4], ex[2][k]);
   }
   function finish(ok, answer, why, given, close) {
@@ -457,7 +457,7 @@ function exerciseRunner(box, items, o) {
     const full = ex[0] === "fill" ? ex[1].replace(/_{2,}/, answer).replace(/\s*\([^)]*\)/g, "").trim() : ex[0] === "mc" ? (ex[1].includes("___") ? ex[1].replace(/_{2,}/, answer) : answer) : answer;
     $("#fb").innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><b>${ok ? "¡Correcto!" : close ? "Casi. Respuesta esperada:" : "Respuesta correcta:"}</b> ${ok ? "" : esc(answer)} ${speakBtn(full)}
       ${!ok && !["mc", "ord", "blocks"].includes(ex[0]) && ex[2].length > 1 ? `<div class="small muted">También vale: ${ex[2].slice(1, 4).map(esc).join(" · ")}</div>` : ""}
-      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict ? "" : csBox(full)}${!ok && ["tr", "fix", "fill", "sub"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
+      ${why ? `<p>${esc(why)}</p>` : ""}${o.strict || ex.noCs || !looksEnglish(full) ? "" : csBox(full)}${!ok && ["tr", "fix", "fill", "sub"].includes(ex[0]) && !o.strict ? `<button class="btn ghost small" id="mine">Mi respuesta también es correcta</button>` : ""}</div>
       <button class="btn wide" id="nx">Continuar ⏎</button>`;
     if ($("#mine")) $("#mine").onclick = () => { correct++; wrongs.pop(); recordEx(ex, true, true); $("#mine").outerHTML = `<span class="small">✓ Contada como correcta</span>`; };
     $("#nx").onclick = next; $("#nx").focus();
@@ -942,9 +942,8 @@ RENDER.ajustes = (m) => {
     <p class="muted small">Puedes bajar a un nivel ya desbloqueado si quieres reforzarlo.</p>
     <label class="cando"><input type="checkbox" id="pronshow" ${S.settings.pronShow === false ? "" : "checked"}> <span>Mostrar <b>cómo se pronuncia</b> cada palabra (a la española, con la sílaba fuerte en MAYÚSCULAS)</span></label>
     <label class="cando"><input type="checkbox" id="ipashow" ${S.settings.ipaShow === false ? "" : "checked"}> <span>Incluir la fonética internacional (IPA)</span></label>
-    <label class="cando"><input type="checkbox" id="picsshow" ${S.settings.picsShow === false ? "" : "checked"}> <span>Mostrar <b>imágenes</b> junto a las palabras</span></label>
-    <label class="label">Tipo de imagen</label><select id="picstyle"><option value="photo" ${(S.settings.picStyle || "photo") === "photo" ? "selected" : ""}>Fotos reales + imágenes 3D (recomendado)</option><option value="3d" ${S.settings.picStyle === "3d" ? "selected" : ""}>Solo imágenes 3D</option><option value="emoji" ${S.settings.picStyle === "emoji" ? "selected" : ""}>Emojis del teléfono</option></select>
-    <p class="muted small">Fotos: Pixabay (licencia de contenido de Pixabay). Imágenes 3D: Microsoft Fluent Emoji (licencia MIT). Vienen con la app y se guardan en el celular la primera vez que aparecen.</p>
+    <label class="cando"><input type="checkbox" id="picsshow" ${S.settings.picsShow === false ? "" : "checked"}> <span>Mostrar <b>fotos</b> junto a las palabras</span></label>
+    <p class="muted small">Las imágenes son fotos reales de Pixabay. Vienen con la app y se guardan en el celular la primera vez que aparecen.</p>
     <label class="cando"><input type="checkbox" id="csshow" ${S.settings.csShow === false ? "" : "checked"}> <span>Mostrar <b>🔗 Así suena</b> (connected speech) debajo de las frases</span></label>
     <label class="cando"><input type="checkbox" id="csopen" ${S.settings.csOpen === false ? "" : "checked"}> <span>Abrirlo automáticamente en dictados, shadowing y respuestas modelo</span></label>
     <label class="label">Retención objetivo de las tarjetas</label><select id="ret">${[[0.85, "85% · menos repasos"], [0.9, "90% · recomendado"], [0.95, "95% · más repasos, recuerdas más"]].map(([v, l]) => `<option value="${v}" ${S.settings.retention === v ? "selected" : ""}>${l}</option>`).join("")}</select>
@@ -975,7 +974,6 @@ RENDER.ajustes = (m) => {
   $("#redo").onclick = () => { S.placementDone = false; save(); go("inicio"); };
   $("#ret").onchange = (e) => { S.settings.retention = +e.target.value; save(); };
   $("#csshow").onchange = (e) => { S.settings.csShow = e.target.checked; save(); };
-  $("#picstyle").onchange = (e) => { S.settings.picStyle = e.target.value; save(); };
   [["pronshow", "pronShow"], ["ipashow", "ipaShow"], ["picsshow", "picsShow"]].forEach(([id, k]) => { $("#" + id).onchange = (e) => { S.settings[k] = e.target.checked; save(); }; });
   $("#csopen").onchange = (e) => { S.settings.csOpen = e.target.checked; save(); };
   $("#mme").onchange = (e) => { S.settings.mmEmail = e.target.value.trim(); save(); };

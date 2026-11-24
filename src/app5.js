@@ -126,7 +126,7 @@ function situationsMap(box) {
   box.innerHTML = `<p class="muted">Recorre la ciudad: entra a un lugar, elige una situación y habla con las personas. Las conversaciones con 🔀 cambian según lo que respondas. Gana hasta 3 estrellas en cada una.</p>
   <div class="small muted">⭐ ${got} de ${total * 3} estrellas</div>
   <div class="citymap"><svg viewBox="0 0 100 100" preserveAspectRatio="none" class="roads"><path d="M0 30 H100 M0 58 H100 M0 86 H100 M27 0 V100 M52 0 V100 M76 0 V100" /></svg>
-    ${MAP_PLACES.map((p) => { const cs = placeConvos(p.id), ok = cs.some(convoOK), st = cs.reduce((a, c) => a + starsOf(c.id), 0); return `<button class="place ${ok ? "" : "locked"} ${mapPlace === p.id ? "sel" : ""}" style="left:${p.x}%;top:${p.y}%" data-place="${p.id}">${fl3dHTML(p.icon, "map")}<span class="pn">${esc(p.name)}</span><span class="ps">${ok ? `★${st}/${cs.length * 3}` : "🔒"}</span></button>`; }).join("")}
+    ${MAP_PLACES.map((p) => { const cs = placeConvos(p.id), ok = cs.some(convoOK), st = cs.reduce((a, c) => a + starsOf(c.id), 0); return `<button class="place ${ok ? "" : "locked"} ${mapPlace === p.id ? "sel" : ""}" style="left:${p.x}%;top:${p.y}%" data-place="${p.id}">${photoHTML(p.photo, "map")}<span class="pn">${esc(p.name)}</span><span class="ps">${ok ? `★${st}/${cs.length * 3}` : "🔒"}</span></button>`; }).join("")}
   </div><div id="placebox"></div>`;
   $$("[data-place]", box).forEach((b) => b.onclick = () => { mapPlace = b.dataset.place; situationsMap(box); $("#placebox").scrollIntoView({ behavior: "smooth", block: "start" }); });
   if (mapPlace) {

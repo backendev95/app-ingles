@@ -37,36 +37,22 @@ function pronHTML(text, o = {}) {
 }
 
 // ---------- Imágenes ----------
-function picFor(text) {
-  if (S.settings.picsShow === false) return "";
-  const k = String(text || "").toLowerCase().trim();
-  return PICS[k] || (globalThis.PIC_VISUAL || {})[k] || PICS[k.replace(/\s*\(.*?\)/g, "")] || "";
-}
-// Fotos (Pixabay) para lo concreto y las acciones; imágenes 3D (Fluent) para todo lo demás; emoji si nada carga.
+// Solo fotos reales (Pixabay). Las palabras sin foto no muestran imagen.
 const PHOTOS = typeof PX_PHOTOS !== "undefined" ? PX_PHOTOS : {};
 const photoKey = (text) => { const k = String(text || "").toLowerCase().trim(); return PHOTOS[k] ? k : PHOTOS[k.replace(/^to /, "")] ? k.replace(/^to /, "") : ""; };
-const flSeg = typeof Intl !== "undefined" && Intl.Segmenter ? new Intl.Segmenter("es", { granularity: "grapheme" }) : null;
-const graphemes = (s) => flSeg ? [...flSeg.segment(s)].map((x) => x.segment) : [...s];
-function fl3dHTML(emo, cls) {
-  const gs = graphemes(emo).filter((g) => g.trim());
-  if (!gs.length) return "";
-  return `<span class="fl3d ${cls}" aria-hidden="true">${gs.map((g) => FL3D[g] ? `<img src="img/fl/${FL3D[g]}.webp" alt="" loading="lazy" data-emo="${esc(g)}">` : `<i>${esc(g)}</i>`).join("")}</span>`;
-}
+function photoHTML(key, cls = "") { return PHOTOS[key] ? `<img class="pxphoto ${cls}" src="img/px/${PHOTOS[key][0]}.webp" alt="${esc(key)}" loading="lazy">` : ""; }
 function picHTML(text, cls = "") {
   if (S.settings.picsShow === false) return "";
-  const style = S.settings.picStyle || "photo", emo = picFor(text);
-  const pk = style === "photo" ? photoKey(text) : "";
-  if (pk) return `<img class="pxphoto ${cls}" src="img/px/${PHOTOS[pk][0]}.webp" alt="${esc(text)}" loading="lazy" data-emo="${esc(emo)}">`;
-  if (!emo) return "";
-  if (style === "emoji") return `<span class="pic ${cls}" aria-hidden="true">${emo}</span>`;
-  return fl3dHTML(emo, cls);
+  return photoHTML(photoKey(text), cls);
 }
-document.addEventListener("error", (e) => {
-  const t = e.target; if (!t || t.tagName !== "IMG" || !t.isConnected) return;
-  if (t.parentElement && t.parentElement.classList.contains("fl3d")) { const i = document.createElement("i"); i.textContent = t.dataset.emo || ""; t.replaceWith(i); return; }
-  if (t.classList.contains("pxphoto")) { const cls = [...t.classList].filter((c) => c !== "pxphoto").join(" "); const emo = t.dataset.emo || ""; if (!emo) { t.remove(); return; } const w = document.createElement("span"); w.innerHTML = fl3dHTML(emo, cls); t.replaceWith(w.firstChild || ""); }
-}, true);
-const hasPic = (text) => S.settings.picsShow !== false && !!(photoKey(text) || picFor(text));
+document.addEventListener("error", (e) => { const t = e.target; if (t && t.tagName === "IMG" && t.classList.contains("pxphoto") && t.isConnected) t.remove(); }, true);
+// ¿El texto está en inglés? (evita mostrar "Así suena" sobre una traducción al español)
+function looksEnglish(t) {
+  const ws = String(t || "").toLowerCase().match(/[a-záéíóúñü']+/g) || [];
+  if (!ws.length || /[áéíóúñ¿¡]/i.test(t)) return false;
+  return ws.filter((w) => PHON[w.replace(/'s$/, "")] || PHON[w]).length / ws.length >= 0.6;
+}
+const hasPic = (text) => S.settings.picsShow !== false && !!photoKey(text);
 
 
 // ---------- Guía: cómo leer la pronunciación ----------
@@ -77,23 +63,22 @@ const pronGuide = () => `<details class="card pguide"><summary><b>🔤 Cómo lee
   <ul class="small"><li><b>ii</b> = i larga (sheep = <i>shiip</i>); <b>i</b> = i corta y relajada (ship = <i>ship</i>).</li><li><b>uu</b> = u larga (food = <i>fuud</i>).</li><li><b>e</b> en sílabas débiles = la vocal neutra ə, muy corta.</li><li><b>z</b> = th como la z de España (think = <i>zink</i>); la <b>d</b> de <i>the</i> es suave.</li><li><b>s</b> puede ser una z que zumba: revisa el consejo de cada palabra.</li><li><b>sh</b> = como pedir silencio; <b>y</b> = la j de <i>job</i> (dʒ), como «yo» fuerte.</li><li><b>j</b> = h aspirada suave (house = <i>jaus</i>).</li><li><b>r</b> = r inglesa: no vibra.</li></ul>
   <h3>Símbolos IPA más útiles</h3>
   <div class="ipagrid">${[["i", "sheep"], ["ɪ", "ship"], ["æ", "cat"], ["ʌ", "cup"], ["ɑ", "hot"], ["ɔ", "thought"], ["ʊ", "book"], ["u", "food"], ["ə", "about"], ["ɝ", "bird"], ["eɪ", "day"], ["aɪ", "my"], ["oʊ", "go"], ["aʊ", "now"], ["θ", "think"], ["ð", "this"], ["ʃ", "she"], ["ʒ", "vision"], ["tʃ", "chair"], ["dʒ", "job"], ["ŋ", "sing"], ["j", "yes"], ["ˈ", "acento fuerte"]].map(([s, w]) => `<span><b>${s}</b> ${w}</span>`).join("")}</div>
-  <p class="small muted">Fotos de Pixabay e imágenes 3D de Microsoft Fluent Emoji. Pronunciación estadounidense, según el diccionario CMU. ${S && S.settings ? "Puedes ocultar la IPA o todo esto en Ajustes." : ""}</p></details>`;
+  <p class="small muted">Fotos de Pixabay. Pronunciación estadounidense, según el diccionario CMU. ${S && S.settings ? "Puedes ocultar la IPA o todo esto en Ajustes." : ""}</p></details>`;
 
 // ---------- Quiz con imágenes ----------
 function visualPool() {
   const levelOKv = (c) => c.level === "DEV" || (LEVELS.includes(c.level) && lvlIdx(c.level) <= lvlIdx(S.level));
-  return allCards().filter((c) => !c.irr && hasPic(c.en) && levelOKv(c));
+  return allCards().filter((c) => !c.irr && c.level !== "DEV" && hasPic(c.en) && levelOKv(c));
 }
 function visualQuiz(m, onExit) {
   const pool = visualPool();
   if (pool.length < 8) { toast("Todavía no hay suficientes palabras con imagen en tu nivel"); return; }
-  const concrete = pool.filter((c) => photoKey(c.en));
-  const base = concrete.length >= 12 ? concrete : pool;
+  const base = pool;
   const picks = shuffle(base.slice()).filter((x, i, arr) => arr.findIndex((y) => y.en === x.en) === i).slice(0, 12);
   const items = picks.map((w, k) => {
     const others = shuffle(base.filter((x) => x.en !== w.en && x.es !== w.es)).slice(0, 3), opts = shuffle([w, ...others]);
-    let ex; if (k % 2) { ex = ["mc", "¿Qué palabra es?", opts.map((x) => x.en), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.pic = picHTML(w.en, "quiz"); return ex; }
-    ex = ["mc", `¿Qué imagen corresponde a «${w.en}»?`, opts.map((x) => x.es), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.optHTML = opts.map((x) => picHTML(x.en, "opt")); return ex;
+    let ex; if (k % 2) { ex = ["mc", "¿Qué palabra es?", opts.map((x) => x.en), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.pic = picHTML(w.en, "quiz"); ex.noCs = true; return ex; }
+    ex = ["mc", `¿Qué imagen corresponde a «${w.en}»?`, opts.map((x) => x.en), opts.indexOf(w), `${w.en} = ${w.es}`]; ex.optHTML = opts.map((x) => picHTML(x.en, "optimg")); ex.noCs = true; return ex;
   });
   exerciseRunner(m, items, { title: "🖼️ Quiz con imágenes", subtitle: "Asocia la palabra con su imagen", onExit, onFinish: (c, n) => {
     skill("vocab", c, n); addXP(c * 2);

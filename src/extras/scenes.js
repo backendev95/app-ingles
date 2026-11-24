@@ -3,18 +3,18 @@
 // opts = caminos posibles. Lo que digas se compara con las frases de cada camino y la conversación sigue por el más parecido.
 // Un nodo con end: true cierra la conversación.
 const MAP_PLACES = [
-  { id: "cafe", name: "Cafetería", icon: "☕", x: 14, y: 18 },
-  { id: "restaurant", name: "Restaurante", icon: "🍽️", x: 40, y: 12 },
-  { id: "party", name: "Fiesta", icon: "🎉", x: 70, y: 16 },
-  { id: "shop", name: "Tienda de ropa", icon: "🛍️", x: 88, y: 34 },
-  { id: "pharmacy", name: "Farmacia", icon: "💊", x: 12, y: 46 },
-  { id: "station", name: "Estación de tren", icon: "🚉", x: 38, y: 40 },
-  { id: "taxi", name: "Taxi", icon: "🚕", x: 62, y: 44 },
-  { id: "doctor", name: "Consultorio", icon: "🩺", x: 16, y: 74 },
-  { id: "hotel", name: "Hotel", icon: "🏨", x: 42, y: 70 },
-  { id: "airport", name: "Aeropuerto", icon: "✈️", x: 84, y: 64 },
-  { id: "office", name: "Oficina", icon: "🏢", x: 64, y: 82 },
-  { id: "forum", name: "Auditorio", icon: "🎤", x: 88, y: 90 }
+  { id: "cafe", photo: "coffee", name: "Cafetería", icon: "☕", x: 14, y: 18 },
+  { id: "restaurant", photo: "dinner", name: "Restaurante", icon: "🍽️", x: 40, y: 12 },
+  { id: "party", photo: "dance", name: "Fiesta", icon: "🎉", x: 70, y: 16 },
+  { id: "shop", photo: "dress", name: "Tienda de ropa", icon: "🛍️", x: 88, y: 34 },
+  { id: "pharmacy", photo: "medicine", name: "Farmacia", icon: "💊", x: 12, y: 46 },
+  { id: "station", photo: "train", name: "Estación de tren", icon: "🚉", x: 38, y: 40 },
+  { id: "taxi", photo: "taxi", name: "Taxi", icon: "🚕", x: 62, y: 44 },
+  { id: "doctor", photo: "doctor", name: "Consultorio", icon: "🩺", x: 16, y: 74 },
+  { id: "hotel", photo: "hotel", name: "Hotel", icon: "🏨", x: 42, y: 70 },
+  { id: "airport", photo: "airport", name: "Aeropuerto", icon: "✈️", x: 84, y: 64 },
+  { id: "office", photo: "office", name: "Oficina", icon: "🏢", x: 64, y: 82 },
+  { id: "forum", photo: "meeting", name: "Auditorio", icon: "🎤", x: 88, y: 90 }
 ];
 // Conversaciones que ya existían, ubicadas en el mapa
 const MAP_EXTRA = { restaurant: ["A2-p0"], party: ["A2-p1"], hotel: ["B1-p1"], office: ["B1-p0", "B2-p0", "C1-p0", "dev-p0", "dev-p1", "dev-p2", "dev-p3", "dev-p4", "dev-p5"], forum: ["B2-p1", "C1-p1", "C2-p0", "C2-p1"] };
