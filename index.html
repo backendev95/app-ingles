@@ -3896,23 +3896,30 @@ function migrate(x) {
   if (!o.v || o.v < 2) { o.v = 2; if (Object.keys(o.lessons).length || Object.keys(o.cards).length) o.placementDone = true; }
   return o;
 }
-function loadLocal() { try { const raw = localStorage.getItem("ingles-state"); if (raw) S = migrate(JSON.parse(raw)); } catch (e) {} }
+function loadLocal() { try { const raw = localStorage.getItem("ingles-state"); if (raw) { S = migrate(JSON.parse(raw)); S.streak = calcStreak(); } } catch (e) {} }
 
 let saveTimer = null;
 function save() {
   S.updatedAt = Date.now();
   try { localStorage.setItem("ingles-state", JSON.stringify(S)); } catch (e) {}
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => Sync.push(), 2000);
+  saveTimer = setTimeout(() => { saveTimer = null; Sync.push(); }, 2000);
 }
+// Racha = días seguidos con actividad, contados desde el historial (que se combina entre dispositivos).
+// Si hoy aún no has estudiado, la racha de ayer sigue viva hasta medianoche.
+function calcStreak(h = S.history || {}) {
+  const d = new Date(), key = () => d.toLocaleDateString("en-CA");
+  if (!(h[key()] > 0)) d.setDate(d.getDate() - 1);
+  let n = 0; while (h[key()] > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+// Junta el historial de dos copias del progreso: por cada día se queda con el valor mayor
+function mergeHistory(a = {}, b = {}) { const o = { ...a }; Object.entries(b || {}).forEach(([k, v]) => { o[k] = Math.max(o[k] || 0, v || 0); }); return o; }
 function addXP(n) {
   const d = today();
-  if (S.lastDay !== d) {
-    const y = new Date(); y.setDate(y.getDate() - 1);
-    S.streak = S.lastDay === y.toLocaleDateString("en-CA") ? S.streak + 1 : 1;
-    S.lastDay = d;
-  }
-  S.xp += n; S.history[d] = (S.history[d] || 0) + n;
+  if (S.lastDay !== d) S.lastDay = d;
+  S.xp += n; S.history[d] = (S.history[d] || 0) + Math.max(1, n);
+  S.streak = calcStreak();
   save(); renderTop(); if (n > 0) toast(`+${n} XP`);
 }
 function skill(name, c, t) { const s = S.skills[name]; s[0] += c; s[1] += t; }
@@ -3925,7 +3932,16 @@ const Sync = {
   status(t) { this.text = t; const el = $("#sync"); if (el) el.textContent = t; },
   adopt(remote) {
     if (!remote) return false;
-    if ((remote.updatedAt || 0) > (S.updatedAt || 0)) { S = migrate(JSON.parse(JSON.stringify(remote))); try { localStorage.setItem("ingles-state", JSON.stringify(S)); } catch (e) {} vq = null; render(); return true; }
+    const hist = mergeHistory(S.history, remote.history);
+    if ((remote.updatedAt || 0) > (S.updatedAt || 0)) {
+      const lost = Object.keys(hist).length > Object.keys(remote.history || {}).length;
+      S = migrate(JSON.parse(JSON.stringify(remote))); S.history = hist; S.streak = calcStreak();
+      try { localStorage.setItem("ingles-state", JSON.stringify(S)); } catch (e) {}
+      if (lost) { S.updatedAt = Date.now(); this.push(); } // este dispositivo tenía días que la nube no tenía
+      vq = null; render(); return true;
+    }
+    // La copia local es más nueva: igual recupera los días que solo estaban en la nube
+    if (Object.keys(hist).length > Object.keys(S.history || {}).length) { S.history = hist; S.streak = calcStreak(); S.updatedAt = Date.now(); try { localStorage.setItem("ingles-state", JSON.stringify(S)); } catch (e) {} renderTop(); }
     return false;
   },
   async init() {
@@ -3949,7 +3965,10 @@ const Sync = {
       this.mode = "supabase";
       try { await this.pull(); this.status("Progreso sincronizado con tu base de datos"); }
       catch (e) { this.status("Sin conexión con la base de datos: guardado en este navegador"); }
-      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") this.pull().catch(() => {}); });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") this.pull().catch(() => {});
+        else if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; this.push(); } // al salir, subir lo pendiente
+      });
       return;
     }
     this.status("Guardado solo en este navegador · configura la sincronización en Ajustes");
@@ -4216,7 +4235,7 @@ function go(v) { if (location.hash.slice(1) === v) route(); else location.hash =
 function renderNav() { $("#nav").innerHTML = VIEWS.map(([id, ic, l]) => `<a href="#${id}" class="${view === id ? "active" : ""}"><span class="ic">${ic}</span><span class="lbl">${l}</span></a>`).join(""); }
 function renderTop() {
   const t = S.history[today()] || 0;
-  $("#top").innerHTML = `<div class="chip lvl">Nivel ${S.level}</div><div class="chip">🔥 ${S.streak} ${S.streak === 1 ? "día" : "días"}</div><div class="chip goal"><div class="bar"><i style="width:${Math.min(100, (t / DAILY_GOAL) * 100)}%"></i></div>${t}/${DAILY_GOAL} XP</div>`;
+  $("#top").innerHTML = `<div class="chip lvl">Nivel ${S.level}</div><div class="chip">🔥 ${calcStreak()} ${calcStreak() === 1 ? "día" : "días"}</div><div class="chip goal"><div class="bar"><i style="width:${Math.min(100, (t / DAILY_GOAL) * 100)}%"></i></div>${t}/${DAILY_GOAL} XP</div>`;
 }
 const RENDER = {};
 function render() { renderNav(); renderTop(); (RENDER[view] || RENDER.inicio)($("#main")); window.scrollTo(0, 0); }
