@@ -279,7 +279,13 @@ function voiceFor(i) {
 const CLAUDE_VOICES = ["airy", "rounded", "glassy", "buttery"];
 let speakToken = 0, curAudio = null;
 function stopSpeech() { speakToken++; try { if (curAudio) { curAudio.pause(); curAudio = null; } } catch (e) {} try { ttsApi && ttsApi.stop(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
-function speak(text, rate) { return speakLines([[0, text]], rate); }
+// Si el texto trae " | " (p. ej. las 3 formas de un verbo), cada parte se dice por separado con una pausa entre ellas.
+const wordGap = () => (S.settings.wordGap === undefined ? 700 : S.settings.wordGap);
+function speak(text, rate) {
+  const parts = String(text).split(" | ").map((x) => x.trim()).filter(Boolean);
+  if (parts.length > 1 && wordGap() > 0) return speakLines(parts.map((t) => [0, t]), rate, null, wordGap());
+  return speakLines([[0, parts.join(", ")]], rate);
+}
 function playFile(url, rate, token) {
   return new Promise((resolve, reject) => {
     if (token !== speakToken) return resolve();
@@ -299,12 +305,12 @@ function ttsLine(sp, text, rate, token) {
     } catch (e) { toast("El audio no está disponible en este navegador"); resolve(); }
   });
 }
-async function speakLines(lines, rate, onLine) {
+async function speakLines(lines, rate, onLine, gap) {
   rate = rate || S.settings.rate;
   stopSpeech();
   const token = speakToken;
   const anyHQ = lines.some(([sp, t]) => hqFile(sp, t));
-  if (ttsApi && !anyHQ) {
+  if (ttsApi && !anyHQ && !gap) {
     const t0 = lines.map(([sp, text], i) => ({ text, voice: CLAUDE_VOICES[sp % CLAUDE_VOICES.length], language: "en", rate, id: String(i) }));
     if (onLine) try { ttsApi.onLine(({ id }) => onLine(+id)); } catch (e) {}
     return ttsApi.speak(t0).catch((e) => { if (e && e.code === "not_granted") { ttsApi = null; return speakLines(lines, rate, onLine); } });
@@ -313,10 +319,14 @@ async function speakLines(lines, rate, onLine) {
     if (token !== speakToken) return;
     const [sp, text] = lines[i]; onLine && onLine(i);
     const f = hqFile(sp, text);
-    if (f) { try { await playFile(f, rate, token); continue; } catch (e) {} }
+    let done = false;
+    if (f) { try { await playFile(f, rate, token); done = true; } catch (e) {} }
     if (token !== speakToken) return;
-    await ttsLine(sp, text, rate, token);
-    if (i < lines.length - 1) await new Promise((r) => setTimeout(r, 250));
+    if (!done) {
+      if (ttsApi) { try { await ttsApi.speak([{ text, voice: CLAUDE_VOICES[sp % CLAUDE_VOICES.length], language: "en", rate, id: String(i) }]); } catch (e) { await ttsLine(sp, text, rate, token); } }
+      else await ttsLine(sp, text, rate, token);
+    }
+    if (i < lines.length - 1) await new Promise((r) => setTimeout(r, gap || (done ? 0 : 250)));
   }
 }
 const speakBtn = (text, label = "🔊") => `<button class="icon-btn" data-speak="${esc(text)}" title="Escuchar">${label}</button>`;
@@ -393,7 +403,7 @@ const firstForm = (f) => f.split("/")[0];
 function irrPattern(v) { const a = v.base, b = firstForm(v.past), c = firstForm(v.pp); return a === b && b === c ? "AAA" : b === c ? "ABB" : a === c ? "ABA" : "ABC"; }
 const IRR_PATTERNS = { AAA: "Las tres formas iguales (cut – cut – cut)", ABB: "Pasado y participio iguales (buy – bought – bought)", ABA: "Participio igual al verbo base (come – came – come)", ABC: "Las tres formas distintas (go – went – gone)" };
 const irrForms = (v) => `${v.base} – ${v.past.replace("/", " / ")} – ${v.pp.replace("/", " / ")}`;
-const irrSay = (v) => `${v.base}, ${firstForm(v.past)}, ${firstForm(v.pp)}`;
+const irrSay = (v) => `${v.base} | ${firstForm(v.past)} | ${firstForm(v.pp)}`;
 const formOK = (forms, given) => forms.split("/").some((f) => norm(f) === norm(given));
 const IRR_NEW_PER_DAY = 5;
 const learnedCount = () => Object.entries(S.cards).filter(([k, c]) => !k.endsWith(":r") && c.reps >= 2).length;
@@ -956,6 +966,7 @@ RENDER.ajustes = (m) => {
   ${voiceSettingsHTML()}
   <div class="card"><h2>🎓 Estudio</h2>
     <label class="label">Velocidad de la voz: <b id="rv">${S.settings.rate}</b></label><input type="range" id="rate" min="0.6" max="1.2" step="0.05" value="${S.settings.rate}">
+    <label class="label">Pausa entre palabras (p. ej. las 3 formas de un verbo)</label><select id="wgap">${[[0, "Sin pausa (todo seguido)"], [400, "Corta"], [700, "Media"], [1200, "Larga"], [1800, "Muy larga"]].map(([v, l]) => `<option value="${v}" ${wordGap() === v ? "selected" : ""}>${l}</option>`).join("")}</select>
     <label class="label">Tarjetas nuevas por día</label><select id="npd">${[5, 10, 15, 20, 30].map((n) => `<option ${S.settings.newPerDay === n ? "selected" : ""}>${n}</option>`).join("")}</select>
     <label class="label">Nivel de trabajo</label><select id="lvl">${S.unlocked.map((l) => `<option ${l === S.level ? "selected" : ""}>${l}</option>`).join("")}</select>
     <p class="muted small">Puedes bajar a un nivel ya desbloqueado si quieres reforzarlo.</p>
@@ -987,6 +998,7 @@ RENDER.ajustes = (m) => {
   if ($("#sout")) $("#sout").onclick = () => { Supa.logout(); Sync.mode = "local"; Sync.status("Guardado solo en este navegador"); render(); };
   $("#rate").oninput = (e) => { S.settings.rate = +e.target.value; $("#rv").textContent = S.settings.rate; };
   $("#rate").onchange = () => { save(); speak("This is how fast I will speak."); };
+  $("#wgap").onchange = (e) => { S.settings.wordGap = +e.target.value; save(); speak("think | thought | thought"); };
   bindVoiceSettings(m);
   $("#npd").onchange = (e) => { S.settings.newPerDay = +e.target.value; vq = null; save(); };
   $("#lvl").onchange = (e) => { S.level = e.target.value; gLevel = null; vq = null; dq = null; hq = null; save(); renderTop(); toast("Nivel de trabajo: " + S.level); };

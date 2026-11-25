@@ -11,7 +11,7 @@ const out = new Map();
 const add = (v, t, cat) => { t = String(t || "").trim(); if (!t || t.length > 4000) return; const k = v + "|" + t; if (!out.has(k)) out.set(k, { v, t, cat }); };
 eval(code + `
 LEVELS.forEach((lv) => VOCAB[lv].split("\\n").forEach((line) => { if (!line.includes("|")) return; const [en, es, ex] = line.split("|").map((x) => (x || "").trim()); add("A", en, "word"); if (${all}) add("A", ex, "example"); }));
-Object.values(IRREGULAR).forEach((block) => block.trim().split("\\n").forEach((line) => { const [b, p, pp] = line.split("|").map((x) => x.trim()); add("A", b, "word"); add("A", b + ", " + p.split("/")[0] + ", " + pp.split("/")[0], "irregular"); }));
+Object.values(IRREGULAR).forEach((block) => block.trim().split("\\n").forEach((line) => { const [b, p, pp] = line.split("|").map((x) => x.trim()); add("A", b, "word"); add("A", b + ", " + p.split("/")[0] + ", " + pp.split("/")[0], "irregular"); [p, pp].forEach((f) => add("A", f.split("/")[0].trim(), "word")); }));
 LEVELS.forEach((lv) => SENTENCES[lv].forEach((s) => add("A", s, "sentence")));
 LEVELS.forEach((lv) => (LISTENING[lv] || []).forEach((d) => d.lines.forEach(([sp, t]) => add(sp === "A" ? "A" : sp === "B" ? "B" : "C", t, "dialogue"))));
 LEVELS.forEach((lv) => (ROLEPLAY[lv] || []).forEach((r) => r.turns.forEach(([p, task, models]) => { add("B", p, "roleplay"); models.forEach((x) => add("A", x, "model")); })));
