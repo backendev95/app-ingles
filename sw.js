@@ -1,6 +1,6 @@
 // Caché sencilla para usar la app sin conexión
-const CACHE = "english-path-v23";
-const IMGS = "english-path-img-v1"; // las imágenes se guardan aparte para no descargarlas otra vez en cada actualización
+const CACHE = "english-path-v24";
+const IMGS = "english-path-img-v2"; // las imágenes se guardan aparte para no descargarlas otra vez en cada actualización
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon.svg", "pip.html", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE && k !== IMGS).map((k) => caches.delete(k))))); self.clients.claim(); });
